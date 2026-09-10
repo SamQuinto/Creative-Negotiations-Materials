@@ -11,7 +11,7 @@ Participant materials for the 200-issue Candidate–Recruiter negotiation scenar
 | Survey for participants assigned Candidate | [candidate_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/candidate_feedback_survey.yaml) |
 | Survey for participants assigned Recruiter | [recruiter_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/recruiter_feedback_survey.yaml) |
 
-Randomly assign Candidate or Recruiter and load that role's JSON and matching survey. Each JSON contains just one role, in the existing `roles` array. Q9 and Q12 depend on the assigned role. The role text preserves its bold and italic formatting in Markdown. The earlier combined JSON remains only for old-link compatibility; use the separate files above for this survey.
+Randomly assign Candidate or Recruiter and load that role's JSON and matching survey. Each JSON contains just one role, in the existing `roles` array. Q9 and Q12 depend on the assigned role. Role text uses bold-only Markdown: italic markers are omitted because the current Empirica reader displays them as stray asterisks. Wording is unchanged; original italics remain in the private source materials and HTML mockup. The earlier combined JSON remains only for old-link compatibility; use the separate files above for this survey.
 
 ## File format
 

@@ -2,7 +2,9 @@
 
 ## Use the role-specific files
 
-After assigning Candidate or Recruiter, load that role's JSON and survey YAML. Each role JSON keeps the existing `roles`/`tips` structure, but `roles` contains **one role only**. Render `roles[0].narrative` as Markdown, preserving bold and italics. Do not download the other role's material into the participant interface.
+After assigning Candidate or Recruiter, load that role's JSON and survey YAML. Each role JSON keeps the existing `roles`/`tips` structure, but `roles` contains **one role only**. Render `roles[0].narrative` using the existing paragraph and bold support. Do not download the other role's material into the participant interface.
+
+**Formatting compatibility:** the current Empirica reader displays single-asterisk italic markers literally. The role JSONs therefore use bold-only Markdown: no `*italic*` or `***bold italic***` markers. Wording is unchanged; original italics remain in the private source and HTML mockup. Do not add single-asterisk markers back unless the Empirica reader is first updated and tested for full Markdown. The builder supports `role_markdown(blocks, preserve_italics=True)` for a future compatible reader, but public exports deliberately leave this off. After an update, reload the role JSON; already-open sessions or pinned older commit URLs may still show the old text.
 
 The previous combined `role_materials_200.json` remains only for compatibility with an earlier link. Use the new role-specific links for this survey.
 
