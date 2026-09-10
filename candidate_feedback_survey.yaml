@@ -5,6 +5,12 @@ scales:
     - "Neither agree nor disagree"
     - "Somewhat agree"
     - "Strongly agree"
+  experience_5:
+    - "None"
+    - "A little"
+    - "Some"
+    - "Quite a lot"
+    - "A great deal"
 
 questions:
   - id: q1
@@ -99,14 +105,9 @@ questions:
 
   - id: q14
     n: 14
-    type: "single_select"
+    type: "likert"
     label: "How much experience do you have negotiating in everyday life?"
-    options:
-      - "None"
-      - "A little"
-      - "Some"
-      - "Quite a lot"
-      - "A great deal"
+    scale: "experience_5"
 
   - id: q15
     n: 15
