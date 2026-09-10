@@ -73,7 +73,7 @@ questions:
   - id: q11
     n: 11
     type: "open_text"
-    label: "Propose three to five other issues that could realistically be raised and included in an offer."
+    label: "Propose three other issues that could realistically be raised and included in an offer. You may add up to two more."
     hint: "List 3–5 issues. For each, write the issue name and why it makes sense. Use one line per issue: Issue name — justification. Issues 4 and 5 are optional; the first three are required. You do not need to write another full offer."
 
   - id: q12
