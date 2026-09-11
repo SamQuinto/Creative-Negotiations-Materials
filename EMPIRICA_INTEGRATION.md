@@ -18,16 +18,14 @@ The previous combined `role_materials_200.json` remains only for compatibility w
 
 Use `About_This_Activity.md` for **About This Activity**. It distinguishes the feedback activity's random bonus draw from the main study's agreement-based bonus. Changing a role JSON cannot replace text that is hardcoded in Empirica; paste this content into that component.
 
-## Q11: three rows, with optional additions
+## Q11: one text box, job-feature names only
 
-The YAML keeps the existing `q11` / `open_text` question so it remains compatible with the current schema. A YAML file cannot add a dynamic control unsupported by the survey renderer.
+The 11 September decision replaces the earlier repeatable-row plan. Keep `q11` as `open_text`: participants list 3 job-feature names, optionally up to 5, in one box. Do not request reasons or justifications.
 
-For `question.id === "q11"`, use a small repeatable-input component instead of the usual single text box:
+The YAML provides a two-line `hint` and a three-line `placeholder`. Show the hint above the box in gray, normal-weight text using `white-space: pre-line`. The hint should stay visible while typing; the placeholder disappears normally. Save only the participant's entered answer under `q11`, never the placeholder. Do not add new response fields or an Add another button.
 
-1. Initially show **three rows**, each with an **Issue name** field and a **Why it makes sense** field. Both fields in each of these rows are required.
-2. Below them, show **+ Add another issue (optional)**. Each click adds one row, up to five in total. Focus the new issue-name field.
-3. Rows four and five are optional. If either field in an optional row is filled, require its partner field too. A completely blank optional row is valid.
-4. Disable the add button when five rows are visible. Preserve values when participants review role materials or navigate back.
-5. Save an array of `{issue, justification}` records. If the existing response API only accepts strings, serialize the nonblank rows as numbered `Issue name — justification` lines under the existing `q11` answer key. Keep all other question IDs unchanged.
+The private mockup implements this. If the deployed reader still shows only “Your response…”, it must bind the existing textarea's `placeholder` to `question.placeholder` and display `question.hint`. The screenshot does not establish support for those optional presentation fields; updating YAML alone cannot force a reader that ignores them to display them.
 
-The private HTML mockup already implements this behavior. Until the renderer change is installed, the public YAML remains a standard text question requesting three to five issue/reason pairs; it must not be described as already providing dynamic boxes in Empirica.
+## Role-specific wording and the counteroffer
+
+Q2, Q9 and Q12 name the correct counterpart in each role's YAML. Q9's label contains three paragraphs: the role-specific introduction, the unchanged counteroffer, then “What offer would you make to respond to them?” Preserve these breaks with `white-space: pre-line` in the reader. The local mockup additionally shows the offer in a separate italic quotation panel. No arbitrary HTML or Markdown parsing is needed for the YAML survey.

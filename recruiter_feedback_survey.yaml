@@ -23,7 +23,7 @@ questions:
     n: 2
     type: "likert"
     scale: "agree_5"
-    label: "The role materials helped me understand what may matter to the other party."
+    label: "The role materials helped me understand what may matter to the Candidate."
 
   - id: q3
     n: 3
@@ -58,7 +58,7 @@ questions:
   - id: q8
     n: 8
     type: "single_select"
-    label: "Was it clear that you could include multiple job terms beyond the three required terms?"
+    label: "Was it clear that you could include multiple job/contract features beyond the three required ones?"
     style: "pills"
     options:
       - "Yes"
@@ -67,7 +67,7 @@ questions:
   - id: q9
     n: 9
     type: "open_text"
-    label: "Imagine that the other party sends you this counteroffer. What would your counteroffer be?\n\nCandidate’s counteroffer: “I am asking for a $55,000 salary, a $13,000 personal work-expense budget and a 15 June starting date, with four remote-working days per week.”"
+    label: "Imagine that the Candidate sends you this counteroffer:\n\nCandidate’s counteroffer: “I am asking for a $55,000 salary, a $13,000 personal work-expense budget and a 15 June starting date, with four remote-working days per week.”\n\nWhat offer would you make to respond to them?"
     hint: "Write a complete counteroffer in ordinary language."
 
   - id: q10
@@ -79,8 +79,9 @@ questions:
   - id: q11
     n: 11
     type: "open_text"
-    label: "Propose three other issues that could realistically be raised and included in an offer. You may add up to two more."
-    hint: "List 3–5 issues. For each, write the issue name and why it makes sense. Use one line per issue: Issue name — justification. Issues 4 and 5 are optional; the first three are required. You do not need to write another full offer."
+    label: "Propose 3 other job features that could realistically be raised and included in an offer. You may add up to 2 more (maximum 5)."
+    hint: "Enter only the name of each job feature, one per line.\nList 3 features. You may add up to 2 more (maximum 5)."
+    placeholder: "1. [Job feature]\n2. [Job feature]\n3. [Job feature]"
 
   - id: q12
     n: 12
