@@ -5,73 +5,112 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NOVA post-negotiation survey preview</title>
   <style>
-    :root { --blue:#2563eb; --blue-dark:#1e40af; --ink:#172033; --muted:#5f6b7a; --line:#d9e1ec; --paper:#ffffff; --wash:#f4f7fb; --error:#b91c1c; }
+    :root {
+      --blue:#2563eb; --blue-dark:#173d91; --blue-soft:#edf4ff; --ink:#151922;
+      --muted:#606875; --line:#d9dee7; --paper:#fff; --wash:#eef1f5; --error:#b42318;
+    }
     * { box-sizing:border-box; }
-    body { margin:0; background:var(--wash); color:var(--ink); font:16px/1.48 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-    .preview { background:#111827; color:#fff; padding:8px 20px; text-align:center; font-size:13px; letter-spacing:.01em; }
-    .shell { max-width:1120px; margin:0 auto; padding:28px 24px 80px; }
-    .header { background:var(--paper); border:1px solid var(--line); border-radius:14px 14px 0 0; padding:24px 28px 20px; }
-    .eyebrow { color:var(--blue-dark); font-size:13px; font-weight:750; letter-spacing:.08em; text-transform:uppercase; }
-    h1 { margin:5px 0 7px; font-size:30px; line-height:1.15; }
-    .intro { margin:0; color:var(--muted); max-width:760px; }
-    .progress-row { display:flex; align-items:center; gap:14px; margin-top:20px; }
-    .progress { flex:1; height:8px; overflow:hidden; background:#e6ebf2; border-radius:99px; }
-    .progress > span { display:block; height:100%; background:var(--blue); transition:width .2s ease; }
-    .page-label { min-width:92px; text-align:right; color:var(--muted); font-size:14px; font-weight:650; }
-    main { background:var(--paper); border:1px solid var(--line); border-top:0; padding:28px; }
-    .page-title { margin:0 0 7px; font-size:23px; }
-    .page-help { color:var(--muted); margin:0 0 24px; }
-    .section-title { margin:34px 0 12px; padding-top:4px; font-size:19px; color:var(--blue-dark); }
-    .question { margin:0 0 18px; border:1px solid var(--line); border-radius:12px; padding:19px; background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.03); }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--wash); color:var(--ink); font:16px/1.48 Arial, Helvetica, sans-serif; }
+    button, input, textarea { font:inherit; }
+    .preview-note { padding:8px 18px; background:#171717; color:#fff; text-align:center; font-size:13px; }
+    .page { width:min(920px,100%); min-height:100vh; margin:0 auto; background:var(--paper); box-shadow:0 0 0 1px #d7dbe2; }
+    .survey-head { padding:30px 40px 23px; border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--blue-dark); font-size:12px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    h1 { margin:7px 0 8px; font-size:30px; line-height:1.15; }
+    .intro { max-width:700px; margin:0; color:var(--muted); }
+    .toolbar { position:sticky; top:0; z-index:5; padding:12px 40px; background:rgba(255,255,255,.97); border-bottom:1px solid var(--line); box-shadow:0 5px 16px rgba(15,23,42,.05); }
+    .toolbar-top { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px; }
+    .page-label { color:var(--blue-dark); font-weight:800; }
+    .progress-note { color:var(--muted); font-size:14px; }
+    .progress { height:7px; overflow:hidden; border-radius:99px; background:#e5e9ef; }
+    .progress span { display:block; height:100%; border-radius:inherit; background:var(--blue); transition:width .2s ease; }
+    main { padding:30px 40px 18px; }
+    .page-title { margin:0 0 5px; font-size:24px; }
+    .page-help { margin:0 0 26px; color:var(--muted); }
+    .section-title { margin:32px 0 0; padding:11px 14px; border-left:4px solid var(--blue); background:var(--blue-soft); color:var(--blue-dark); font-size:17px; }
+    .section-title:first-of-type { margin-top:8px; }
+    .question { padding:24px 2px 25px; border-bottom:1px solid var(--line); }
     .question.hidden { display:none; }
-    .question-label { margin:0 0 13px; font-weight:650; }
-    .number { color:var(--blue-dark); margin-right:7px; }
-    .required { color:var(--error); margin-left:3px; }
-    .hint { color:var(--muted); background:#f7f9fc; border-left:3px solid #9db8ee; padding:9px 11px; margin:-2px 0 14px; }
-    .choices { display:grid; gap:8px; }
-    .choices.scale { grid-template-columns:repeat(var(--cols), minmax(76px,1fr)); overflow-x:auto; padding-bottom:3px; }
-    .choice { min-width:0; display:flex; align-items:flex-start; gap:8px; border:1px solid var(--line); border-radius:8px; padding:10px; cursor:pointer; background:#fff; }
-    .choice:hover { border-color:#91ace1; background:#f8faff; }
+    .question.unanswered { margin-left:-13px; margin-right:-13px; padding-left:13px; padding-right:13px; background:#fff8f7; border-radius:6px; }
+    .question-label { display:flex; align-items:flex-start; gap:10px; margin:0 0 17px; font-size:17px; font-weight:700; }
+    .number { flex:0 0 auto; min-width:31px; color:var(--blue-dark); }
+    .required { margin-left:3px; color:var(--error); }
+    .hint { margin:-7px 0 15px 41px; padding:9px 12px; color:var(--muted); background:#f7f8fa; border-left:3px solid #9bb7ee; }
+    .slider-box { margin-left:41px; padding:14px 16px 13px; border:1px solid #ccd4e0; border-radius:7px; background:#fbfcfe; }
+    .slider-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+    .answer-value { color:var(--muted); font-size:14px; font-weight:700; }
+    .answer-value.selected { color:var(--blue-dark); }
+    .na-button { padding:6px 10px; border:1px solid #aeb8c7; border-radius:5px; color:#3e4652; background:#fff; cursor:pointer; font-size:13px; font-weight:700; }
+    .na-button:hover, .na-button.active { color:#fff; background:#3e4652; border-color:#3e4652; }
+    input[type="range"] { width:100%; height:28px; margin:0; background:transparent; cursor:pointer; accent-color:var(--blue); -webkit-appearance:none; appearance:none; }
+    input[type="range"]::-webkit-slider-runnable-track { height:7px; border-radius:99px; background:#d7deea; }
+    input[type="range"].answered::-webkit-slider-runnable-track { background:linear-gradient(90deg,var(--blue) 0 var(--fill),#d7deea var(--fill) 100%); }
+    input[type="range"]::-webkit-slider-thumb { width:20px; height:20px; margin-top:-6.5px; border:3px solid #fff; border-radius:50%; background:#9aa6b6; box-shadow:0 0 0 1px #768397,0 2px 5px rgba(0,0,0,.16); appearance:none; }
+    input[type="range"].answered::-webkit-slider-thumb { background:var(--blue); box-shadow:0 0 0 1px var(--blue-dark),0 2px 5px rgba(0,0,0,.16); }
+    input[type="range"]::-moz-range-track { height:7px; border-radius:99px; background:#d7deea; }
+    input[type="range"]::-moz-range-progress { height:7px; border-radius:99px; background:var(--blue); }
+    input[type="range"]::-moz-range-thumb { width:17px; height:17px; border:3px solid #fff; border-radius:50%; background:var(--blue); box-shadow:0 0 0 1px var(--blue-dark); }
+    .ticks { display:flex; justify-content:space-between; padding:0 5px; color:#747d8a; font-size:12px; }
+    .anchors { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:7px; color:#4e5866; font-size:12px; line-height:1.25; }
+    .anchors span:nth-child(2) { text-align:center; }
+    .anchors span:last-child { text-align:right; }
+    .choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-left:41px; }
+    .choices.four { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .choice { display:flex; align-items:flex-start; gap:9px; min-height:47px; padding:11px 13px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; }
+    .choice:hover { border-color:#8fa9dc; background:#f8faff; }
+    .choice:has(input:checked) { border-color:var(--blue); background:var(--blue-soft); box-shadow:inset 0 0 0 1px var(--blue); }
     .choice input { margin-top:3px; accent-color:var(--blue); }
-    .choice span { font-size:14px; overflow-wrap:anywhere; }
-    textarea { width:100%; min-height:128px; resize:vertical; border:1px solid #b9c4d3; border-radius:9px; padding:12px; font:inherit; }
-    textarea:focus { outline:3px solid rgba(37,99,235,.16); border-color:var(--blue); }
-    .validation { display:none; margin:0 0 16px; color:var(--error); font-weight:650; }
+    textarea { width:calc(100% - 41px); min-height:126px; margin-left:41px; padding:12px; resize:vertical; border:1px solid #aeb8c7; border-radius:6px; background:#fff; }
+    textarea:focus, button:focus-visible, input:focus-visible { outline:3px solid rgba(37,99,235,.20); outline-offset:2px; }
+    .validation { display:none; margin:14px 0 0; padding:11px 14px; border-left:4px solid var(--error); color:var(--error); background:#fff3f2; font-weight:700; }
     .validation.show { display:block; }
-    .footer { display:flex; justify-content:space-between; gap:12px; background:var(--paper); border:1px solid var(--line); border-top:0; border-radius:0 0 14px 14px; padding:18px 28px; position:sticky; bottom:0; box-shadow:0 -8px 22px rgba(15,23,42,.06); }
-    button { border:0; border-radius:8px; padding:11px 20px; font:700 15px/1 inherit; cursor:pointer; }
-    .secondary { color:var(--blue-dark); background:#eaf0fd; }
-    .primary { color:#fff; background:var(--blue); margin-left:auto; }
-    button:disabled { opacity:.45; cursor:not-allowed; }
-    .done { display:none; text-align:center; padding:48px 20px; }
+    .done { display:none; padding:55px 20px 70px; text-align:center; }
     .done.show { display:block; }
-    @media (max-width:760px) {
-      .shell { padding:14px 10px 58px; } .header, main, .footer { padding-left:16px; padding-right:16px; }
-      .choices.scale { grid-template-columns:repeat(var(--cols), minmax(112px,1fr)); } h1 { font-size:25px; }
+    .done-mark { display:grid; place-items:center; width:58px; height:58px; margin:0 auto 14px; border-radius:50%; color:#fff; background:var(--blue); font-size:30px; }
+    .actions { position:sticky; bottom:0; z-index:4; display:flex; align-items:center; gap:12px; padding:15px 40px; border-top:1px solid var(--line); background:rgba(255,255,255,.98); box-shadow:0 -8px 20px rgba(15,23,42,.06); }
+    .answered-count { color:var(--muted); font-size:14px; }
+    button.nav { padding:11px 20px; border:0; border-radius:5px; cursor:pointer; font-weight:700; }
+    .secondary { color:var(--blue-dark); background:#e8effc; }
+    .primary { margin-left:auto; color:#fff; background:var(--blue); }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    @media(max-width:700px) {
+      .survey-head, main, .toolbar, .actions { padding-left:18px; padding-right:18px; }
+      h1 { font-size:26px; }
+      .slider-box, .choices, textarea { width:100%; margin-left:0; }
+      .hint { margin-left:0; }
+      .question-label { gap:6px; }
+      .choices, .choices.four { grid-template-columns:1fr; }
+      .anchors { gap:6px; font-size:11px; }
+      .answered-count { display:none; }
     }
   </style>
 </head>
 <body>
-  <div class="preview">Visual preview only. This file does not collect or transmit responses.</div>
-  <div class="shell">
-    <header class="header">
+  <div class="preview-note">Research preview only. Answers entered here are not saved or transmitted.</div>
+  <div class="page">
+    <header class="survey-head">
       <div class="eyebrow">NOVA experiment</div>
       <h1>Post-negotiation survey</h1>
       <p class="intro">Please answer the following questions about the negotiation you just completed. Your responses are private.</p>
-      <div class="progress-row"><div class="progress"><span id="progress"></span></div><div class="page-label" id="pageLabel"></div></div>
     </header>
+    <div class="toolbar">
+      <div class="toolbar-top"><span class="page-label" id="pageLabel"></span><span class="progress-note" id="progressNote"></span></div>
+      <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+    </div>
     <main>
       <div id="survey"></div>
-      <p class="validation" id="validation">Please answer each required question shown on this page before continuing.</p>
-      <div class="done" id="done"><h2>Survey complete</h2><p>In Empirica, this would save the responses and continue to the completion page.</p></div>
+      <p class="validation" id="validation">Please answer the highlighted questions before continuing.</p>
+      <div class="done" id="done"><div class="done-mark">✓</div><h2>Survey complete</h2><p>In Empirica, your responses would now be saved and you would continue to the completion page.</p></div>
     </main>
-    <footer class="footer">
-      <button class="secondary" id="back" type="button">Back</button>
-      <button class="primary" id="next" type="button">Next</button>
+    <footer class="actions">
+      <button class="nav secondary" id="back" type="button">Back</button>
+      <span class="answered-count" id="answeredCount"></span>
+      <button class="nav primary" id="next" type="button">Continue</button>
     </footer>
   </div>
   <script>
-    const surveyData = {"scales": {"svi_positive_7": ["1 — Not at all", "2", "3", "4 — Moderately", "5", "6", "7 — Perfectly", "N/A"], "svi_loss_7": ["1 — Not at all", "2", "3", "4 — Moderately", "5", "6", "7 — A great deal", "N/A"], "svi_competence_7": ["1 — It made me feel less competent", "2", "3", "4 — It did not make me feel more or less competent", "5", "6", "7 — It made me feel more competent", "N/A"], "svi_self_image_7": ["1 — It negatively impacted my self-image", "2", "3", "4 — It did not positively or negatively impact my self-image", "5", "6", "7 — It positively impacted my self-image", "N/A"], "svi_satisfaction_7": ["1 — Not at all satisfied", "2", "3", "4 — Moderately satisfied", "5", "6", "7 — Perfectly satisfied", "N/A"], "svi_impression_7": ["1 — Extremely negative", "2", "3", "4 — Neither negative nor positive", "5", "6", "7 — Extremely positive", "N/A"], "agree_7": ["1 — Strongly disagree", "2", "3", "4 — Neither agree nor disagree", "5", "6", "7 — Strongly agree"], "strong_agree_7": ["1 — Very strongly disagree", "2", "3", "4 — Neither agree nor disagree", "5", "6", "7 — Very strongly agree"], "frequency_5": ["Never", "Rarely", "Occasionally", "Frequently", "Very frequently"]}, "questions": [{"id": "q1", "n": 1, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "How satisfied are you with your own outcome—i.e., the extent to which the terms of your agreement (or lack of agreement) benefit you?"}, {"id": "q2", "n": 2, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "How satisfied are you with the balance between your own outcome and your counterpart’s outcome?"}, {"id": "q3", "n": 3, "page": 1, "type": "likert", "scale": "svi_loss_7", "required": true, "reverse_scored": true, "label": "Did you feel like you forfeited or ‘lost’ in this negotiation?"}, {"id": "q4", "n": 4, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Do you think the terms of your agreement are consistent with principles of legitimacy or objective criteria (e.g., common standards of fairness, precedent, industry practice, legality, etc.)?"}, {"id": "q5", "n": 5, "page": 1, "type": "likert", "scale": "svi_loss_7", "required": true, "reverse_scored": true, "label": "Did you ‘lose face’ (i.e., damage your sense of pride) in the negotiation?"}, {"id": "q6", "n": 6, "page": 1, "type": "likert", "scale": "svi_competence_7", "required": true, "label": "Did this negotiation make you feel more or less competent as a negotiator?"}, {"id": "q7", "n": 7, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did you behave according to your own principles and values?"}, {"id": "q8", "n": 8, "page": 1, "type": "likert", "scale": "svi_self_image_7", "required": true, "label": "Did this negotiation positively or negatively impact your self-image or your impression of yourself?"}, {"id": "q9", "n": 9, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Do you feel your counterpart listened to your concerns?"}, {"id": "q10", "n": 10, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Would you characterize the negotiation process as fair?"}, {"id": "q11", "n": 11, "page": 1, "type": "likert", "scale": "svi_satisfaction_7", "required": true, "label": "How satisfied are you with the ease (or difficulty) of reaching an agreement?"}, {"id": "q12", "n": 12, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did your counterpart consider your wishes, opinions, or needs?"}, {"id": "q13", "n": 13, "page": 1, "type": "likert", "scale": "svi_impression_7", "required": true, "label": "What kind of ‘overall’ impression did your counterpart make on you?"}, {"id": "q14", "n": 14, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "How satisfied are you with your relationship with your counterpart as a result of this negotiation?"}, {"id": "q15", "n": 15, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did the negotiation make you trust your counterpart?"}, {"id": "q16", "n": 16, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did the negotiation build a good foundation for a future relationship with your counterpart?"}, {"id": "q17", "n": 17, "page": 2, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "I had no difficulty imagining myself in this negotiation."}, {"id": "q18", "n": 18, "page": 2, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "This negotiation felt realistic."}, {"id": "q19", "n": 19, "page": 2, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "I took my assigned role seriously."}, {"id": "q20", "n": 20, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I considered diverse sources of information when generating new ideas."}, {"id": "q21", "n": 21, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I looked for connections with solutions used in seemingly different situations."}, {"id": "q22", "n": 22, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I generated several alternatives to the same problem before deciding what to propose."}, {"id": "q23", "n": 23, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I tried to devise solutions that moved away from established ways of doing things."}, {"id": "q24", "n": 24, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I spent considerable time working through information that helped me generate new ideas."}, {"id": "q25", "n": 25, "page": 2, "section": "Creative confidence", "type": "likert", "scale": "strong_agree_7", "required": true, "label": "During this negotiation, I was confident that I could solve problems creatively."}, {"id": "q26", "n": 26, "page": 2, "section": "Creative confidence", "type": "likert", "scale": "strong_agree_7", "required": true, "label": "During this negotiation, I felt able to build further on ideas raised by the other party."}, {"id": "q27", "n": 27, "page": 2, "section": "Creative confidence", "type": "likert", "scale": "strong_agree_7", "required": true, "label": "During this negotiation, I felt capable of generating novel ideas."}, {"id": "q28", "n": 28, "page": 2, "section": "Temporary impasse", "type": "single_select", "style": "pills", "required": true, "label": "At any point during this negotiation, did you experience a temporary impasse?", "hint": "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely.", "options": ["Yes", "No"]}, {"id": "q29", "n": 29, "page": 2, "section": "Temporary impasse", "type": "single_select", "required": true, "show_if": {"question": "q28", "equals": "Yes"}, "label": "Approximately when did the first temporary impasse occur?", "options": ["First quarter of the negotiation", "Second quarter of the negotiation", "Third quarter of the negotiation", "Fourth quarter of the negotiation"]}, {"id": "q30", "n": 30, "page": 2, "section": "Temporary impasse", "type": "single_select", "style": "pills", "required": true, "show_if": {"question": "q28", "equals": "Yes"}, "label": "Did you and the other party eventually move past this temporary impasse?", "options": ["Yes", "No"]}, {"id": "q31", "n": 31, "page": 2, "section": "Other feedback", "type": "open_text", "required": false, "label": "Do you have any other feedback about this negotiation task, or any comments, thoughts, or feelings about your experience that you would like to share with us?", "hint": "Optional"}, {"id": "q32", "n": 32, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I tried to understand what the other party was thinking in their situation."}, {"id": "q33", "n": 33, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I tried to imagine the negotiation from the other party’s point of view."}, {"id": "q34", "n": 34, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "I felt able to raise job or contract issues that were not listed in my role materials."}, {"id": "q35", "n": 35, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "reverse_scored": true, "label": "I felt limited to negotiating only the job or contract issues listed in my role materials."}]};
+    const surveyData = {"scales": {"svi_positive_7": ["1 — Not at all", "2", "3", "4 — Moderately", "5", "6", "7 — Perfectly", "N/A"], "svi_loss_7": ["1 — Not at all", "2", "3", "4 — Moderately", "5", "6", "7 — A great deal", "N/A"], "svi_competence_7": ["1 — It made me feel less competent", "2", "3", "4 — It did not make me feel more or less competent", "5", "6", "7 — It made me feel more competent", "N/A"], "svi_self_image_7": ["1 — It negatively impacted my self-image", "2", "3", "4 — It did not positively or negatively impact my self-image", "5", "6", "7 — It positively impacted my self-image", "N/A"], "svi_satisfaction_7": ["1 — Not at all satisfied", "2", "3", "4 — Moderately satisfied", "5", "6", "7 — Perfectly satisfied", "N/A"], "svi_impression_7": ["1 — Extremely negative", "2", "3", "4 — Neither negative nor positive", "5", "6", "7 — Extremely positive", "N/A"], "agree_7": ["1 — Strongly disagree", "2", "3", "4 — Neither agree nor disagree", "5", "6", "7 — Strongly agree"], "strong_agree_7": ["1 — Very strongly disagree", "2", "3", "4 — Neither agree nor disagree", "5", "6", "7 — Very strongly agree"], "frequency_5": ["Never", "Rarely", "Occasionally", "Frequently", "Very frequently"]}, "questions": [{"id": "q1", "n": 1, "page": 1, "section": "Your outcome", "type": "likert", "scale": "svi_positive_7", "required": true, "label": "How satisfied are you with your own outcome—i.e., the extent to which the terms of your agreement (or lack of agreement) benefit you?"}, {"id": "q2", "n": 2, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "How satisfied are you with the balance between your own outcome and your counterpart’s outcome?"}, {"id": "q3", "n": 3, "page": 1, "type": "likert", "scale": "svi_loss_7", "required": true, "reverse_scored": true, "label": "Did you feel like you forfeited or ‘lost’ in this negotiation?"}, {"id": "q4", "n": 4, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Do you think the terms of your agreement are consistent with principles of legitimacy or objective criteria (e.g., common standards of fairness, precedent, industry practice, legality, etc.)?"}, {"id": "q5", "n": 5, "page": 1, "section": "How you felt about yourself", "type": "likert", "scale": "svi_loss_7", "required": true, "reverse_scored": true, "label": "Did you ‘lose face’ (i.e., damage your sense of pride) in the negotiation?"}, {"id": "q6", "n": 6, "page": 1, "type": "likert", "scale": "svi_competence_7", "required": true, "label": "Did this negotiation make you feel more or less competent as a negotiator?"}, {"id": "q7", "n": 7, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did you behave according to your own principles and values?"}, {"id": "q8", "n": 8, "page": 1, "type": "likert", "scale": "svi_self_image_7", "required": true, "label": "Did this negotiation positively or negatively impact your self-image or your impression of yourself?"}, {"id": "q9", "n": 9, "page": 1, "section": "The negotiation process", "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Do you feel your counterpart listened to your concerns?"}, {"id": "q10", "n": 10, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Would you characterize the negotiation process as fair?"}, {"id": "q11", "n": 11, "page": 1, "type": "likert", "scale": "svi_satisfaction_7", "required": true, "label": "How satisfied are you with the ease (or difficulty) of reaching an agreement?"}, {"id": "q12", "n": 12, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did your counterpart consider your wishes, opinions, or needs?"}, {"id": "q13", "n": 13, "page": 1, "section": "Your relationship with the other party", "type": "likert", "scale": "svi_impression_7", "required": true, "label": "What kind of ‘overall’ impression did your counterpart make on you?"}, {"id": "q14", "n": 14, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "How satisfied are you with your relationship with your counterpart as a result of this negotiation?"}, {"id": "q15", "n": 15, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did the negotiation make you trust your counterpart?"}, {"id": "q16", "n": 16, "page": 1, "type": "likert", "scale": "svi_positive_7", "required": true, "label": "Did the negotiation build a good foundation for a future relationship with your counterpart?"}, {"id": "q17", "n": 17, "page": 2, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "I had no difficulty imagining myself in this negotiation."}, {"id": "q18", "n": 18, "page": 2, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "This negotiation felt realistic."}, {"id": "q19", "n": 19, "page": 2, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "I took my assigned role seriously."}, {"id": "q20", "n": 20, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I considered diverse sources of information when generating new ideas."}, {"id": "q21", "n": 21, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I looked for connections with solutions used in seemingly different situations."}, {"id": "q22", "n": 22, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I generated several alternatives to the same problem before deciding what to propose."}, {"id": "q23", "n": 23, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I tried to devise solutions that moved away from established ways of doing things."}, {"id": "q24", "n": 24, "page": 2, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I spent considerable time working through information that helped me generate new ideas."}, {"id": "q25", "n": 25, "page": 2, "section": "Creative confidence", "type": "likert", "scale": "strong_agree_7", "required": true, "label": "During this negotiation, I was confident that I could solve problems creatively."}, {"id": "q26", "n": 26, "page": 2, "section": "Creative confidence", "type": "likert", "scale": "strong_agree_7", "required": true, "label": "During this negotiation, I felt able to build further on ideas raised by the other party."}, {"id": "q27", "n": 27, "page": 2, "section": "Creative confidence", "type": "likert", "scale": "strong_agree_7", "required": true, "label": "During this negotiation, I felt capable of generating novel ideas."}, {"id": "q28", "n": 28, "page": 2, "section": "Temporary impasse", "type": "single_select", "style": "pills", "required": true, "label": "At any point during this negotiation, did you experience a temporary impasse?", "hint": "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely.", "options": ["Yes", "No"]}, {"id": "q29", "n": 29, "page": 2, "section": "Temporary impasse", "type": "single_select", "required": true, "show_if": {"question": "q28", "equals": "Yes"}, "label": "Approximately when did the first temporary impasse occur?", "options": ["First quarter of the negotiation", "Second quarter of the negotiation", "Third quarter of the negotiation", "Fourth quarter of the negotiation"]}, {"id": "q30", "n": 30, "page": 2, "section": "Temporary impasse", "type": "single_select", "style": "pills", "required": true, "show_if": {"question": "q28", "equals": "Yes"}, "label": "Did you and the other party eventually move past this temporary impasse?", "options": ["Yes", "No"]}, {"id": "q31", "n": 31, "page": 2, "section": "Other feedback", "type": "open_text", "required": false, "label": "Do you have any other feedback about this negotiation task, or any comments, thoughts, or feelings about your experience that you would like to share with us?", "hint": "Optional"}, {"id": "q32", "n": 32, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I tried to understand what the other party was thinking in their situation."}, {"id": "q33", "n": 33, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I tried to imagine the negotiation from the other party’s point of view."}, {"id": "q34", "n": 34, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "I felt able to raise job or contract issues that were not listed in my role materials."}, {"id": "q35", "n": 35, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "reverse_scored": true, "label": "I felt limited to negotiating only the job or contract issues listed in my role materials."}]};
     const answers = {};
     let page = 1;
     const surveyEl = document.getElementById('survey');
@@ -87,66 +126,155 @@
     function escapeText(value) {
       return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
     }
+    function scaleParts(question) {
+      const all = surveyData.scales[question.scale];
+      return {numeric:all.filter(option => option !== 'N/A'), hasNA:all.includes('N/A')};
+    }
+    function optionNumber(option) {
+      const match = String(option || '').match(/^\d+/);
+      return match ? Number(match[0]) : null;
+    }
+    function anchorText(option) {
+      const parts = String(option).split(' — ');
+      return parts.length > 1 ? `${parts[0]} — ${parts.slice(1).join(' — ')}` : parts[0];
+    }
+    function sliderHtml(question) {
+      const {numeric,hasNA} = scaleParts(question);
+      const current = answers[question.id];
+      const currentNumber = optionNumber(current);
+      const midpoint = Math.ceil(numeric.length / 2);
+      const value = currentNumber || midpoint;
+      const selected = Boolean(currentNumber);
+      const fill = ((value - 1) / (numeric.length - 1)) * 100;
+      const middle = numeric[Math.floor(numeric.length / 2)];
+      return `<div class="slider-box" data-slider-box="${question.id}">
+        <div class="slider-top"><span class="answer-value ${selected || current === 'N/A' ? 'selected' : ''}" id="value-${question.id}">${current ? escapeText(current) : 'Move the slider to answer'}</span>
+        ${hasNA ? `<button class="na-button ${current === 'N/A' ? 'active' : ''}" type="button" data-na="${question.id}">Not applicable</button>` : ''}</div>
+        <input type="range" name="${question.id}" data-scale="${question.scale}" min="1" max="${numeric.length}" step="1" value="${value}" class="${selected ? 'answered' : ''}" style="--fill:${fill}%" aria-label="Response to question ${question.n}">
+        <div class="ticks">${numeric.map((_,index) => `<span>${index + 1}</span>`).join('')}</div>
+        <div class="anchors"><span>${escapeText(anchorText(numeric[0]))}</span><span>${escapeText(anchorText(middle))}</span><span>${escapeText(anchorText(numeric[numeric.length - 1]))}</span></div>
+      </div>`;
+    }
     function questionHtml(question) {
       const required = question.required ? '<span class="required" aria-hidden="true">*</span>' : '';
       const hint = question.hint ? `<div class="hint">${escapeText(question.hint)}</div>` : '';
       let control = '';
       if (question.type === 'likert') {
-        const options = surveyData.scales[question.scale];
-        control = `<div class="choices scale" style="--cols:${options.length}">` + options.map(option => `
-          <label class="choice"><input type="radio" name="${question.id}" value="${escapeText(option)}" ${answers[question.id]===option?'checked':''}><span>${escapeText(option)}</span></label>`).join('') + '</div>';
+        control = sliderHtml(question);
       } else if (question.type === 'single_select') {
-        control = '<div class="choices">' + question.options.map(option => `
+        const choiceClass = question.options.length > 2 ? 'choices four' : 'choices';
+        control = `<div class="${choiceClass}">` + question.options.map(option => `
           <label class="choice"><input type="radio" name="${question.id}" value="${escapeText(option)}" ${answers[question.id]===option?'checked':''}><span>${escapeText(option)}</span></label>`).join('') + '</div>';
       } else {
-        control = `<textarea name="${question.id}" placeholder="Optional">${escapeText(answers[question.id] || '')}</textarea>`;
+        control = `<textarea name="${question.id}" placeholder="Optional response">${escapeText(answers[question.id] || '')}</textarea>`;
       }
-      return `<section class="question ${isVisible(question)?'':'hidden'}" data-id="${question.id}"><p class="question-label"><span class="number">${question.n}.</span>${escapeText(question.label)}${required}</p>${hint}${control}</section>`;
+      return `<section class="question ${isVisible(question)?'':'hidden'}" data-id="${question.id}"><p class="question-label"><span class="number">${question.n}.</span><span>${escapeText(question.label)}${required}</span></p>${hint}${control}</section>`;
     }
-    function render() {
+    function pageQuestions() {
+      return surveyData.questions.filter(question => question.page === page && isVisible(question));
+    }
+    function updateAnsweredCount() {
+      const required = pageQuestions().filter(question => question.required);
+      const answered = required.filter(question => Object.prototype.hasOwnProperty.call(answers, question.id) && String(answers[question.id]).trim() !== '').length;
+      document.getElementById('answeredCount').textContent = `${answered} of ${required.length} required responses completed`;
+      document.getElementById('progressNote').textContent = page === 1 ? 'About your negotiation outcome' : 'Almost finished';
+    }
+    function render(scrollToTop = true) {
       doneEl.classList.remove('show');
       surveyEl.style.display = '';
       const questions = surveyData.questions.filter(question => question.page === page);
-      const title = page === 1 ? 'Your experience of the negotiation' : 'Final questions';
+      const title = page === 1 ? 'How did the negotiation feel?' : 'Your experience and approach';
       const help = page === 1
-        ? 'Select the response that most accurately reflects your opinion. Choose N/A only when a question does not apply.'
-        : 'Think about the negotiation you just completed. The temporary-impasse follow-ups appear only when relevant.';
+        ? 'Move each slider to the response that best reflects your experience. Choose Not applicable only when an item genuinely does not apply.'
+        : 'Answer these final questions about how you approached the negotiation. Follow-up questions about temporary impasse appear only when relevant.';
       let currentSection = null;
-      let html = `<h2 class="page-title">${title}</h2><p class="page-help">${help}</p>`;
+      let output = `<h2 class="page-title">${title}</h2><p class="page-help">${help}</p>`;
       for (const question of questions) {
         if (question.section && question.section !== currentSection) {
           currentSection = question.section;
-          html += `<h3 class="section-title">${escapeText(currentSection)}</h3>`;
+          output += `<h3 class="section-title">${escapeText(currentSection)}</h3>`;
         }
-        html += questionHtml(question);
+        output += questionHtml(question);
       }
-      surveyEl.innerHTML = html;
+      surveyEl.innerHTML = output;
       document.getElementById('progress').style.width = `${page * 50}%`;
       document.getElementById('pageLabel').textContent = `Page ${page} of 2`;
       backButton.disabled = page === 1;
-      nextButton.textContent = page === 2 ? 'Submit survey' : 'Next';
+      nextButton.disabled = false;
+      nextButton.textContent = page === 2 ? 'Submit survey' : 'Continue';
       validationEl.classList.remove('show');
       bindInputs();
-      window.scrollTo({top:0, behavior:'smooth'});
+      updateAnsweredCount();
+      if (scrollToTop) window.scrollTo({top:0, behavior:'smooth'});
+    }
+    function setSliderAnswer(input) {
+      const options = surveyData.scales[input.dataset.scale].filter(option => option !== 'N/A');
+      const selected = options[Number(input.value) - 1];
+      answers[input.name] = selected;
+      input.classList.add('answered');
+      input.style.setProperty('--fill', `${((Number(input.value)-1)/(options.length-1))*100}%`);
+      const box = input.closest('.slider-box');
+      const value = box.querySelector('.answer-value');
+      value.textContent = selected;
+      value.classList.add('selected');
+      const na = box.querySelector('.na-button');
+      if (na) na.classList.remove('active');
+      input.closest('.question').classList.remove('unanswered');
+      validationEl.classList.remove('show');
+      updateAnsweredCount();
     }
     function bindInputs() {
+      document.querySelectorAll('input[type=range]').forEach(input => input.addEventListener('input', () => setSliderAnswer(input)));
+      document.querySelectorAll('[data-na]').forEach(button => button.addEventListener('click', () => {
+        const qid = button.dataset.na;
+        answers[qid] = 'N/A';
+        const box = button.closest('.slider-box');
+        box.querySelector('input[type=range]').classList.remove('answered');
+        box.querySelector('.answer-value').textContent = 'N/A';
+        box.querySelector('.answer-value').classList.add('selected');
+        button.classList.add('active');
+        button.closest('.question').classList.remove('unanswered');
+        validationEl.classList.remove('show');
+        updateAnsweredCount();
+      }));
       document.querySelectorAll('input[type=radio]').forEach(input => input.addEventListener('change', event => {
         answers[event.target.name] = event.target.value;
         if (event.target.name === 'q28' && event.target.value === 'No') { delete answers.q29; delete answers.q30; }
-        render();
+        render(false);
       }));
-      document.querySelectorAll('textarea').forEach(input => input.addEventListener('input', event => { answers[event.target.name] = event.target.value; }));
+      document.querySelectorAll('textarea').forEach(input => input.addEventListener('input', event => {
+        answers[event.target.name] = event.target.value;
+        updateAnsweredCount();
+      }));
     }
     function pageIsComplete() {
-      return surveyData.questions.filter(question => question.page === page && question.required && isVisible(question))
+      return pageQuestions().filter(question => question.required)
         .every(question => Object.prototype.hasOwnProperty.call(answers, question.id) && String(answers[question.id]).trim() !== '');
+    }
+    function markUnanswered() {
+      let first = null;
+      for (const question of pageQuestions().filter(question => question.required)) {
+        const missing = !Object.prototype.hasOwnProperty.call(answers, question.id) || String(answers[question.id]).trim() === '';
+        const element = document.querySelector(`[data-id="${question.id}"]`);
+        if (element) element.classList.toggle('unanswered', missing);
+        if (missing && !first) first = element;
+      }
+      validationEl.classList.add('show');
+      (first || validationEl).scrollIntoView({behavior:'smooth', block:'center'});
     }
     backButton.addEventListener('click', () => { if (page > 1) { page -= 1; render(); } });
     nextButton.addEventListener('click', () => {
-      if (!pageIsComplete()) { validationEl.classList.add('show'); validationEl.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+      if (!pageIsComplete()) { markUnanswered(); return; }
       if (page === 1) { page = 2; render(); return; }
-      surveyEl.style.display = 'none'; doneEl.classList.add('show'); backButton.disabled = false; nextButton.disabled = true;
-      document.getElementById('progress').style.width = '100%'; document.getElementById('pageLabel').textContent = 'Complete'; window.scrollTo({top:0,behavior:'smooth'});
+      surveyEl.style.display = 'none';
+      doneEl.classList.add('show');
+      backButton.disabled = false;
+      nextButton.disabled = true;
+      document.getElementById('answeredCount').textContent = '';
+      document.getElementById('progress').style.width = '100%';
+      document.getElementById('pageLabel').textContent = 'Complete';
+      document.getElementById('progressNote').textContent = 'Responses ready to save';
+      window.scrollTo({top:0, behavior:'smooth'});
     });
     render();
   </script>

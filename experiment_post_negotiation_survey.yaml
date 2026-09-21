@@ -80,6 +80,7 @@ questions:
   - id: q1
     n: 1
     page: 1
+    section: "Your outcome"
     type: "likert"
     scale: "svi_positive_7"
     required: true
@@ -113,6 +114,7 @@ questions:
   - id: q5
     n: 5
     page: 1
+    section: "How you felt about yourself"
     type: "likert"
     scale: "svi_loss_7"
     required: true
@@ -146,6 +148,7 @@ questions:
   - id: q9
     n: 9
     page: 1
+    section: "The negotiation process"
     type: "likert"
     scale: "svi_positive_7"
     required: true
@@ -178,6 +181,7 @@ questions:
   - id: q13
     n: 13
     page: 1
+    section: "Your relationship with the other party"
     type: "likert"
     scale: "svi_impression_7"
     required: true
