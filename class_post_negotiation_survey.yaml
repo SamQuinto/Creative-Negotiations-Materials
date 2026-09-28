@@ -1,0 +1,200 @@
+scales:
+  agree_7:
+    - "1 — Strongly disagree"
+    - "2"
+    - "3"
+    - "4 — Neither agree nor disagree"
+    - "5"
+    - "6"
+    - "7 — Strongly agree"
+  frequency_5:
+    - "Never"
+    - "Rarely"
+    - "Occasionally"
+    - "Frequently"
+    - "Very frequently"
+
+questions:
+  - id: q1
+    n: 1
+    page: 1
+    section: "Your experience"
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "I had no difficulty imagining myself in this negotiation."
+
+  - id: q2
+    n: 2
+    page: 1
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "This negotiation felt realistic."
+
+  - id: q3
+    n: 3
+    page: 1
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "I took my assigned role seriously."
+
+  - id: q4
+    n: 4
+    page: 1
+    section: "Generating ideas"
+    type: "likert"
+    scale: "frequency_5"
+    required: true
+    label: "I considered diverse sources of information when generating new ideas."
+
+  - id: q5
+    n: 5
+    page: 1
+    type: "likert"
+    scale: "frequency_5"
+    required: true
+    label: "I looked for connections with solutions used in seemingly different situations."
+
+  - id: q6
+    n: 6
+    page: 1
+    type: "likert"
+    scale: "frequency_5"
+    required: true
+    label: "I generated several alternatives to the same problem before deciding what to propose."
+
+  - id: q7
+    n: 7
+    page: 1
+    type: "likert"
+    scale: "frequency_5"
+    required: true
+    label: "I tried to devise solutions that moved away from established ways of doing things."
+
+  - id: q8
+    n: 8
+    page: 1
+    type: "likert"
+    scale: "frequency_5"
+    required: true
+    label: "I spent considerable time working through information that helped me generate new ideas."
+
+  - id: q9
+    n: 9
+    page: 1
+    section: "Temporary impasse"
+    type: "single_select"
+    style: "pills"
+    required: true
+    label: "At any point during this negotiation, did you experience a temporary impasse?"
+    hint: "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely."
+    options:
+      - "Yes"
+      - "No"
+
+  - id: q10
+    n: 10
+    page: 1
+    section: "Temporary impasse"
+    type: "single_select"
+    required: true
+    show_if:
+      question: "q9"
+      equals: "Yes"
+    label: "Approximately when did the first temporary impasse occur?"
+    options:
+      - "First quarter of the negotiation"
+      - "Second quarter of the negotiation"
+      - "Third quarter of the negotiation"
+      - "Fourth quarter of the negotiation"
+
+  - id: q11
+    n: 11
+    page: 1
+    section: "Temporary impasse"
+    type: "single_select"
+    style: "pills"
+    required: true
+    show_if:
+      question: "q9"
+      equals: "Yes"
+    label: "Did you and the other party eventually move past this temporary impasse?"
+    options:
+      - "Yes"
+      - "No"
+
+  - id: q12
+    n: 12
+    page: 2
+    section: "How you approached the negotiation"
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "During the negotiation, I tried to understand what the other party was thinking in their situation."
+
+  - id: q13
+    n: 13
+    page: 2
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "During the negotiation, I tried to imagine the negotiation from the other party’s point of view."
+
+  - id: q14
+    n: 14
+    page: 2
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "During the negotiation, I carefully kept my own role and the information I was given in mind."
+
+  - id: q15
+    n: 15
+    page: 2
+    section: "Learning and reflection"
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "This exercise helped me understand how negotiators’ underlying interests shape the offers they make."
+
+  - id: q16
+    n: 16
+    page: 2
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "This exercise helped me see how looking at a negotiation from another person’s perspective can change what happens."
+
+  - id: q17
+    n: 17
+    page: 2
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "This exercise gave me a useful opportunity to learn about negotiation."
+
+  - id: q18
+    n: 18
+    page: 2
+    type: "open_text"
+    required: true
+    label: "What is the most important thing you learned or noticed from this negotiation?"
+    hint: "A short response is fine."
+
+  - id: q19
+    n: 19
+    page: 2
+    type: "open_text"
+    required: false
+    label: "What question, prompt, or activity would help you reflect more deeply on what happened?"
+    hint: "Optional."
+
+  - id: q20
+    n: 20
+    page: 2
+    type: "open_text"
+    required: false
+    label: "What would be most useful or interesting to discuss in class, and is there anything we should change about this activity?"
+    hint: "Optional."

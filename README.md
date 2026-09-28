@@ -1,6 +1,6 @@
 # Creative Negotiations — experiment materials
 
-Participant materials for the 200-issue Candidate–Recruiter negotiation scenario and its feedback survey. The hidden payoff catalog, research data, and API keys are not included.
+Participant-facing materials for the Candidate–Recruiter negotiation scenario, its feedback pre-test, and the class and Prolific post-negotiation surveys. The hidden payoff catalog, research data, and API keys are not included.
 
 ## Raw links for Empirica
 
@@ -10,10 +10,22 @@ Participant materials for the 200-issue Candidate–Recruiter negotiation scenar
 | Recruiter role materials | [recruiter_role_materials_200.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/recruiter_role_materials_200.json) |
 | Survey for participants assigned Candidate | [candidate_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/candidate_feedback_survey.yaml) |
 | Survey for participants assigned Recruiter | [recruiter_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/recruiter_feedback_survey.yaml) |
-| Actual experiment post-negotiation survey | [experiment_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/experiment_post_negotiation_survey.yaml) |
-| Post-negotiation survey HTML preview | [experiment_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/experiment_post_negotiation_survey_preview.html) |
+| Earlier full post-negotiation survey | [experiment_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/experiment_post_negotiation_survey.yaml) |
+| Earlier full survey HTML preview | [experiment_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/experiment_post_negotiation_survey_preview.html) |
+| Class post-negotiation survey | [class_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/class_post_negotiation_survey.yaml) |
+| Class survey HTML preview | [class_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/class_post_negotiation_survey_preview.html) |
+| Prolific post-negotiation survey | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) |
+| Prolific survey HTML preview | [prolific_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/prolific_post_negotiation_survey_preview.html) |
 
-The experiment survey is role-independent and is used after both Fixed 15 and Latent 215 negotiations. It contains two participant pages. Q29 and Q30 use `show_if` and should appear, and become required, only when Q28 is answered **Yes**. The standalone HTML file is a visual and interaction preview; it does not collect or transmit responses.
+The earlier full survey is retained for version history. Use one of the two purpose-specific surveys below for new studies.
+
+## Which post-negotiation survey to use
+
+- **Class:** `class_post_negotiation_survey.yaml` is the short teaching version for the Control versus Perspective Taking comparison. It omits the Subjective Value Inventory and adds learning and reflection questions. Q10–Q11 appear only when Q9 is **Yes**.
+- **Prolific:** `prolific_post_negotiation_survey.yaml` is the streamlined research version for Fixed 15 versus Latent 215, crossed with Control versus Perspective Taking. It retains the full Subjective Value Inventory, creative-engagement measure, temporary-impasse questions, and both manipulation checks. Q26–Q27 appear only when Q25 is **Yes**.
+- The HTML files are interactive visual previews only. They do not save or transmit responses.
+
+Issue generation, issue redefinition and issue diversity are calculated from behavioral offer data by the experiment application. They are not self-report survey questions.
 
 Randomly assign Candidate or Recruiter and load that role's JSON and matching survey. Each JSON contains just one role, in the existing `roles` array. Q2, Q9 and Q12 depend on the assigned role. The reviewed role materials use shorter paragraphs, selected bullets, five numbered scoring notes, and inline HTML for italic role names/examples and colored payoff values. Single-asterisk Markdown is not used. The external Empirica reader still needs checking for this inline formatting; see the integration notes below. The earlier combined JSON remains only for old-link compatibility; use the separate files above for this survey.
 

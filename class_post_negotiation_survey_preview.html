@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOVA class post-negotiation survey preview</title>
+  <style>
+    :root {
+      --blue:#2563eb; --blue-dark:#173d91; --blue-soft:#edf4ff; --ink:#151922;
+      --muted:#606875; --line:#d9dee7; --paper:#fff; --wash:#eef1f5; --error:#b42318;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--wash); color:var(--ink); font:16px/1.48 Arial, Helvetica, sans-serif; }
+    button, input, textarea { font:inherit; }
+    .preview-note { padding:8px 18px; background:#171717; color:#fff; text-align:center; font-size:13px; }
+    .page { width:min(920px,100%); min-height:100vh; margin:0 auto; background:var(--paper); box-shadow:0 0 0 1px #d7dbe2; }
+    .survey-head { padding:30px 40px 23px; border-bottom:1px solid var(--line); }
+    .eyebrow { color:var(--blue-dark); font-size:12px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    h1 { margin:7px 0 8px; font-size:30px; line-height:1.15; }
+    .intro { max-width:700px; margin:0; color:var(--muted); }
+    .toolbar { position:sticky; top:0; z-index:5; padding:12px 40px; background:rgba(255,255,255,.97); border-bottom:1px solid var(--line); box-shadow:0 5px 16px rgba(15,23,42,.05); }
+    .toolbar-top { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px; }
+    .page-label { color:var(--blue-dark); font-weight:800; }
+    .progress-note { color:var(--muted); font-size:14px; }
+    .progress { height:7px; overflow:hidden; border-radius:99px; background:#e5e9ef; }
+    .progress span { display:block; height:100%; border-radius:inherit; background:var(--blue); transition:width .2s ease; }
+    main { padding:30px 40px 18px; }
+    .page-title { margin:0 0 5px; font-size:24px; }
+    .page-help { margin:0 0 26px; color:var(--muted); }
+    .section-title { margin:32px 0 0; padding:11px 14px; border-left:4px solid var(--blue); background:var(--blue-soft); color:var(--blue-dark); font-size:17px; }
+    .section-title:first-of-type { margin-top:8px; }
+    .question { padding:24px 2px 25px; border-bottom:1px solid var(--line); }
+    .question.hidden { display:none; }
+    .question.unanswered { margin-left:-13px; margin-right:-13px; padding-left:13px; padding-right:13px; background:#fff8f7; border-radius:6px; }
+    .question-label { display:flex; align-items:flex-start; gap:10px; margin:0 0 17px; font-size:17px; font-weight:700; }
+    .number { flex:0 0 auto; min-width:31px; color:var(--blue-dark); }
+    .required { margin-left:3px; color:var(--error); }
+    .hint { margin:-7px 0 15px 41px; padding:9px 12px; color:var(--muted); background:#f7f8fa; border-left:3px solid #9bb7ee; }
+    .slider-box { margin-left:41px; padding:14px 16px 13px; border:1px solid #ccd4e0; border-radius:7px; background:#fbfcfe; }
+    .slider-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+    .answer-value { color:var(--muted); font-size:14px; font-weight:700; }
+    .answer-value.selected { color:var(--blue-dark); }
+    .na-button { padding:6px 10px; border:1px solid #aeb8c7; border-radius:5px; color:#3e4652; background:#fff; cursor:pointer; font-size:13px; font-weight:700; }
+    .na-button:hover, .na-button.active { color:#fff; background:#3e4652; border-color:#3e4652; }
+    input[type="range"] { width:100%; height:28px; margin:0; background:transparent; cursor:pointer; accent-color:var(--blue); -webkit-appearance:none; appearance:none; }
+    input[type="range"]::-webkit-slider-runnable-track { height:7px; border-radius:99px; background:#d7deea; }
+    input[type="range"].answered::-webkit-slider-runnable-track { background:linear-gradient(90deg,var(--blue) 0 var(--fill),#d7deea var(--fill) 100%); }
+    input[type="range"]::-webkit-slider-thumb { width:20px; height:20px; margin-top:-6.5px; border:3px solid #fff; border-radius:50%; background:#9aa6b6; box-shadow:0 0 0 1px #768397,0 2px 5px rgba(0,0,0,.16); appearance:none; }
+    input[type="range"].answered::-webkit-slider-thumb { background:var(--blue); box-shadow:0 0 0 1px var(--blue-dark),0 2px 5px rgba(0,0,0,.16); }
+    input[type="range"]::-moz-range-track { height:7px; border-radius:99px; background:#d7deea; }
+    input[type="range"]::-moz-range-progress { height:7px; border-radius:99px; background:var(--blue); }
+    input[type="range"]::-moz-range-thumb { width:17px; height:17px; border:3px solid #fff; border-radius:50%; background:var(--blue); box-shadow:0 0 0 1px var(--blue-dark); }
+    .ticks { display:flex; justify-content:space-between; padding:0 5px; color:#747d8a; font-size:12px; }
+    .anchors { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:7px; color:#4e5866; font-size:12px; line-height:1.25; }
+    .anchors span:nth-child(2) { text-align:center; }
+    .anchors span:last-child { text-align:right; }
+    .choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-left:41px; }
+    .choices.four { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .choice { display:flex; align-items:flex-start; gap:9px; min-height:47px; padding:11px 13px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; }
+    .choice:hover { border-color:#8fa9dc; background:#f8faff; }
+    .choice:has(input:checked) { border-color:var(--blue); background:var(--blue-soft); box-shadow:inset 0 0 0 1px var(--blue); }
+    .choice input { margin-top:3px; accent-color:var(--blue); }
+    textarea { width:calc(100% - 41px); min-height:126px; margin-left:41px; padding:12px; resize:vertical; border:1px solid #aeb8c7; border-radius:6px; background:#fff; }
+    textarea:focus, button:focus-visible, input:focus-visible { outline:3px solid rgba(37,99,235,.20); outline-offset:2px; }
+    .validation { display:none; margin:14px 0 0; padding:11px 14px; border-left:4px solid var(--error); color:var(--error); background:#fff3f2; font-weight:700; }
+    .validation.show { display:block; }
+    .done { display:none; padding:55px 20px 70px; text-align:center; }
+    .done.show { display:block; }
+    .done-mark { display:grid; place-items:center; width:58px; height:58px; margin:0 auto 14px; border-radius:50%; color:#fff; background:var(--blue); font-size:30px; }
+    .actions { position:sticky; bottom:0; z-index:4; display:flex; align-items:center; gap:12px; padding:15px 40px; border-top:1px solid var(--line); background:rgba(255,255,255,.98); box-shadow:0 -8px 20px rgba(15,23,42,.06); }
+    .answered-count { color:var(--muted); font-size:14px; }
+    button.nav { padding:11px 20px; border:0; border-radius:5px; cursor:pointer; font-weight:700; }
+    .secondary { color:var(--blue-dark); background:#e8effc; }
+    .primary { margin-left:auto; color:#fff; background:var(--blue); }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    @media(max-width:700px) {
+      .survey-head, main, .toolbar, .actions { padding-left:18px; padding-right:18px; }
+      h1 { font-size:26px; }
+      .slider-box, .choices, textarea { width:100%; margin-left:0; }
+      .hint { margin-left:0; }
+      .question-label { gap:6px; }
+      .choices, .choices.four { grid-template-columns:1fr; }
+      .anchors { gap:6px; font-size:11px; }
+      .answered-count { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-note">Research preview only. Answers entered here are not saved or transmitted.</div>
+  <div class="page">
+    <header class="survey-head">
+      <div class="eyebrow">Class negotiation exercise</div>
+      <h1>Post-negotiation reflection</h1>
+      <p class="intro">Please answer these brief questions about the negotiation you just completed. Your responses will help us understand the exercise and improve the class experience.</p>
+    </header>
+    <div class="toolbar">
+      <div class="toolbar-top"><span class="page-label" id="pageLabel"></span><span class="progress-note" id="progressNote"></span></div>
+      <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+    </div>
+    <main>
+      <div id="survey"></div>
+      <p class="validation" id="validation">Please answer the highlighted questions before continuing.</p>
+      <div class="done" id="done"><div class="done-mark">✓</div><h2>Survey complete</h2><p>In Empirica, your responses would now be saved and you would continue to the completion page.</p></div>
+    </main>
+    <footer class="actions">
+      <button class="nav secondary" id="back" type="button">Back</button>
+      <span class="answered-count" id="answeredCount"></span>
+      <button class="nav primary" id="next" type="button">Continue</button>
+    </footer>
+  </div>
+  <script>
+    const surveyData = {"scales": {"agree_7": ["1 — Strongly disagree", "2", "3", "4 — Neither agree nor disagree", "5", "6", "7 — Strongly agree"], "frequency_5": ["Never", "Rarely", "Occasionally", "Frequently", "Very frequently"]}, "questions": [{"id": "q1", "n": 1, "page": 1, "section": "Your experience", "type": "likert", "scale": "agree_7", "required": true, "label": "I had no difficulty imagining myself in this negotiation."}, {"id": "q2", "n": 2, "page": 1, "type": "likert", "scale": "agree_7", "required": true, "label": "This negotiation felt realistic."}, {"id": "q3", "n": 3, "page": 1, "type": "likert", "scale": "agree_7", "required": true, "label": "I took my assigned role seriously."}, {"id": "q4", "n": 4, "page": 1, "section": "Generating ideas", "type": "likert", "scale": "frequency_5", "required": true, "label": "I considered diverse sources of information when generating new ideas."}, {"id": "q5", "n": 5, "page": 1, "type": "likert", "scale": "frequency_5", "required": true, "label": "I looked for connections with solutions used in seemingly different situations."}, {"id": "q6", "n": 6, "page": 1, "type": "likert", "scale": "frequency_5", "required": true, "label": "I generated several alternatives to the same problem before deciding what to propose."}, {"id": "q7", "n": 7, "page": 1, "type": "likert", "scale": "frequency_5", "required": true, "label": "I tried to devise solutions that moved away from established ways of doing things."}, {"id": "q8", "n": 8, "page": 1, "type": "likert", "scale": "frequency_5", "required": true, "label": "I spent considerable time working through information that helped me generate new ideas."}, {"id": "q9", "n": 9, "page": 1, "section": "Temporary impasse", "type": "single_select", "style": "pills", "required": true, "label": "At any point during this negotiation, did you experience a temporary impasse?", "hint": "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely.", "options": ["Yes", "No"]}, {"id": "q10", "n": 10, "page": 1, "section": "Temporary impasse", "type": "single_select", "required": true, "show_if": {"question": "q9", "equals": "Yes"}, "label": "Approximately when did the first temporary impasse occur?", "options": ["First quarter of the negotiation", "Second quarter of the negotiation", "Third quarter of the negotiation", "Fourth quarter of the negotiation"]}, {"id": "q11", "n": 11, "page": 1, "section": "Temporary impasse", "type": "single_select", "style": "pills", "required": true, "show_if": {"question": "q9", "equals": "Yes"}, "label": "Did you and the other party eventually move past this temporary impasse?", "options": ["Yes", "No"]}, {"id": "q12", "n": 12, "page": 2, "section": "How you approached the negotiation", "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I tried to understand what the other party was thinking in their situation."}, {"id": "q13", "n": 13, "page": 2, "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I tried to imagine the negotiation from the other party’s point of view."}, {"id": "q14", "n": 14, "page": 2, "type": "likert", "scale": "agree_7", "required": true, "label": "During the negotiation, I carefully kept my own role and the information I was given in mind."}, {"id": "q15", "n": 15, "page": 2, "section": "Learning and reflection", "type": "likert", "scale": "agree_7", "required": true, "label": "This exercise helped me understand how negotiators’ underlying interests shape the offers they make."}, {"id": "q16", "n": 16, "page": 2, "type": "likert", "scale": "agree_7", "required": true, "label": "This exercise helped me see how looking at a negotiation from another person’s perspective can change what happens."}, {"id": "q17", "n": 17, "page": 2, "type": "likert", "scale": "agree_7", "required": true, "label": "This exercise gave me a useful opportunity to learn about negotiation."}, {"id": "q18", "n": 18, "page": 2, "type": "open_text", "required": true, "label": "What is the most important thing you learned or noticed from this negotiation?", "hint": "A short response is fine."}, {"id": "q19", "n": 19, "page": 2, "type": "open_text", "required": false, "label": "What question, prompt, or activity would help you reflect more deeply on what happened?", "hint": "Optional."}, {"id": "q20", "n": 20, "page": 2, "type": "open_text", "required": false, "label": "What would be most useful or interesting to discuss in class, and is there anything we should change about this activity?", "hint": "Optional."}]};
+    const previewConfig = {"stem": "class_post_negotiation_survey", "expected_count": 20, "page_counts": {"1": 11, "2": 9}, "conditional_parent": "q9", "document_title": "NOVA class post-negotiation survey preview", "eyebrow": "Class negotiation exercise", "heading": "Post-negotiation reflection", "intro": "Please answer these brief questions about the negotiation you just completed. Your responses will help us understand the exercise and improve the class experience.", "page_titles": ["Your negotiation experience", "Learning and reflection"], "page_help": ["Move each slider to the response that best reflects your experience. Follow-up questions about temporary impasse appear only when relevant.", "Think about how you approached the negotiation and what would help you learn from it."], "progress_notes": ["Experience and idea generation", "Almost finished"], "conditional_children": ["q10", "q11"]};
+    const answers = {};
+    let page = 1;
+    const surveyEl = document.getElementById('survey');
+    const validationEl = document.getElementById('validation');
+    const doneEl = document.getElementById('done');
+    const backButton = document.getElementById('back');
+    const nextButton = document.getElementById('next');
+
+    function isVisible(question) {
+      if (!question.show_if) return true;
+      return answers[question.show_if.question] === question.show_if.equals;
+    }
+    function escapeText(value) {
+      return String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    }
+    function scaleParts(question) {
+      const all = surveyData.scales[question.scale];
+      return {numeric:all.filter(option => option !== 'N/A'), hasNA:all.includes('N/A')};
+    }
+    function optionNumber(option) {
+      const match = String(option || '').match(/^\d+/);
+      return match ? Number(match[0]) : null;
+    }
+    function anchorText(option) {
+      const parts = String(option).split(' — ');
+      return parts.length > 1 ? `${parts[0]} — ${parts.slice(1).join(' — ')}` : parts[0];
+    }
+    function sliderHtml(question) {
+      const {numeric,hasNA} = scaleParts(question);
+      const current = answers[question.id];
+      const currentNumber = optionNumber(current);
+      const midpoint = Math.ceil(numeric.length / 2);
+      const value = currentNumber || midpoint;
+      const selected = Boolean(currentNumber);
+      const fill = ((value - 1) / (numeric.length - 1)) * 100;
+      const middle = numeric[Math.floor(numeric.length / 2)];
+      return `<div class="slider-box" data-slider-box="${question.id}">
+        <div class="slider-top"><span class="answer-value ${selected || current === 'N/A' ? 'selected' : ''}" id="value-${question.id}">${current ? escapeText(current) : 'Move the slider to answer'}</span>
+        ${hasNA ? `<button class="na-button ${current === 'N/A' ? 'active' : ''}" type="button" data-na="${question.id}">Not applicable</button>` : ''}</div>
+        <input type="range" name="${question.id}" data-scale="${question.scale}" min="1" max="${numeric.length}" step="1" value="${value}" class="${selected ? 'answered' : ''}" style="--fill:${fill}%" aria-label="Response to question ${question.n}">
+        <div class="ticks">${numeric.map((_,index) => `<span>${index + 1}</span>`).join('')}</div>
+        <div class="anchors"><span>${escapeText(anchorText(numeric[0]))}</span><span>${escapeText(anchorText(middle))}</span><span>${escapeText(anchorText(numeric[numeric.length - 1]))}</span></div>
+      </div>`;
+    }
+    function questionHtml(question) {
+      const required = question.required ? '<span class="required" aria-hidden="true">*</span>' : '';
+      const hint = question.hint ? `<div class="hint">${escapeText(question.hint)}</div>` : '';
+      let control = '';
+      if (question.type === 'likert') {
+        control = sliderHtml(question);
+      } else if (question.type === 'single_select') {
+        const choiceClass = question.options.length > 2 ? 'choices four' : 'choices';
+        control = `<div class="${choiceClass}">` + question.options.map(option => `
+          <label class="choice"><input type="radio" name="${question.id}" value="${escapeText(option)}" ${answers[question.id]===option?'checked':''}><span>${escapeText(option)}</span></label>`).join('') + '</div>';
+      } else {
+        control = `<textarea name="${question.id}" placeholder="Optional response">${escapeText(answers[question.id] || '')}</textarea>`;
+      }
+      return `<section class="question ${isVisible(question)?'':'hidden'}" data-id="${question.id}"><p class="question-label"><span class="number">${question.n}.</span><span>${escapeText(question.label)}${required}</span></p>${hint}${control}</section>`;
+    }
+    function pageQuestions() {
+      return surveyData.questions.filter(question => question.page === page && isVisible(question));
+    }
+    function updateAnsweredCount() {
+      const required = pageQuestions().filter(question => question.required);
+      const answered = required.filter(question => Object.prototype.hasOwnProperty.call(answers, question.id) && String(answers[question.id]).trim() !== '').length;
+      document.getElementById('answeredCount').textContent = `${answered} of ${required.length} required responses completed`;
+      document.getElementById('progressNote').textContent = previewConfig.progress_notes[page - 1];
+    }
+    function render(scrollToTop = true) {
+      doneEl.classList.remove('show');
+      surveyEl.style.display = '';
+      const questions = surveyData.questions.filter(question => question.page === page);
+      const title = previewConfig.page_titles[page - 1];
+      const help = previewConfig.page_help[page - 1];
+      let currentSection = null;
+      let output = `<h2 class="page-title">${title}</h2><p class="page-help">${help}</p>`;
+      for (const question of questions) {
+        if (question.section && question.section !== currentSection) {
+          currentSection = question.section;
+          output += `<h3 class="section-title">${escapeText(currentSection)}</h3>`;
+        }
+        output += questionHtml(question);
+      }
+      surveyEl.innerHTML = output;
+      document.getElementById('progress').style.width = `${page * 50}%`;
+      document.getElementById('pageLabel').textContent = `Page ${page} of 2`;
+      backButton.disabled = page === 1;
+      nextButton.disabled = false;
+      nextButton.textContent = page === 2 ? 'Submit survey' : 'Continue';
+      validationEl.classList.remove('show');
+      bindInputs();
+      updateAnsweredCount();
+      if (scrollToTop) window.scrollTo({top:0, behavior:'smooth'});
+    }
+    function setSliderAnswer(input) {
+      const options = surveyData.scales[input.dataset.scale].filter(option => option !== 'N/A');
+      const selected = options[Number(input.value) - 1];
+      answers[input.name] = selected;
+      input.classList.add('answered');
+      input.style.setProperty('--fill', `${((Number(input.value)-1)/(options.length-1))*100}%`);
+      const box = input.closest('.slider-box');
+      const value = box.querySelector('.answer-value');
+      value.textContent = selected;
+      value.classList.add('selected');
+      const na = box.querySelector('.na-button');
+      if (na) na.classList.remove('active');
+      input.closest('.question').classList.remove('unanswered');
+      validationEl.classList.remove('show');
+      updateAnsweredCount();
+    }
+    function bindInputs() {
+      document.querySelectorAll('input[type=range]').forEach(input => input.addEventListener('input', () => setSliderAnswer(input)));
+      document.querySelectorAll('[data-na]').forEach(button => button.addEventListener('click', () => {
+        const qid = button.dataset.na;
+        answers[qid] = 'N/A';
+        const box = button.closest('.slider-box');
+        box.querySelector('input[type=range]').classList.remove('answered');
+        box.querySelector('.answer-value').textContent = 'N/A';
+        box.querySelector('.answer-value').classList.add('selected');
+        button.classList.add('active');
+        button.closest('.question').classList.remove('unanswered');
+        validationEl.classList.remove('show');
+        updateAnsweredCount();
+      }));
+      document.querySelectorAll('input[type=radio]').forEach(input => input.addEventListener('change', event => {
+        answers[event.target.name] = event.target.value;
+        if (event.target.name === previewConfig.conditional_parent && event.target.value === 'No') {
+          previewConfig.conditional_children.forEach(id => delete answers[id]);
+        }
+        render(false);
+      }));
+      document.querySelectorAll('textarea').forEach(input => input.addEventListener('input', event => {
+        answers[event.target.name] = event.target.value;
+        updateAnsweredCount();
+      }));
+    }
+    function pageIsComplete() {
+      return pageQuestions().filter(question => question.required)
+        .every(question => Object.prototype.hasOwnProperty.call(answers, question.id) && String(answers[question.id]).trim() !== '');
+    }
+    function markUnanswered() {
+      let first = null;
+      for (const question of pageQuestions().filter(question => question.required)) {
+        const missing = !Object.prototype.hasOwnProperty.call(answers, question.id) || String(answers[question.id]).trim() === '';
+        const element = document.querySelector(`[data-id="${question.id}"]`);
+        if (element) element.classList.toggle('unanswered', missing);
+        if (missing && !first) first = element;
+      }
+      validationEl.classList.add('show');
+      (first || validationEl).scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    backButton.addEventListener('click', () => { if (page > 1) { page -= 1; render(); } });
+    nextButton.addEventListener('click', () => {
+      if (!pageIsComplete()) { markUnanswered(); return; }
+      if (page === 1) { page = 2; render(); return; }
+      surveyEl.style.display = 'none';
+      doneEl.classList.add('show');
+      backButton.disabled = false;
+      nextButton.disabled = true;
+      document.getElementById('answeredCount').textContent = '';
+      document.getElementById('progress').style.width = '100%';
+      document.getElementById('pageLabel').textContent = 'Complete';
+      document.getElementById('progressNote').textContent = 'Responses ready to save';
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+    render();
+  </script>
+</body>
+</html>
