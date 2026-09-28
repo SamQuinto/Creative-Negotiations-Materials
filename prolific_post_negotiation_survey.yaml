@@ -272,6 +272,31 @@ questions:
   - id: q25
     n: 25
     page: 2
+    section: "Creative confidence"
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "During this negotiation, I was confident that I could solve problems creatively."
+
+  - id: q26
+    n: 26
+    page: 2
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "During this negotiation, I felt able to build further on ideas raised by the other party."
+
+  - id: q27
+    n: 27
+    page: 2
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "During this negotiation, I felt capable of generating novel ideas."
+
+  - id: q28
+    n: 28
+    page: 2
     section: "Temporary impasse"
     type: "single_select"
     style: "pills"
@@ -282,14 +307,14 @@ questions:
       - "Yes"
       - "No"
 
-  - id: q26
-    n: 26
+  - id: q29
+    n: 29
     page: 2
     section: "Temporary impasse"
     type: "single_select"
     required: true
     show_if:
-      question: "q25"
+      question: "q28"
       equals: "Yes"
     label: "Approximately when did the first temporary impasse occur?"
     options:
@@ -298,50 +323,25 @@ questions:
       - "Third quarter of the negotiation"
       - "Fourth quarter of the negotiation"
 
-  - id: q27
-    n: 27
+  - id: q30
+    n: 30
     page: 2
     section: "Temporary impasse"
     type: "single_select"
     style: "pills"
     required: true
     show_if:
-      question: "q25"
+      question: "q28"
       equals: "Yes"
     label: "Did you and the other party eventually move past this temporary impasse?"
     options:
       - "Yes"
       - "No"
 
-  - id: q28
-    n: 28
-    page: 2
-    section: "Other feedback"
-    type: "open_text"
-    required: false
-    label: "Do you have any other feedback about this negotiation task, or any comments, thoughts, or feelings about your experience that you would like to share with us?"
-    hint: "Optional."
-
-  - id: q29
-    n: 29
-    page: 2
-    section: "How you approached the negotiation"
-    type: "likert"
-    scale: "agree_7"
-    required: true
-    label: "During the negotiation, I tried to understand what the other party was thinking in their situation."
-
-  - id: q30
-    n: 30
-    page: 2
-    type: "likert"
-    scale: "agree_7"
-    required: true
-    label: "During the negotiation, I tried to imagine the negotiation from the other party’s point of view."
-
   - id: q31
     n: 31
     page: 2
+    section: "Room to shape the negotiation"
     type: "likert"
     scale: "agree_7"
     required: true
@@ -355,3 +355,12 @@ questions:
     required: true
     reverse_scored: true
     label: "I felt limited to negotiating only the job or contract issues listed in my role materials."
+
+  - id: q33
+    n: 33
+    page: 2
+    section: "Other feedback"
+    type: "open_text"
+    required: false
+    label: "Do you have any other feedback about this negotiation task, or any comments, thoughts, or feelings about your experience that you would like to share with us?"
+    hint: "Optional."

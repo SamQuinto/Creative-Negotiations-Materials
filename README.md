@@ -21,8 +21,8 @@ The earlier full survey is retained for version history. Use one of the two purp
 
 ## Which post-negotiation survey to use
 
-- **Class:** `class_post_negotiation_survey.yaml` is the short teaching version for the Control versus Perspective Taking comparison. It omits the Subjective Value Inventory and adds learning and reflection questions. Q10–Q11 appear only when Q9 is **Yes**.
-- **Prolific:** `prolific_post_negotiation_survey.yaml` is the streamlined research version for Fixed 15 versus Latent 215, crossed with Control versus Perspective Taking. It retains the full Subjective Value Inventory, creative-engagement measure, temporary-impasse questions, and both manipulation checks. Q26–Q27 appear only when Q25 is **Yes**.
+- **Class:** `class_post_negotiation_survey.yaml` is the short teaching version for the Control versus Perspective Taking comparison. It focuses on temporary impasse, the perspective-taking manipulation check, and a student-centered learning-and-reflection sequence. It does not include the Subjective Value Inventory, realism, creative-engagement or creative-self-efficacy measures. Q2–Q3 appear only when Q1 is **Yes**.
+- **Prolific:** `prolific_post_negotiation_survey.yaml` is the research version for Fixed 15 versus Latent 215. It retains the full Subjective Value Inventory, creative-engagement and creative-self-efficacy measures, temporary-impasse questions, and the issue-space manipulation check. It does not include a perspective-taking manipulation check. Q29–Q30 appear only when Q28 is **Yes**.
 - The HTML files are interactive visual previews only. They do not save or transmit responses.
 
 Issue generation, issue redefinition and issue diversity are calculated from behavioral offer data by the experiment application. They are not self-report survey questions.
