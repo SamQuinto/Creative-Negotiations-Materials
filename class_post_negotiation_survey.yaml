@@ -90,7 +90,7 @@ questions:
     type: "likert"
     scale: "compare_satisfaction_7"
     required: true
-    label: "Compared with fixed-issue negotiations you have completed, how satisfied are you with the outcome of this negotiation?"
+    label: "Compared with a negotiation in which you must negotiate over a predefined set of issues (e.g., New Recruit), how satisfied are you with the outcome of this negotiation, where you had flexibility in which issues you could introduce?"
 
   - id: q7
     n: 7
@@ -98,7 +98,7 @@ questions:
     type: "likert"
     scale: "compare_realism_7"
     required: true
-    label: "Compared with fixed-issue negotiations you have completed, how realistic did this negotiation feel?"
+    label: "Compared with a negotiation in which you must negotiate over a predefined set of issues, how realistic did this negotiation feel when you had flexibility in which issues you could introduce?"
 
   - id: q8
     n: 8
@@ -106,7 +106,7 @@ questions:
     type: "likert"
     scale: "compare_ability_7"
     required: true
-    label: "Compared with fixed-issue negotiations, how able were you to understand what mattered to the other party in this negotiation?"
+    label: "Compared with negotiating over a predefined set of issues, how able were you to understand what mattered to the other party when you had flexibility in which issues you could introduce?"
 
   - id: q9
     n: 9
@@ -114,7 +114,7 @@ questions:
     section: "Comparing your strategies"
     type: "open_text"
     required: true
-    label: "What was the main difference in how you prepared, communicated, or made offers when you could raise issues beyond a fixed list?"
+    label: "What was the main difference in how you prepared, communicated, or made offers between (a) a negotiation with a predefined set of issues, such as New Recruit, and (b) this negotiation, where you had flexibility in which issues you could introduce?"
     hint: "A short response is fine."
 
   - id: q10
@@ -122,7 +122,7 @@ questions:
     page: 2
     type: "open_text"
     required: true
-    label: "Which negotiation principles or ideas from class were most useful here? Were any harder to apply, or less useful, than in a fixed-issue negotiation?"
+    label: "Which negotiation principles or ideas from class were most useful when you had flexibility in which issues you could introduce? Were any harder to apply, or less useful, than when negotiating over a predefined set of issues?"
     hint: "A short response is fine."
 
   - id: q11
@@ -137,23 +137,71 @@ questions:
   - id: q12
     n: 12
     page: 2
-    type: "multi_select"
+    section: "Temporary impasse"
+    type: "single_select"
+    style: "pills"
     required: true
-    max_selections: 2
-    label: "Which two activities would be most useful or interesting for the class debrief?"
-    hint: "Select up to two."
+    label: "At any point during this negotiation, did you experience a temporary impasse?"
+    hint: "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely."
     options:
-      - "Compare strategies and outcomes across groups"
-      - "See how both parties valued the offers"
-      - "Examine an offer that could have created more value"
-      - "Discuss why negotiations became stuck or moved forward"
-      - "Compare open and fixed-issue negotiation strategies"
-      - "Discuss how perspective taking was translated into action"
-      - "Try the negotiation again or switch roles"
+      - "Yes"
+      - "No"
 
   - id: q13
     n: 13
     page: 2
+    type: "open_text"
+    required: true
+    show_if:
+      question: "q12"
+      equals: "Yes"
+    label: "Please briefly describe what the temporary impasse or disagreement was about and why you think it happened."
+    hint: "A short response is fine."
+
+  - id: q14
+    n: 14
+    page: 2
+    type: "single_select"
+    required: true
+    show_if:
+      question: "q12"
+      equals: "Yes"
+    label: "Approximately when did the first temporary impasse occur?"
+    options:
+      - "First quarter of the negotiation"
+      - "Second quarter of the negotiation"
+      - "Third quarter of the negotiation"
+      - "Fourth quarter of the negotiation"
+
+  - id: q15
+    n: 15
+    page: 2
+    type: "single_select"
+    style: "pills"
+    required: true
+    show_if:
+      question: "q12"
+      equals: "Yes"
+    label: "Do you feel that you and the other party eventually moved past this temporary impasse?"
+    options:
+      - "Yes"
+      - "No"
+
+  - id: q16
+    n: 16
+    page: 2
+    type: "open_text"
+    required: true
+    show_if:
+      question: "q15"
+      equals: "Yes"
+    label: "How do you think you moved past it?"
+    hint: "A short response is fine."
+
+  - id: q17
+    n: 17
+    page: 2
+    section: "Other feedback"
     type: "open_text"
     required: false
     label: "Is there anything else that would be useful or interesting to discuss in class, or anything we should change about this activity?"

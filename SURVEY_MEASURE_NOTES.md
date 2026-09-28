@@ -10,8 +10,10 @@ This note records where the survey measures came from and which questions were w
 | Q3 | Asks whether students translated their understanding of the other party into questions, offers or responses. | Project-developed behavioral-enactment item. It deliberately distinguishes understanding a perspective from acting on it. |
 | Q4 | Checks attention to one's own role and information. | Project-developed comparison item for the Control versus Perspective Taking classroom exercise. |
 | Q5 | Measures satisfaction with one's own negotiation outcome. | Subjective Value Inventory item from Curhan, Elfenbein and Xu (2006). |
-| Q6–Q8 | Compare satisfaction, realism and ability to understand the other party with students' earlier fixed-issue negotiations. | Project-developed comparative items. They should be analyzed individually rather than described as a validated scale. |
-| Q9–Q13 | Ask students to compare strategies, connect the exercise to course principles, identify a transferable action and choose useful debrief activities. | Instructor-developed reflection prompts. Their sequence follows the experiential-learning logic of moving from experience to reflection, conceptual interpretation and future application. They are teaching prompts, not a psychometric scale. |
+| Q6–Q8 | Compare satisfaction, realism and ability to understand the other party with negotiations built around a predefined set of issues, such as New Recruit. | Project-developed comparative items. They should be analyzed individually rather than described as a validated scale. |
+| Q9–Q11 | Ask students to compare a predefined issue set with having flexibility in which issues they can introduce, connect the exercise to course principles and identify a transferable action. | Instructor-developed reflection prompts. Their sequence follows the experiential-learning logic of moving from experience to reflection, conceptual interpretation and future application. They are teaching prompts, not a psychometric scale. |
+| Q12–Q16 | Record whether a temporary impasse occurred, what it concerned, when it occurred, whether it was overcome and how. | Adapted from Loewenstein and Brett (2007). These questions are intentionally placed after the main comparison and reflection questions so that thinking about impasse does not shape students' earlier answers. |
+| Q17 | Collects optional feedback about the activity or class discussion. | Instructor-developed. |
 
 ## Prolific research survey
 
