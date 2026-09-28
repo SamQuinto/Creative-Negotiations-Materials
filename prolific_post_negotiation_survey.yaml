@@ -311,6 +311,18 @@ questions:
     n: 29
     page: 2
     section: "Temporary impasse"
+    type: "open_text"
+    required: true
+    show_if:
+      question: "q28"
+      equals: "Yes"
+    label: "Please briefly describe what the temporary impasse or disagreement was about and why you think it happened."
+    hint: "A short response is fine."
+
+  - id: q30
+    n: 30
+    page: 2
+    section: "Temporary impasse"
     type: "single_select"
     required: true
     show_if:
@@ -323,8 +335,8 @@ questions:
       - "Third quarter of the negotiation"
       - "Fourth quarter of the negotiation"
 
-  - id: q30
-    n: 30
+  - id: q31
+    n: 31
     page: 2
     section: "Temporary impasse"
     type: "single_select"
@@ -333,28 +345,22 @@ questions:
     show_if:
       question: "q28"
       equals: "Yes"
-    label: "Did you and the other party eventually move past this temporary impasse?"
+    label: "Do you feel that you and the other party eventually moved past this temporary impasse?"
     options:
       - "Yes"
       - "No"
 
-  - id: q31
-    n: 31
-    page: 2
-    section: "Room to shape the negotiation"
-    type: "likert"
-    scale: "agree_7"
-    required: true
-    label: "I felt able to raise job or contract issues that were not listed in my role materials."
-
   - id: q32
     n: 32
     page: 2
-    type: "likert"
-    scale: "agree_7"
+    section: "Temporary impasse"
+    type: "open_text"
     required: true
-    reverse_scored: true
-    label: "I felt limited to negotiating only the job or contract issues listed in my role materials."
+    show_if:
+      question: "q31"
+      equals: "Yes"
+    label: "How do you think you moved past it?"
+    hint: "A short response is fine."
 
   - id: q33
     n: 33

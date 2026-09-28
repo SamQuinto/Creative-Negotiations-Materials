@@ -16,13 +16,14 @@ Participant-facing materials for the Candidate–Recruiter negotiation scenario,
 | Class survey HTML preview | [class_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/class_post_negotiation_survey_preview.html) |
 | Prolific post-negotiation survey | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) |
 | Prolific survey HTML preview | [prolific_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/prolific_post_negotiation_survey_preview.html) |
+| Survey measure and design notes | [SURVEY_MEASURE_NOTES.md](SURVEY_MEASURE_NOTES.md) |
 
 The earlier full survey is retained for version history. Use one of the two purpose-specific surveys below for new studies.
 
 ## Which post-negotiation survey to use
 
-- **Class:** `class_post_negotiation_survey.yaml` is the short teaching version for the Control versus Perspective Taking comparison. It focuses on temporary impasse, the perspective-taking manipulation check, and a student-centered learning-and-reflection sequence. It does not include the Subjective Value Inventory, realism, creative-engagement or creative-self-efficacy measures. Q2–Q3 appear only when Q1 is **Yes**.
-- **Prolific:** `prolific_post_negotiation_survey.yaml` is the research version for Fixed 15 versus Latent 215. It retains the full Subjective Value Inventory, creative-engagement and creative-self-efficacy measures, temporary-impasse questions, and the issue-space manipulation check. It does not include a perspective-taking manipulation check. Q29–Q30 appear only when Q28 is **Yes**.
+- **Class:** `class_post_negotiation_survey.yaml` is the short teaching version for the Control versus Perspective Taking comparison. It asks students to compare this open negotiation with earlier fixed-issue negotiations, distinguish perspective understanding from perspective use, connect their strategy to course principles and identify a lesson for a future negotiation. It does not include the full Subjective Value Inventory, creative-engagement or creative-self-efficacy measures.
+- **Prolific:** `prolific_post_negotiation_survey.yaml` is the research version for Fixed 15 versus Latent 215. It retains the full Subjective Value Inventory, creative-engagement and creative-self-efficacy measures and a literature-based temporary-impasse module. It does not include perspective-taking or issue-space manipulation checks. Q29–Q31 appear only when Q28 is **Yes**; Q32 appears only when Q31 is **Yes**.
 - The HTML files are interactive visual previews only. They do not save or transmit responses.
 
 Issue generation, issue redefinition and issue diversity are calculated from behavioral offer data by the experiment application. They are not self-report survey questions.

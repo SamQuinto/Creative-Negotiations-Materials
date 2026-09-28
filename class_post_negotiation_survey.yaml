@@ -7,54 +7,43 @@ scales:
     - "5"
     - "6"
     - "7 — Strongly agree"
+  svi_satisfaction_7:
+    - "1 — Not at all satisfied"
+    - "2"
+    - "3"
+    - "4 — Moderately satisfied"
+    - "5"
+    - "6"
+    - "7 — Perfectly satisfied"
+    - "N/A"
+  compare_satisfaction_7:
+    - "1 — Much less satisfied"
+    - "2"
+    - "3"
+    - "4 — About the same"
+    - "5"
+    - "6"
+    - "7 — Much more satisfied"
+  compare_realism_7:
+    - "1 — Much less realistic"
+    - "2"
+    - "3"
+    - "4 — About the same"
+    - "5"
+    - "6"
+    - "7 — Much more realistic"
+  compare_ability_7:
+    - "1 — Much less able"
+    - "2"
+    - "3"
+    - "4 — About the same"
+    - "5"
+    - "6"
+    - "7 — Much more able"
 
 questions:
   - id: q1
     n: 1
-    page: 1
-    section: "Temporary impasse"
-    type: "single_select"
-    style: "pills"
-    required: true
-    label: "At any point during this negotiation, did you experience a temporary impasse?"
-    hint: "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely."
-    options:
-      - "Yes"
-      - "No"
-
-  - id: q2
-    n: 2
-    page: 1
-    section: "Temporary impasse"
-    type: "single_select"
-    required: true
-    show_if:
-      question: "q1"
-      equals: "Yes"
-    label: "Approximately when did the first temporary impasse occur?"
-    options:
-      - "First quarter of the negotiation"
-      - "Second quarter of the negotiation"
-      - "Third quarter of the negotiation"
-      - "Fourth quarter of the negotiation"
-
-  - id: q3
-    n: 3
-    page: 1
-    section: "Temporary impasse"
-    type: "single_select"
-    style: "pills"
-    required: true
-    show_if:
-      question: "q1"
-      equals: "Yes"
-    label: "Did you and the other party eventually move past this temporary impasse?"
-    options:
-      - "Yes"
-      - "No"
-
-  - id: q4
-    n: 4
     page: 1
     section: "How you approached the negotiation"
     type: "likert"
@@ -62,81 +51,105 @@ questions:
     required: true
     label: "During the negotiation, I tried to understand what the other party was thinking in their situation."
 
-  - id: q5
-    n: 5
+  - id: q2
+    n: 2
     page: 1
     type: "likert"
     scale: "agree_7"
     required: true
     label: "During the negotiation, I tried to imagine the negotiation from the other party’s point of view."
 
-  - id: q6
-    n: 6
+  - id: q3
+    n: 3
+    page: 1
+    type: "likert"
+    scale: "agree_7"
+    required: true
+    label: "I was able to use my understanding of the other party to shape the questions I asked, the offers I made, or the way I responded."
+
+  - id: q4
+    n: 4
     page: 1
     type: "likert"
     scale: "agree_7"
     required: true
     label: "During the negotiation, I carefully kept my own role and the information I was given in mind."
 
+  - id: q5
+    n: 5
+    page: 1
+    section: "Your experience and outcome"
+    type: "likert"
+    scale: "svi_satisfaction_7"
+    required: true
+    label: "How satisfied are you with your own outcome—i.e., the extent to which the terms of your agreement (or lack of agreement) benefit you?"
+
+  - id: q6
+    n: 6
+    page: 1
+    type: "likert"
+    scale: "compare_satisfaction_7"
+    required: true
+    label: "Compared with fixed-issue negotiations you have completed, how satisfied are you with the outcome of this negotiation?"
+
   - id: q7
     n: 7
-    page: 2
-    section: "What you learned"
+    page: 1
     type: "likert"
-    scale: "agree_7"
+    scale: "compare_realism_7"
     required: true
-    label: "This exercise helped me better distinguish what a negotiator asks for from the underlying reasons they care about it."
+    label: "Compared with fixed-issue negotiations you have completed, how realistic did this negotiation feel?"
 
   - id: q8
     n: 8
-    page: 2
+    page: 1
     type: "likert"
-    scale: "agree_7"
+    scale: "compare_ability_7"
     required: true
-    label: "This exercise helped me understand how changing or adding terms can create value for both parties."
+    label: "Compared with fixed-issue negotiations, how able were you to understand what mattered to the other party in this negotiation?"
 
   - id: q9
     n: 9
     page: 2
-    type: "likert"
-    scale: "agree_7"
+    section: "Comparing your strategies"
+    type: "open_text"
     required: true
-    label: "This exercise helped me recognize how my own choices helped or hindered progress."
+    label: "What was the main difference in how you prepared, communicated, or made offers when you could raise issues beyond a fixed list?"
+    hint: "A short response is fine."
 
   - id: q10
     n: 10
     page: 2
-    section: "Reflecting on what happened"
     type: "open_text"
     required: true
-    label: "Describe one moment that changed or confirmed what you thought mattered to the other party. What happened, and what did you do next?"
+    label: "Which negotiation principles or ideas from class were most useful here? Were any harder to apply, or less useful, than in a fixed-issue negotiation?"
     hint: "A short response is fine."
 
   - id: q11
     n: 11
     page: 2
+    section: "Taking the learning forward"
     type: "open_text"
     required: true
-    label: "If you negotiated this case again, what is one thing you would do differently, and why?"
+    label: "What is one lesson from this experience that you want to carry into a future negotiation? Be specific about what you would do."
     hint: "A short response is fine."
 
   - id: q12
     n: 12
     page: 2
-    section: "Continuing the learning"
     type: "multi_select"
     required: true
     max_selections: 2
-    label: "Which two activities would help you learn most from this exercise?"
+    label: "Which two activities would be most useful or interesting for the class debrief?"
     hint: "Select up to two."
     options:
-      - "Compare my strategy and outcome with other groups"
+      - "Compare strategies and outcomes across groups"
       - "See how both parties valued the offers"
       - "Examine an offer that could have created more value"
       - "Discuss why negotiations became stuck or moved forward"
-      - "Review moments when new options or issues were introduced"
+      - "Compare open and fixed-issue negotiation strategies"
+      - "Discuss how perspective taking was translated into action"
       - "Try the negotiation again or switch roles"
-      - "Receive feedback on my negotiation strategy"
 
   - id: q13
     n: 13
