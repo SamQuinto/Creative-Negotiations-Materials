@@ -210,7 +210,7 @@ questions:
     type: "likert"
     scale: "agree_7"
     required: true
-    label: "I had no difficulty imagining myself in this negotiation."
+    label: "I could easily imagine myself in the position described in my assigned role."
 
   - id: q18
     n: 18
@@ -297,73 +297,56 @@ questions:
   - id: q28
     n: 28
     page: 2
-    section: "Temporary impasse"
-    type: "single_select"
-    style: "pills"
+    section: "How you approached your offers"
+    type: "open_text"
     required: true
-    label: "At any point during this negotiation, did you experience a temporary impasse?"
-    hint: "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely."
-    options:
-      - "Yes"
-      - "No"
+    label: "How did you decide what offer to make next as you worked toward your goals in the negotiation?"
+    hint: "Tell us what you paid attention to and what you decided to change. A short response is fine."
 
   - id: q29
     n: 29
     page: 2
-    section: "Temporary impasse"
-    type: "open_text"
+    section: "When the negotiation felt stuck"
+    type: "single_select"
+    style: "pills"
     required: true
-    show_if:
-      question: "q28"
-      equals: "Yes"
-    label: "Please briefly describe what the temporary impasse or disagreement was about and why you think it happened."
-    hint: "A short response is fine."
+    label: "At any point, did the negotiation feel stuck? In other words, did you and the other party seem unable to make progress, or did reaching an agreement seem unlikely?"
+    options:
+      - "Yes, once"
+      - "Yes, multiple times"
+      - "No"
 
   - id: q30
     n: 30
     page: 2
-    section: "Temporary impasse"
-    type: "single_select"
+    section: "When the negotiation felt stuck"
+    type: "multi_select"
     required: true
     show_if:
-      question: "q28"
-      equals: "Yes"
-    label: "Approximately when did the first temporary impasse occur?"
+      question: "q29"
+      not_equals: "No"
+    label: "Roughly when did the negotiation feel stuck? Select all that apply."
+    max_selections: 4
     options:
-      - "First quarter of the negotiation"
-      - "Second quarter of the negotiation"
-      - "Third quarter of the negotiation"
-      - "Fourth quarter of the negotiation"
+      - "1st quarter of the negotiation"
+      - "2nd quarter of the negotiation"
+      - "3rd quarter of the negotiation"
+      - "4th quarter of the negotiation"
 
   - id: q31
     n: 31
     page: 2
-    section: "Temporary impasse"
-    type: "single_select"
-    style: "pills"
-    required: true
-    show_if:
-      question: "q28"
-      equals: "Yes"
-    label: "Do you feel that you and the other party eventually moved past this temporary impasse?"
-    options:
-      - "Yes"
-      - "No"
-
-  - id: q32
-    n: 32
-    page: 2
-    section: "Temporary impasse"
+    section: "When the negotiation felt stuck"
     type: "open_text"
     required: true
     show_if:
-      question: "q31"
-      equals: "Yes"
-    label: "How do you think you moved past it?"
-    hint: "A short response is fine."
+      question: "q29"
+      not_equals: "No"
+    label: "Do you think you and the other party eventually got past the point or points where the negotiation felt stuck and began making progress again?"
+    hint: "Begin with Yes, Partly, or No. If you became unstuck, describe what changed and what you and the other party did. If you did not, describe why the negotiation remained stuck."
 
-  - id: q33
-    n: 33
+  - id: q32
+    n: 32
     page: 2
     section: "Other feedback"
     type: "open_text"

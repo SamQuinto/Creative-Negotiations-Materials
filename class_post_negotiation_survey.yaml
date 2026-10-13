@@ -137,69 +137,45 @@ questions:
   - id: q12
     n: 12
     page: 2
-    section: "Temporary impasse"
+    section: "When the negotiation felt stuck"
     type: "single_select"
     style: "pills"
     required: true
-    label: "At any point during this negotiation, did you experience a temporary impasse?"
-    hint: "By temporary impasse, we mean a point when the negotiation seemed to stall and reaching an agreement appeared unlikely."
+    label: "At any point, did the negotiation feel stuck? In other words, did you and the other party seem unable to make progress, or did reaching an agreement seem unlikely?"
     options:
-      - "Yes"
+      - "Yes, once"
+      - "Yes, multiple times"
       - "No"
 
   - id: q13
     n: 13
     page: 2
-    type: "open_text"
+    type: "multi_select"
     required: true
     show_if:
       question: "q12"
-      equals: "Yes"
-    label: "Please briefly describe what the temporary impasse or disagreement was about and why you think it happened."
-    hint: "A short response is fine."
+      not_equals: "No"
+    label: "Roughly when did the negotiation feel stuck? Select all that apply."
+    max_selections: 4
+    options:
+      - "1st quarter of the negotiation"
+      - "2nd quarter of the negotiation"
+      - "3rd quarter of the negotiation"
+      - "4th quarter of the negotiation"
 
   - id: q14
     n: 14
     page: 2
-    type: "single_select"
-    required: true
-    show_if:
-      question: "q12"
-      equals: "Yes"
-    label: "Approximately when did the first temporary impasse occur?"
-    options:
-      - "First quarter of the negotiation"
-      - "Second quarter of the negotiation"
-      - "Third quarter of the negotiation"
-      - "Fourth quarter of the negotiation"
-
-  - id: q15
-    n: 15
-    page: 2
-    type: "single_select"
-    style: "pills"
-    required: true
-    show_if:
-      question: "q12"
-      equals: "Yes"
-    label: "Do you feel that you and the other party eventually moved past this temporary impasse?"
-    options:
-      - "Yes"
-      - "No"
-
-  - id: q16
-    n: 16
-    page: 2
     type: "open_text"
     required: true
     show_if:
-      question: "q15"
-      equals: "Yes"
-    label: "How do you think you moved past it?"
-    hint: "A short response is fine."
+      question: "q12"
+      not_equals: "No"
+    label: "Do you think you and the other party eventually got past the point or points where the negotiation felt stuck and began making progress again?"
+    hint: "Begin with Yes, Partly, or No. If you became unstuck, describe what changed and what you and the other party did. If you did not, describe why the negotiation remained stuck."
 
-  - id: q17
-    n: 17
+  - id: q15
+    n: 15
     page: 2
     section: "Other feedback"
     type: "open_text"

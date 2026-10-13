@@ -14,6 +14,10 @@ If tags appear literally or colors are removed, check the reader's formatting su
 
 The previous combined `role_materials_200.json` remains only for compatibility with an earlier link. Use the new role-specific links for this survey.
 
+## Class and Prolific survey branching
+
+Both current surveys use `show_if.not_equals` for their plain-language “felt stuck” follow-ups. In the class survey, display Q13–Q14 whenever Q12 is either **Yes, once** or **Yes, multiple times**. In the Prolific survey, display Q30–Q31 whenever Q29 has either Yes response. Hide the follow-ups only when the participant answered **No**. The local HTML previews implement this rule. If the Empirica survey reader currently handles only `show_if.equals`, add the equivalent `not_equals` branch before deployment; do not show the follow-ups to participants who answered No.
+
 ## Replace the hardcoded introduction
 
 Use `About_This_Activity.md` for **About This Activity**. It distinguishes the feedback activity's random bonus draw from the main study's agreement-based bonus. Changing a role JSON cannot replace text that is hardcoded in Empirica; paste this content into that component.
