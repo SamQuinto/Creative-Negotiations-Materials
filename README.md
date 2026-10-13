@@ -1,47 +1,41 @@
 # Creative Negotiations — experiment materials
 
-Participant-facing materials for the Candidate–Recruiter negotiation scenario, its feedback pre-test, and the class and Prolific post-negotiation surveys. The hidden payoff catalog, research data, and API keys are not included.
+Current participant-facing materials for the Candidate–Recruiter negotiation project. This public repository contains role materials and survey definitions only. Hidden payoff rules, participant data, API keys, analysis files, and internal planning documents are not included.
 
-## Raw links for Empirica
+## Current materials
 
-| Material | Raw link |
+### Feedback pre-test
+
+| Material | Raw file |
 |---|---|
 | Candidate role materials | [candidate_role_materials_200.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/candidate_role_materials_200.json) |
 | Recruiter role materials | [recruiter_role_materials_200.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/recruiter_role_materials_200.json) |
-| Survey for participants assigned Candidate | [candidate_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/candidate_feedback_survey.yaml) |
-| Survey for participants assigned Recruiter | [recruiter_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/recruiter_feedback_survey.yaml) |
-| Earlier full post-negotiation survey | [experiment_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/experiment_post_negotiation_survey.yaml) |
-| Earlier full survey HTML preview | [experiment_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/experiment_post_negotiation_survey_preview.html) |
-| Class post-negotiation survey | [class_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/class_post_negotiation_survey.yaml) |
-| Class survey HTML preview | [class_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/class_post_negotiation_survey_preview.html) |
-| Prolific post-negotiation survey | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) |
-| Prolific survey HTML preview | [prolific_post_negotiation_survey_preview.html](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/prolific_post_negotiation_survey_preview.html) |
-| Survey measure and design notes | [SURVEY_MEASURE_NOTES.md](SURVEY_MEASURE_NOTES.md) |
+| Candidate feedback survey | [candidate_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/candidate_feedback_survey.yaml) |
+| Recruiter feedback survey | [recruiter_feedback_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/recruiter_feedback_survey.yaml) |
+| Hardcoded activity introduction | [About_This_Activity.md](About_This_Activity.md) |
 
-The earlier full survey is retained for version history. Use one of the two purpose-specific surveys below for new studies.
+Load only the role JSON and survey YAML matching the participant's assigned role.
 
-## Which post-negotiation survey to use
+The `_200` role filenames are retained so existing Empirica raw links continue to work. Their contents are the current reviewed role materials.
 
-- **Class:** `class_post_negotiation_survey.yaml` is the short teaching version for the Control versus Perspective Taking comparison. It asks students to compare negotiating over a predefined set of issues (e.g., New Recruit) with having flexibility in which issues they can introduce, distinguish perspective understanding from perspective use, connect their strategy to course principles and identify a lesson for a future negotiation. A plain-language module about whether the negotiation felt stuck appears near the end, after the main comparison and reflection questions, to reduce priming. Students who felt stuck compare that experience with predefined-issue negotiations; students who did not can optionally explain why. It does not include the full Subjective Value Inventory, creative-engagement or creative-self-efficacy measures.
-- **Prolific:** `prolific_post_negotiation_survey.yaml` is the research version for Fixed 15 versus Latent 215. It retains the full Subjective Value Inventory, creative-engagement and creative-self-efficacy measures, asks how participants chose their next offers, and uses a plain-language module about whether the negotiation felt stuck. Participants who did not feel stuck can optionally explain why. It does not include perspective-taking or issue-space manipulation checks.
-- The HTML files are interactive visual previews only. They do not save or transmit responses.
+### Post-negotiation surveys
 
-Issue generation, issue redefinition and issue diversity are calculated from behavioral offer data by the experiment application. They are not self-report survey questions.
+| Use | Empirica YAML | Interactive preview |
+|---|---|---|
+| Classroom exercise | [class_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/class_post_negotiation_survey.yaml) | [Open preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/class_post_negotiation_survey_preview.html) |
+| Prolific Fixed-15 versus Latent-215 study | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) | [Open preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_post_negotiation_survey_preview.html) |
 
-Randomly assign Candidate or Recruiter and load that role's JSON and matching survey. Each JSON contains just one role, in the existing `roles` array. Q2, Q9 and Q12 depend on the assigned role. The reviewed role materials use shorter paragraphs, selected bullets, five numbered scoring notes, and inline HTML for italic role names/examples and colored payoff values. Single-asterisk Markdown is not used. The external Empirica reader still needs checking for this inline formatting; see the integration notes below. The earlier combined JSON remains only for old-link compatibility; use the separate files above for this survey.
+The HTML files are visual, interactive previews only. They do not save or transmit responses.
 
-## File format
+## Which survey to use
 
-- **Role JSON:** `roles` and `tips`; each role has `role_name`, `narrative`, `RP`, and `scoresheet`. The scoresheet is intentionally empty so the feedback task does not disclose the hidden issue menu. This file does not score offers.
-- **Survey YAML:** `scales` and `questions`, with the existing `likert`, `single_select`, `multi_select`, and `open_text` types. Q6 requests three written terms; Q11 requests 3–5 job-feature names only, one per line in a single box. Required/optional responses must be enforced by the survey host.
-- **Researcher preview:** the two-page HTML preview and answer key are kept in the separate private project, not this public repository. Participant YAML files do not contain answer keys.
+- **Classroom:** a short teaching and reflection survey for the Control versus Perspective Taking exercise. It compares an open-ended negotiation with a predefined-issue exercise such as New Recruit and supports discussion of strategy, learning, and how negotiations became stuck or resumed progress.
+- **Prolific:** the research survey for Fixed-15 versus Latent-215. It includes the full Subjective Value Inventory, perceived realism and role engagement, Creative Process Engagement, Creative Self-Efficacy, offer-strategy reflection, and the plain-language “felt stuck” module.
 
-For the hardcoded introduction, use [About This Activity](About_This_Activity.md), including the feedback bonus draw. **Q11 stays one text box**, with a short gray guide and three-line placeholder; no reasons are requested. If the external reader ignores those presentation fields, see [the integration notes](EMPIRICA_INTEGRATION.md). The private mockup shows the intended layout.
+Issue generation, issue redefinition, issue diversity, agreement, time, offers, payoffs, joint gains, and Pareto efficiency come from behavioral experiment logs rather than survey self-reports.
 
-The formats follow the existing [narrative JSON](https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/shared_office_3p_easy.json) and [survey YAML](https://raw.githubusercontent.com/SamQuinto/Describing-Search-in-Negotiations/refs/heads/main/narative_survey.yaml) examples. The Empirica loader is maintained separately; no running experiment or participant response collection is hosted here.
+## Implementation notes
 
-For data collection, replace `refs/heads/main` in the raw links with a commit ID so later edits cannot change the materials during an active study.
-
-## Measure attribution
-
-The experiment survey contains established or adapted research measures cited in the accompanying study documentation, including the Subjective Value Inventory and measures of perceived realism, creative process engagement, creative self-efficacy, temporary impasse and perspective taking. Retain those citations when reusing the survey. This repository does not grant additional rights to third-party measure wording.
+- [EMPIRICA_INTEGRATION.md](EMPIRICA_INTEGRATION.md) explains role rendering, conditional survey branching, and feedback-survey display requirements.
+- [SURVEY_MEASURE_NOTES.md](SURVEY_MEASURE_NOTES.md) records measure sources and which items were developed for this project.
+- For a live study, replace `refs/heads/main` in raw links with the approved commit ID so later edits cannot change materials during data collection.
