@@ -12,8 +12,8 @@ This note records where the survey measures came from and which questions were w
 | Q5 | Measures satisfaction with one's own negotiation outcome. | Subjective Value Inventory item from Curhan, Elfenbein and Xu (2006). |
 | Q6–Q8 | Compare satisfaction, realism and ability to understand the other party with negotiations built around a predefined set of issues, such as New Recruit. | Project-developed comparative items. They should be analyzed individually rather than described as a validated scale. |
 | Q9–Q11 | Ask students to compare a predefined issue set with having flexibility in which issues they can introduce, connect the exercise to course principles and identify a transferable action. | Instructor-developed reflection prompts. Their sequence follows the experiential-learning logic of moving from experience to reflection, conceptual interpretation and future application. They are teaching prompts, not a psychometric scale. |
-| Q12–Q14 | Record whether the negotiation felt stuck once or multiple times, roughly when this happened, and how or whether the parties began making progress again. | Plain-language adaptation informed by Loewenstein and Brett (2007). These questions are intentionally placed after the main comparison and reflection questions so that thinking about getting stuck does not shape students' earlier answers. |
-| Q15 | Collects optional feedback about the activity or class discussion. | Instructor-developed. |
+| Q12–Q16 | Record whether the negotiation felt stuck once or multiple times, roughly when this happened, how or whether the parties began making progress again, and why some negotiations never felt stuck. Students who felt stuck also compare the experience with predefined-issue negotiations such as New Recruit. | Plain-language adaptation informed by Loewenstein and Brett (2007), plus project-developed comparison and no-stuck prompts. These questions are intentionally placed after the main comparison and reflection questions so that thinking about getting stuck does not shape students' earlier answers. |
+| Q17 | Collects optional feedback about the activity or class discussion. | Instructor-developed. |
 
 ## Prolific research survey
 
@@ -25,8 +25,8 @@ This note records where the survey measures came from and which questions were w
 | Q20–Q24 | Measure idea-generation engagement during the negotiation. | Five-item idea-generation component adapted to the negotiation from Zhang and Bartol's (2010) Creative Process Engagement measure. |
 | Q25–Q27 | Measure confidence in solving problems creatively, developing another person's ideas and generating novel ideas. | Three-item Creative Self-Efficacy measure from Tierney and Farmer (2002), adapted to refer to this negotiation. |
 | Q28 | Asks participants, without naming a particular strategy, how they decided what offer to make next. | Project-developed qualitative process question. Responses can be coded for exploitation of known terms, exploration of different terms, attention to feedback, concessions, interests and other emergent approaches. |
-| Q29–Q31 | Record whether the negotiation felt stuck, whether this happened once or repeatedly, roughly when it happened and how or whether the parties began making progress again. | Plain-language adaptation informed by the post-negotiation protocol in Loewenstein and Brett (2007). The combined open response can be coded for changing the issue set, trading across known issues, discussing interests, persistence, concession and unresolved disagreement. These questions are placed late to reduce priming. |
-| Q32 | Collects optional feedback. | Project-developed. |
+| Q29–Q32 | Record whether the negotiation felt stuck, whether this happened once or repeatedly, roughly when it happened, how or whether the parties began making progress again, and why some negotiations never felt stuck. | Plain-language adaptation informed by the post-negotiation protocol in Loewenstein and Brett (2007), plus a project-developed no-stuck prompt. The open responses can be coded for changing the issue set, trading across known issues, discussing interests, persistence, concession, smooth progress and unresolved disagreement. These questions are placed late to reduce priming. |
+| Q33 | Collects optional feedback. | Project-developed. |
 
 ## References
 

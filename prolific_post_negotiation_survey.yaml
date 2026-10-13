@@ -348,6 +348,17 @@ questions:
   - id: q32
     n: 32
     page: 2
+    type: "open_text"
+    required: false
+    show_if:
+      question: "q29"
+      equals: "No"
+    label: "Why do you think this negotiation did not feel stuck?"
+    hint: "Optional. A short response is fine."
+
+  - id: q33
+    n: 33
+    page: 2
     section: "Other feedback"
     type: "open_text"
     required: false

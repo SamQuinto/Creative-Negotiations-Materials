@@ -177,6 +177,28 @@ questions:
   - id: q15
     n: 15
     page: 2
+    type: "open_text"
+    required: true
+    show_if:
+      question: "q12"
+      not_equals: "No"
+    label: "If you have felt stuck in a negotiation with a predefined set of issues, such as New Recruit, did being stuck in this negotiation feel different? What was different about why you became stuck or how you moved forward?"
+    hint: "If you did not feel stuck in those earlier negotiations, simply say so. A short response is fine."
+
+  - id: q16
+    n: 16
+    page: 2
+    type: "open_text"
+    required: false
+    show_if:
+      question: "q12"
+      equals: "No"
+    label: "Why do you think this negotiation did not feel stuck?"
+    hint: "Optional. A short response is fine."
+
+  - id: q17
+    n: 17
+    page: 2
     section: "Other feedback"
     type: "open_text"
     required: false

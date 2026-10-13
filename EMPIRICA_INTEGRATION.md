@@ -16,7 +16,7 @@ The previous combined `role_materials_200.json` remains only for compatibility w
 
 ## Class and Prolific survey branching
 
-Both current surveys use `show_if.not_equals` for their plain-language “felt stuck” follow-ups. In the class survey, display Q13–Q14 whenever Q12 is either **Yes, once** or **Yes, multiple times**. In the Prolific survey, display Q30–Q31 whenever Q29 has either Yes response. Hide the follow-ups only when the participant answered **No**. The local HTML previews implement this rule. If the Empirica survey reader currently handles only `show_if.equals`, add the equivalent `not_equals` branch before deployment; do not show the follow-ups to participants who answered No.
+Both current surveys use `show_if.not_equals` for their plain-language “felt stuck” follow-ups. In the class survey, display Q13–Q15 whenever Q12 has either Yes response, and display the optional no-stuck explanation Q16 only when Q12 is **No**. In the Prolific survey, display Q30–Q31 whenever Q29 has either Yes response, and display the optional no-stuck explanation Q32 only when Q29 is **No**. The local HTML previews implement both `not_equals` and `equals` rules. If the Empirica survey reader currently handles only `show_if.equals`, add the equivalent `not_equals` branch before deployment.
 
 ## Replace the hardcoded introduction
 
