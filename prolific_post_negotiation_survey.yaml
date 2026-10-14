@@ -272,7 +272,6 @@ questions:
   - id: q25
     n: 25
     page: 2
-    section: "Creative confidence"
     type: "likert"
     scale: "agree_7"
     required: true
