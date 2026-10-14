@@ -235,7 +235,7 @@ questions:
     type: "likert"
     scale: "frequency_5"
     required: true
-    label: "I considered diverse sources of information when generating new ideas."
+    label: "I considered diverse sources of information when generating new ideas or offers."
 
   - id: q21
     n: 21
@@ -243,7 +243,7 @@ questions:
     type: "likert"
     scale: "frequency_5"
     required: true
-    label: "I looked for connections with solutions used in seemingly different situations."
+    label: "I looked for connections with solutions used in seemingly different situations when thinking about what to propose."
 
   - id: q22
     n: 22
@@ -259,7 +259,7 @@ questions:
     type: "likert"
     scale: "frequency_5"
     required: true
-    label: "I tried to devise solutions that moved away from established ways of doing things."
+    label: "In making proposals, I tried to devise solutions that moved away from established ways of doing things."
 
   - id: q24
     n: 24
