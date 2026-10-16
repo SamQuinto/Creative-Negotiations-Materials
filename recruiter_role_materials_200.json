@@ -1,4 +1,5 @@
 {
+  "readrole_instructions": "[TEST PLACEHOLDER: Instructions shown before reading your role materials go here. Replace this text before launching the study.]",
   "roles": [
     {
       "role_name": "Recruiter",
