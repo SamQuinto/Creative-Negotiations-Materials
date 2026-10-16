@@ -1,6 +1,6 @@
 # Creative Negotiations — experiment materials
 
-Current participant-facing materials for the Candidate–Recruiter negotiation project. This public repository contains role materials and survey definitions only. Hidden payoff rules, participant data, API keys, analysis files, and internal planning documents are not included.
+Current materials for the Candidate–Recruiter negotiation project. This public repository contains participant role materials and surveys, plus the explicitly published backend scoring scenario linked below. Participant data, API keys, analysis files, and internal planning documents are not included.
 
 ## Current materials
 
@@ -28,6 +28,12 @@ These are the expanded-task narratives. For the Fixed-15 condition, the experime
 | Prolific Fixed-15 versus Latent-215 study | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) | [Open preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_post_negotiation_survey_preview.html) |
 
 The HTML files are visual, interactive previews only. They do not save or transmit responses.
+
+### Backend scoring scenario
+
+The [Flexible 215 scoring JSON](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/flexible-215.json) is publicly accessible for server-side Empirica loading. It is an exact copy of the approved `empirica/scenarios/flexible-215.json` from prototype commit `cd6436f`. It includes both roles' payoffs and the full issue catalogue; it is not a participant-facing role file. Public access means anyone with the link can inspect those rules. Do not send the complete file to participants' browsers.
+
+Use the current shared Python scorer and continuous-input integration described in the [scenario guide](https://github.com/SamQuinto/Creative-Negotiations/blob/main/empirica/SCENARIO_FORMAT.md). The visible `readrole_instructions` test placeholder still needs replacing before participant collection. The main prototype repository remains private.
 
 ## Which survey to use
 
