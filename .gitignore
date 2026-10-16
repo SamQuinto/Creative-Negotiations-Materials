@@ -1,0 +1,11 @@
+**/__pycache__/
+*.pyc
+**/*key*.txt
+**/empirica_key*
+.env
+**/.env
+*.sqlite
+*.sqlite-*
+*.log
+**/node_modules/
+**/participant_data/

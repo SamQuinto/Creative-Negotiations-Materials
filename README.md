@@ -1,6 +1,6 @@
 # Creative Negotiations — experiment materials
 
-Current materials for the Candidate–Recruiter negotiation project. This public repository contains participant role materials and surveys, plus the explicitly published backend scoring scenario linked below. Participant data, API keys, analysis files, and internal planning documents are not included.
+Current materials for the Candidate–Recruiter negotiation project. This public repository contains participant role materials and surveys, plus the Empirica scorer runtime and scoring scenarios linked below. Participant data, API keys, analysis files, and internal planning documents are not included.
 
 ## Current materials
 
@@ -29,11 +29,18 @@ These are the expanded-task narratives. For the Fixed-15 condition, the experime
 
 The HTML files are visual, interactive previews only. They do not save or transmit responses.
 
-### Backend scoring scenario
+### Empirica scorer and scenarios
 
-The [Flexible 215 scoring JSON](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/flexible-215.json) is publicly accessible for server-side Empirica loading. It is an exact copy of the approved `empirica/scenarios/flexible-215.json` from prototype commit `cd6436f`. It includes both roles' payoffs and the full issue catalogue; it is not a participant-facing role file. Public access means anyone with the link can inspect those rules. Do not send the complete file to participants' browsers.
+[Open the public Empirica folder](empirica/) or [download ZIP](https://github.com/SamQuinto/Creative-Negotiations-Materials/archive/refs/heads/main.zip). The download includes the two Python commands and the shared `app/` and `developer/` files they need. Keep those folders together. The runtime mirrors prototype release `a2408be`; [instructions and a no-key smoke test](empirica/README.md) are included.
 
-Use the current shared Python scorer and continuous-input integration described in the [scenario guide](https://github.com/SamQuinto/Creative-Negotiations/blob/main/empirica/SCENARIO_FORMAT.md). The visible `readrole_instructions` test placeholder still needs replacing before participant collection. The main prototype repository remains private.
+| Backend scenario | Public raw JSON |
+|---|---|
+| Fixed 15 | [fixed-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/fixed-15.json) |
+| Flexible 15 | [flexible-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/flexible-15.json) |
+| Flexible 215 | [flexible-215.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/flexible-215.json) |
+| Tutorial | [tutorial.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/tutorial.json) |
+
+These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and do not send the complete files to participants' browsers. The visible `readrole_instructions` test placeholder still needs replacing before participant collection. The main prototype repository remains private.
 
 ## Which survey to use
 
