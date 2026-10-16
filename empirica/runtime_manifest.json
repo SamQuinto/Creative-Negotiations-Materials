@@ -30,27 +30,27 @@
     },
     {
       "path": "app/config/fixed-15.json",
-      "sha256": "bbb0e9a8ed6fce29e63e843e2c95dd4b99d705df208ff939c1065e995d8e063f"
+      "sha256": "6b2c35f2b894e4cb2665fde708ee2c1f04b487d8529e29fe8ecbfb8ae9b71727"
     },
     {
       "path": "app/config/issue-phrase-registry.json",
-      "sha256": "7a75fd81c7d54f60b41966ac1f7d3931025267d642031ee2ee7ba64906fb04d6"
+      "sha256": "d0e5321c30d291679469d7806a266105f39636ca35ee957a448095aeb0da08c9"
     },
     {
       "path": "app/config/large-200.json",
-      "sha256": "c50b4d9cdae54a2cbf787c9ba627748928daab8742024bb33f73c767e45dd3c5"
+      "sha256": "8b6aeffd82045fc141a3001cf6e866fd73677367d857b686d8f73458b1c36746"
     },
     {
       "path": "app/config/large-215.json",
-      "sha256": "8280f347cc3360f040d0eac1b71ce113dba53d4264522148b1ccdd198107a6fe"
+      "sha256": "4c5daec8a09b5c68d7fb835d6d5a75ec121c0b1a2e20fbbf9ebcf474504b1f22"
     },
     {
       "path": "app/config/small-15.json",
-      "sha256": "d25c511befed769625218853298f0f414d5e0cc7f0c0566bfa70d2563efed67b"
+      "sha256": "84b47c87b1f2843b2958ce4694b60f257b038cfe73f054c9956e92bbe34698e4"
     },
     {
       "path": "app/config/tutorial.json",
-      "sha256": "346e6a1f0c7ee1f4bf10dea4ad6a14be701c160703d33495041bd693dc085102"
+      "sha256": "6d7533ef6901a6d3f7e8a482dd7bf121f49eebfa65f804c30d7280d5608d268f"
     },
     {
       "path": "developer/role_presentation.py",
@@ -74,19 +74,19 @@
     },
     {
       "path": "empirica/scenarios/fixed-15.json",
-      "sha256": "c05324f199a9713cdbcb7d49ee510a21de86e97a66ec8d772a8cbefeaf1512f8"
+      "sha256": "6f04a389e08d1285cf769029a51fda5f0465fddbd9bbb453aff473e16b18d087"
     },
     {
       "path": "empirica/scenarios/flexible-15.json",
-      "sha256": "4a1358c7d4c536eff7fd97035d9d6ab22aa3178ba88c4e162e15cb400c6515a8"
+      "sha256": "c2cee67ad4b88a081cd7815bda5e40dfcc848a9ef42d70f9e14f60b0b6b72c94"
     },
     {
       "path": "empirica/scenarios/flexible-215.json",
-      "sha256": "40dce525023a22873d4dc3d67378495cdaf5999cb7ba7393f40bc3be819891f3"
+      "sha256": "241636fea5934d6014f55c1786c4cb97e7accc62f36c0a6049fbb2cfdeac4925"
     },
     {
       "path": "empirica/scenarios/tutorial.json",
-      "sha256": "d060638ac0649bc187df79c3c5b183e659d43d6ee0ed9d053340aadd3a6d4011"
+      "sha256": "64dc0f27f873ba408e3fd6bb8de7b1eb401e84a12dc1c781a2ee4d05265aa61b"
     },
     {
       "path": "empirica/score_offer.py",
