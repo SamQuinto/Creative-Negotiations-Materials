@@ -18,6 +18,8 @@ Load only the role JSON and survey YAML matching the participant's assigned role
 
 The `_200` role filenames are retained so existing Empirica raw links continue to work. Their contents are the current reviewed role materials.
 
+These are the expanded-task narratives. For the Fixed-15 condition, the experiment must instead use the fixed version and show that participant's own full payoff table; do not reuse an open-ended narrative and call it Fixed 15. The scorer, current scenario files, developer guide, and minimal offline replication are in the [main prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
+
 ### Post-negotiation surveys
 
 | Use | Empirica YAML | Interactive preview |
