@@ -1086,14 +1086,14 @@ def _smart_text_findings(
         shown = f"{numeric_date.group(1)}/{numeric_date.group(2)}"
         findings.append(_finding(
             CLARIFICATION_NEEDED, "ambiguous_numeric_date",
-            f"I found “{shown}”, which can mean different dates. Please write the start month as May, June, July, August, or September.",
+            f"I found “{shown}”, which can mean different dates. Please write the month name and day, for example January 6 or June 5.",
         ))
 
     approximate_date = re.search(
-        r"\b(?:start(?:ing)?(?:\s+date)?\s+(?:in\s+)?)((?:around\s+)?(?:mid[-\s]?)?(?:May|June|July|August|September)(?:\s+\d{1,2})?)\b",
+        r"\b(?:start(?:ing)?(?:\s+date)?\s+(?:in\s+)?)((?:(?:around|about|early|late)\s+)?(?:mid[-\s]?)?(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)(?:\s+\d{1,2})?)\b",
         raw, re.I,
     )
-    if approximate_date and re.search(r"\b(?:around|mid[-\s]?)", approximate_date.group(1), re.I) and not (_scenario_issue_map(scenario).get('Starting Date', {}).get('natural_date_conventions') and not re.search(r'\baround\b', approximate_date.group(1), re.I)):
+    if approximate_date and re.search(r"\b(?:around|about|early|late|mid[-\s]?)", approximate_date.group(1), re.I) and not (_scenario_issue_map(scenario).get('Starting Date', {}).get('natural_date_conventions') and not re.search(r'\b(?:around|about|early|late)\b', approximate_date.group(1), re.I)):
         phrase = approximate_date.group(1)
         findings.append(_finding(
             CLARIFICATION_NEEDED, "approximate_start_date",
@@ -1629,7 +1629,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
             maximum = float(spec["max"]) if spec else 20000
             additions.append(("Personal Budget", f"${maximum:,.0f}"))
     if "earliest possible start" in lower:
-        additions.append(("Starting Date", "May"))
+        additions.append(("Starting Date", str(_scenario_issue_map(scenario).get('Starting Date', {}).get('min', 'May'))))
     mentor_text = re.sub(r'\bmentor(?:ing)?\s+meeting\s+frequency\s*:[^;\n|]*', '', lower, flags=re.I)
     if re.search(r"\b(?:mentor|mentoring|mentorship)\b", mentor_text):
         option = _mentorship_option(lower)

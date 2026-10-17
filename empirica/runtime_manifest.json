@@ -1,6 +1,6 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "864317be0632cbe59578b41a3620543ff79ff381",
+  "source_commit": "542651cb5aef22c3e5024a42aa15fdf18876268f",
   "date": "2026-10-17",
   "description": "Generated public runtime mirror; edit the canonical project, then republish.",
   "files": [
@@ -10,7 +10,7 @@
     },
     {
       "path": "app/backend/offer_engine.py",
-      "sha256": "886096a520e2fe6f791908431a190423e389abd81710ffa1ea48496d95a0a43a"
+      "sha256": "436afa2164143281db001f714a76b6e8ba6a834ed49fe26f55810e47eb519eb5"
     },
     {
       "path": "app/backend/scenario_rules.py",
