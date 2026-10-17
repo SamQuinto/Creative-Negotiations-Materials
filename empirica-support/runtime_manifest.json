@@ -2,7 +2,7 @@
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
   "source_commit": "3be4ff4cf1535bf19e7402683fe462fceda71b01",
   "date": "2026-10-17",
-  "description": "Generated public runtime mirror; edit the canonical project, then republish.",
+  "description": "Public shared-engine mirror with a three-file Empirica handoff folder. Scoring logic and payoffs are unchanged by this layout revision.",
   "files": [
     {
       "path": "app/backend/api_budget.py",
@@ -57,36 +57,52 @@
       "sha256": "1b3ac2e12bdc5858616eb4902cb082ee49ab8c3eaab81c13a194309c06b017ca"
     },
     {
-      "path": "empirica/deterministic_score.mjs",
+      "path": "empirica-support/README.md",
+      "sha256": "44d5fa430991af648d27e10335b2764bb092f61699a356932b212b4402d0706f"
+    },
+    {
+      "path": "empirica-support/SCENARIO_FORMAT.md",
+      "sha256": "410497e9b4d8e66605b417445594eac62cf08f7c6f83f596c52b4784c194e7a6"
+    },
+    {
+      "path": "empirica-support/deterministic_score.mjs",
       "sha256": "5845b07a918763052324589498ce48ea0604726a508a675533b0a63f93fa1acc"
     },
     {
-      "path": "empirica/preview.html",
+      "path": "empirica-support/preview.html",
       "sha256": "b05edf45318425ecf1604e3d00c69eaa58bc63d7d3733287355ad9954be828df"
     },
     {
-      "path": "empirica/preview_server.py",
-      "sha256": "a96c7236f12422c1a8e5919ad160a4029fcd9c0e306616171dcc37461c4b49a0"
+      "path": "empirica-support/preview_server.py",
+      "sha256": "f8b3bbeeb65feae35bf1926dc45a7a1d685f6746f574638b91aff35a5247e710"
     },
     {
-      "path": "empirica/SCENARIO_FORMAT.md",
-      "sha256": "3bc89a1c3288a5d39d866185ceefa2f53a09bc8189c26902de15e03f2c69522e"
-    },
-    {
-      "path": "empirica/scenarios/fixed-15.json",
+      "path": "empirica-support/scenarios/fixed-15.json",
       "sha256": "f999655b05b7cf6fd78fdb9b234bc0cabf3f7677dc0cd09f58e0269dac8dba9b"
     },
     {
-      "path": "empirica/scenarios/flexible-15.json",
+      "path": "empirica-support/scenarios/flexible-15.json",
       "sha256": "b334af4f51ba03c8f39d8bbeade5c472cf4798a54dcd4a5bfd4f3adb3611fa97"
     },
     {
-      "path": "empirica/scenarios/flexible-215.json",
+      "path": "empirica-support/scenarios/flexible-215.json",
       "sha256": "ac36e5b6b44a5b72d2ae70077666ba789529cab68d2605161e4559642db8d4f1"
     },
     {
-      "path": "empirica/scenarios/tutorial.json",
+      "path": "empirica-support/scenarios/tutorial.json",
       "sha256": "3a9d401a8eddaf286cf9f92192f939fbb64e80743a3ddd330e0ce3a968104350"
+    },
+    {
+      "path": "empirica-support/smoke_test.py",
+      "sha256": "aab5899e1a84ba865121e4af8acaffc5a55bae4ce79e80132bbb2ed8a3593fa3"
+    },
+    {
+      "path": "empirica-support/test_language_rules.py",
+      "sha256": "62fdf7fc2ddfb7212e48c376f9e1dadebe575ae59df90e61c237922bda66372e"
+    },
+    {
+      "path": "empirica/flexible-215.json",
+      "sha256": "ac36e5b6b44a5b72d2ae70077666ba789529cab68d2605161e4559642db8d4f1"
     },
     {
       "path": "empirica/score_offer.py",
@@ -95,10 +111,7 @@
     {
       "path": "empirica/score_tutorial_offer.py",
       "sha256": "e7272b4c92f1e0a1fa3357c14e5f631e99ef6aaace285eb1ac8d4a4b364a0b83"
-    },
-    {
-      "path": "empirica/test_language_rules.py",
-      "sha256": "62fdf7fc2ddfb7212e48c376f9e1dadebe575ae59df90e61c237922bda66372e"
     }
-  ]
+  ],
+  "layout_revision": "2026-10-17-three-file-handoff"
 }

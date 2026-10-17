@@ -31,14 +31,16 @@ The HTML files are visual, interactive previews only. They do not save or transm
 
 ### Empirica scorer and scenarios
 
-[Open the public Empirica folder](empirica/) or [download ZIP](https://github.com/SamQuinto/Creative-Negotiations-Materials/archive/refs/heads/main.zip). The download includes the two Python commands and the shared `app/` and `developer/` files they need. Keep those folders together. The exact prototype revision and file hashes are in the [runtime manifest](empirica/runtime_manifest.json); [instructions and a no-key smoke test](empirica/README.md) are included.
+[Open the public Empirica folder](empirica/). It contains just the two Python commands and a copy of the current 215-issue scenario. The commands are **not standalone**: keep the shared `app/` folder in the repository layout. The local preview also uses `developer/`.
+
+[Setup instructions, tests, the preview, and other scenarios](empirica-support/) are kept separately to make the download folder easier to navigate. The exact engine revision and file hashes are in the [runtime manifest](empirica-support/runtime_manifest.json). This is a folder cleanup; the scoring logic and payoffs are unchanged.
 
 | Backend scenario | Public raw JSON |
 |---|---|
-| Fixed 15 | [fixed-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/fixed-15.json) |
-| Flexible 15 | [flexible-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/flexible-15.json) |
-| Flexible 215 | [flexible-215.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/flexible-215.json) |
-| Tutorial | [tutorial.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/scenarios/tutorial.json) |
+| Fixed 15 | [fixed-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json) |
+| Flexible 15 | [flexible-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/flexible-15.json) |
+| Flexible 215 | [flexible-215.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json) |
+| Tutorial | [tutorial.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/tutorial.json) |
 
 These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and do not send the complete files to participants' browsers. The visible `readrole_instructions` test placeholder still needs replacing before participant collection. The main prototype repository remains private.
 

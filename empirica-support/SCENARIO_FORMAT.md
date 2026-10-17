@@ -4,14 +4,14 @@ The generated JSONs follow the supplied 200-issue sample's structure. Each has `
 
 `readrole_instructions` keeps the visible **test placeholder** requested by the researcher. Replace it before collecting participant data. The old office-sharing introduction, pounds, and three-party agreement wording are not copied into these files. The general `tips` do not promise an outdated feedback-survey bonus.
 
-| File under `empirica/scenarios/` | Required issues | Own-payoff display |
+| File under `empirica-support/scenarios/` | Required issues | Own-payoff display |
 |---|---|---|
 | `fixed-15.json` | All 15 original issues | All 15 rows |
 | `flexible-15.json` | Salary, budget, starting date | Three required rows |
 | `flexible-215.json` | Salary, budget, starting date | Three required rows |
 | `tutorial.json` | Venue fee, event date, closing time | Three practice rows |
 
-The 200-issue scenario in `app/config/large-200.json` is archived, not the current expanded task. Historical experiments in `replication/` retain their original files and values.
+A byte-identical copy of `flexible-215.json` is also available directly in `empirica/` for easy sharing. The 200-issue scenario in `app/config/large-200.json` is archived, not the current expanded task. Historical experiments in `replication/` retain their original files and values.
 
 ## What is in the fixed table?
 
@@ -64,7 +64,7 @@ For authoritative server scoring, pass explicit choices to the Python adapter. T
 import json, subprocess, sys
 result = subprocess.run([
     sys.executable, 'empirica/score_offer.py',
-    '--scenario-file', 'empirica/scenarios/fixed-15.json',
+    '--scenario-file', 'empirica-support/scenarios/fixed-15.json',
     '--role', 'Candidate', '--choices-json', json.dumps(choices), '--json'
 ], capture_output=True, text=True)
 ```
@@ -90,7 +90,7 @@ Zero or negative offers may be proposed, but acceptance requires strictly positi
 ## Try the local game
 
 ```text
-python empirica/preview_server.py
+python empirica-support/preview_server.py
 ```
 
 Open `http://127.0.0.1:3136/`. Select a scenario and role, enter values, review and send an offer, then switch roles and accept it on both sides. The game loads the generated JSON, checks the browser's fixed-condition calculation against the shared Python scorer, and applies the agreement rules. It needs no key and makes no AI calls. It is a local integration check, not the deployed Empirica app or a participant data-collection service.
@@ -106,6 +106,6 @@ python developer/test_scorer.py
 python developer/test_experiment_materials.py
 ```
 
-Edit the payoff definitions in `app/config/`, then rebuild the exports. Tables and continuous rules are derived from the same definitions; do not maintain a separate table by hand. The generator also refreshes Fixed 15's private display table.
+These rebuild commands belong to the full prototype checkout, which keeps its original development layout. Edit the payoff definitions in `app/config/`, then rebuild the exports. When publishing here, place those exports in `empirica-support/scenarios/` and refresh the matching `empirica/flexible-215.json` copy. Tables and continuous rules are derived from the same definitions; do not maintain a separate table by hand. The generator also refreshes Fixed 15's private display table.
 
 Checks cover all 256 discrete packages for both roles, fractional values, open money, calendar limits, browser/Python agreement, external files in paths with spaces, missing fixed choices, and agreement from both sides. These are offline checks, not a claim of perfect live language interpretation. Final deployment still requires connecting the reader to these inputs and verifying the live server's version.

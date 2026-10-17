@@ -15,6 +15,10 @@ from offer_engine import score_pair
 
 
 def main():
+    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'flexible-215.json'}
+    published_files = {p.name for p in (ROOT / 'empirica').iterdir() if p.name != '__pycache__'}
+    assert published_files == expected_files, published_files
+    assert (ROOT / 'empirica/flexible-215.json').read_bytes() == (ROOT / 'empirica-support/scenarios/flexible-215.json').read_bytes(), '215 scenario copies differ'
     defaults = {'Salary': 31213, 'Personal Budget': 7000, 'Starting Date': '2026-05-01',
         'Probation Length': 3, 'Contract Length': 3, 'Vacation Days': 30, 'Remote Working Days': 3,
         'Venue fee': 300, 'Event date': '2027-09-15'}
@@ -23,7 +27,7 @@ def main():
     count = 0
     with tempfile.TemporaryDirectory(prefix='Empirica download check ') as folder:
         for name in ('fixed-15', 'flexible-15', 'flexible-215', 'tutorial'):
-            path = ROOT / 'empirica/scenarios' / (name + '.json')
+            path = ROOT / 'empirica-support/scenarios' / (name + '.json')
             scenario = json.loads(path.read_text(encoding='utf-8'))
             choices = {i['name']: defaults.get(i['name'], i.get('min')) if i['kind'] == 'continuous'
                        else i['options'][-1]['label'] for i in scenario['issues'] if i['name'] in scenario['required_issues']}
@@ -40,6 +44,15 @@ def main():
                 assert math.isclose(response['total_for_proposer'], expected, abs_tol=1e-9), response
                 assert set(response['valid_pairs']) == set(choices), response
                 count += 1
+        completed = subprocess.run([sys.executable, str(ROOT / 'empirica/score_offer.py'),
+            '--scenario-file', str(ROOT / 'empirica/flexible-215.json'), '--role', 'Candidate',
+            '--choices-json', json.dumps({'Salary': 55000, 'Personal Budget': 9000, 'Starting Date': '2026-01-01'}), '--json'],
+            cwd=folder, env=env, capture_output=True, text=True, encoding='utf-8', timeout=20)
+        assert completed.returncode == 0, completed.stderr or completed.stdout
+        response = json.loads(completed.stdout)
+        assert response['decision'] == 'scorable' and response['scorer_routing']['calls'] == 0, response
+        assert math.isclose(response['total_for_proposer'], 1 + 2/3 - 0.4, abs_tol=1e-9), response
+        count += 1
         completed = subprocess.run([sys.executable, str(ROOT / 'empirica/score_tutorial_offer.py'),
             '--choices-json', json.dumps({'Venue fee': 300, 'Event date': '2027-09-15', 'Closing time': '9:00 p.m.'}), '--json'],
             cwd=folder, env=env, capture_output=True, text=True, encoding='utf-8', timeout=20)
@@ -67,12 +80,12 @@ def main():
             assert completed.returncode==0,completed.stderr or completed.stdout
             assert json.loads(completed.stdout)['issue_count']==wanted,completed.stdout
             count+=1
-    spec = importlib.util.spec_from_file_location('download_preview', ROOT / 'empirica/preview_server.py')
+    spec = importlib.util.spec_from_file_location('download_preview', ROOT / 'empirica-support/preview_server.py')
     preview = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(preview)
     preview.load()
     assert set(preview.SCENARIOS) == {'fixed-15', 'flexible-15', 'flexible-215', 'tutorial'}
-    print(f'PASS: {count} real CLI checks, all four scenarios, both roles, invalid dates, both folder layouts, and preview imports. No AI calls.')
+    print(f'PASS: {count} real CLI checks, all four scenarios, both roles, invalid dates, both folder layouts, the three-file Empirica folder, identical 215 exports, and preview imports. No AI calls.')
 
 
 if __name__ == '__main__':
