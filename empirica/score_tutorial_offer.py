@@ -3,13 +3,8 @@
 
 from __future__ import annotations
 
-import os
-
-
-os.environ["SCORER_DEFAULT_SPACE"] = "tutorial"
-
-from score_offer import main  # noqa: E402  (default must be selected before import)
+from score_offer import main
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(default_space="tutorial"))

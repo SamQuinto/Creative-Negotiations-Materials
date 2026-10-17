@@ -31,7 +31,7 @@ The HTML files are visual, interactive previews only. They do not save or transm
 
 ### Empirica scorer and scenarios
 
-[Open the public Empirica folder](empirica/) or [download ZIP](https://github.com/SamQuinto/Creative-Negotiations-Materials/archive/refs/heads/main.zip). The download includes the two Python commands and the shared `app/` and `developer/` files they need. Keep those folders together. The runtime mirrors prototype release `a2408be`; [instructions and a no-key smoke test](empirica/README.md) are included.
+[Open the public Empirica folder](empirica/) or [download ZIP](https://github.com/SamQuinto/Creative-Negotiations-Materials/archive/refs/heads/main.zip). The download includes the two Python commands and the shared `app/` and `developer/` files they need. Keep those folders together. The exact prototype revision and file hashes are in the [runtime manifest](empirica/runtime_manifest.json); [instructions and a no-key smoke test](empirica/README.md) are included.
 
 | Backend scenario | Public raw JSON |
 |---|---|

@@ -4,6 +4,7 @@ import json
 import math
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -45,12 +46,33 @@ def main():
         assert completed.returncode == 0, completed.stderr or completed.stdout
         assert json.loads(completed.stdout)['scenario_id'].startswith('community-'), completed.stdout
         count += 1
+        for literal in ('2026-01-01','2026-02-30','2027-05-01'):
+            completed=subprocess.run([sys.executable,str(ROOT/'empirica/score_offer.py'),'--issue-space','215',
+                '--choices-json',json.dumps({'Salary':25000,'Personal Budget':19000,'Starting Date':literal}),'--json'],
+                cwd=folder,env=env,capture_output=True,text=True,encoding='utf-8',timeout=20)
+            assert completed.returncode==0,completed.stderr or completed.stdout
+            response=json.loads(completed.stdout)
+            assert response['decision']!='scorable' and response['total_for_proposer'] is None,response
+            assert not response.get('error'),response
+            assert 'could not convert string to float' not in completed.stdout,completed.stdout
+            count+=1
+        flat=Path(folder)/'flat';flat.mkdir()
+        for relative in ('app/backend','app/config'):
+            shutil.copytree(ROOT/relative,flat/relative,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+        for script in ('score_offer.py','score_tutorial_offer.py'):
+            shutil.copy2(ROOT/'empirica'/script,flat/script)
+        for script,wanted in (('score_offer.py',15),('score_tutorial_offer.py',9)):
+            completed=subprocess.run([sys.executable,str(flat/script),'--version'],cwd=folder,env=env,
+                capture_output=True,text=True,encoding='utf-8',timeout=20)
+            assert completed.returncode==0,completed.stderr or completed.stdout
+            assert json.loads(completed.stdout)['issue_count']==wanted,completed.stdout
+            count+=1
     spec = importlib.util.spec_from_file_location('download_preview', ROOT / 'empirica/preview_server.py')
     preview = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(preview)
     preview.load()
     assert set(preview.SCENARIOS) == {'fixed-15', 'flexible-15', 'flexible-215', 'tutorial'}
-    print(f'PASS: {count} real CLI checks, all four scenarios, both roles, and preview imports. No AI calls.')
+    print(f'PASS: {count} real CLI checks, all four scenarios, both roles, invalid dates, both folder layouts, and preview imports. No AI calls.')
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "a2408be99216d0c3f0d17e803ad3a36d1cda8bae",
-  "date": "2026-10-16",
+  "source_commit": "ae328863614899c7e2cadb3f4e62eb921f3fa65f",
+  "date": "2026-10-17",
   "description": "Generated public runtime mirror; edit the canonical project, then republish.",
   "files": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "path": "app/backend/offer_engine.py",
-      "sha256": "561ed667019f0dd5f88deb7066d7e6623df8b0b5a104abb0226b36fa1d37e2d4"
+      "sha256": "d9da921a1e25a1193283369ff5987ff8b601b32e15514baf2cdb98eab3420c8e"
     },
     {
       "path": "app/backend/scenario_rules.py",
@@ -22,7 +22,7 @@
     },
     {
       "path": "app/backend/stream.py",
-      "sha256": "d664f18b6d3dc4f48381bc2f3fd1e87a1d0d9c9029453beceff8d468936ce809"
+      "sha256": "31dd882415c3187838b82a992a5d2cb856203266e2fcccdc7844e36544e52cb3"
     },
     {
       "path": "app/backend/structured_offer.py",
@@ -90,11 +90,11 @@
     },
     {
       "path": "empirica/score_offer.py",
-      "sha256": "6927e4d7b3584a8cb9a339facf19841afc621d119a156ff6114ac371045fd943"
+      "sha256": "7277b8be9b17c63fbc4fc2bbd48df037e35f766602a8d62a3e837ba49f2a7973"
     },
     {
       "path": "empirica/score_tutorial_offer.py",
-      "sha256": "d050808418abcc9037dfabc84e5229a3da1756394e4a73fc4c623f3ae5455f60"
+      "sha256": "6e3d3b659b4bd77bfc5cabcb19b6f58e888a434f11c04983b26553ec85875659"
     }
   ]
 }

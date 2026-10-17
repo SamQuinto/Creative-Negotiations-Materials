@@ -16,6 +16,7 @@ from offer_engine import SCORABLE, evaluate_offer, score_pair, source_quote_is_g
 
 
 ROOT = Path(__file__).resolve().parent.parent
+SCORER_VERSION = '2026-10-17-language-audit-v6'
 SHARED_KEYS_DIR = Path(os.environ["CREATIVE_NEGOTIATIONS_KEYS_DIR"]) if os.environ.get("CREATIVE_NEGOTIATIONS_KEYS_DIR") else None
 
 
@@ -338,6 +339,7 @@ def _llm_extract_once(text: str, previous_offer: str = "", dense_audit: bool = F
         + dense_rule +
         "Use exact issue names. For a discrete issue, return the exact option label. For a continuous issue, preserve the exact stated value and normalize only formatting (for example $22,000, May 15, 4.5 months, or 25 days).\n"
         "For a continuous_range issue, any value inside its configured range is valid. For a continuous_value issue, use its proposal minimum/maximum; its scoring reference values are anchors, not proposal limits, so preserve valid values beyond those anchors. Do not snap to a sample value, round, convert units/currency, invent values, or silently omit material terms.\n"
+        "Keep a clearly stated value even when it is outside the allowed domain or is an invalid calendar date, such as January 1 or February 30. The validator must explain the problem; never silently omit that issue or substitute an allowed value.\n"
         "Starting-date convention: a month alone, such as 'starting date of May', 'start May', or 'May start', means the first day of that month in the scenario year. Return May 1 for May alone, not a missing-day question. Preserve an explicitly stated day exactly. Alternatives such as May or June, and approximate dates such as late May, still need clarification. The complete interpreted date is shown for confirmation.\n"
         "Put unresolved ranges, mutually exclusive alternatives, conditional IF/THEN packages, vague offered values, unclear references, sarcasm, and hypotheticals in ambiguities. Ask only for information needed to select a configured issue/choice or a single numeric value. Ordinary descriptions or fixed qualifications are not automatically unresolved conditions. Do not ask a question whose answer is already stated. Do not mark polite willingness to discuss as an ambiguity when one complete concrete offer is already present, unless the participant also presents a second material package.\n"
         "The personal work-expense budget already covers business/client travel, meals and lodging in this scenario. When its dollar amount is stated, do not request expense examples, reimbursement criteria, receipts, or approval-policy details merely to score that amount. Do not invent additional requirements that the negotiator must add. An independently proposed approval rule belongs to its own catalog issue when one exists; a truly new term is captured/rejected under the scenario policy, not turned into a series of questions about unpriced details.\n"
@@ -785,6 +787,8 @@ def score(text: str, role: str, extraction: dict | None = None, previous_offer: 
         "model": extraction.get('_model', MODEL),
         "scorer_routing": extraction.get('_routing', {'policy': 'single', 'selected': MODEL}),
         "scenario_id": SCENARIO.get("scenario_id"),
+        "scorer_version": SCORER_VERSION,
+        "scenario_issue_count": len(SCENARIO.get('issues', [])),
         "material_revision": SCENARIO.get("material_revision"),
         "scenario_variant": SCENARIO.get("scenario_variant", {}).get("id"),
         "required_issues": REQUIRED_ISSUES,

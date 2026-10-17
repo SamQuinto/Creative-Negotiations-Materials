@@ -1,6 +1,6 @@
 # Empirica scorer download
 
-This public package contains the current main and tutorial scorer commands, scenario JSONs, and the shared files they need. The runtime matches prototype release `a2408be` (16 October 2026), including the month-only start-date and punctuation-free offer repairs. [runtime_manifest.json](runtime_manifest.json) records the source revision and file hashes.
+This public package contains the current main and tutorial scorer commands, scenario JSONs, and the shared files they need. [runtime_manifest.json](runtime_manifest.json) records the exact source revision and file hashes. The October 17 update improves stated-date feedback, preserves short labels and clear optional duties, and prevents several neighboring issues from changing one another's meaning.
 
 ## Download and run
 
@@ -12,18 +12,25 @@ Use Python 3.11 or later. No extra Python packages are required. From the extrac
 python empirica/smoke_test.py
 ```
 
-This tests the actual command-line scripts, all four current scenarios, both roles, and the local preview imports. It makes no AI calls and does not need a key.
+This tests the actual command-line scripts, all four current scenarios, both roles, invalid calendar dates, both supported folder layouts, and the local preview imports. It makes no AI calls and does not need a key. It is a packaging and rule check, not a live language-model test.
 
 For natural-language scoring, set your own `OPENAI_API_KEY` environment variable, then run:
 
 ```text
 python empirica/score_offer.py --role Candidate --issue-space 215 --text "budget of 7000 salary of 31213 starting date of may" --json
 python empirica/score_tutorial_offer.py --text "300 venue fee September 15 close at 9pm include projector use" --json
+python empirica/score_offer.py --issue-space 215 --version
 ```
 
 The main command defaults to Flexible 15. Use `--issue-space fixed-15`, `15`, or `215` explicitly for the intended study; `200` selects the archived scenario. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all 15 rows for Fixed 15.
 
 Natural-language offers use Nano for routine interpretation and independent Luna review when flagged. Payoffs are calculated by the shared deterministic engine. A month-only start such as May is shown as May 1 for confirmation; a supplied day is preserved. Salary and budget accept any non-negative amount, with proportional scoring beyond the displayed reference anchors.
+
+A stated date outside May 1–September 30 is acknowledged with a correction question, not called missing or silently replaced. The date interval remains intentional. `--version` prints the selected scenario's ID, issue count, and shared-file fingerprints without an AI call; use it to check the actual server installation.
+
+The supplied layout keeps the commands in `empirica/`. A server may also put both commands directly beside `app/`; both layouts work without editing `ROOT`. Replace the shared `app/` files as well as the commands when updating. A new JSON URL alone cannot update Python interpretation or feedback behavior. The original root-level commands in the private prototype were not overwritten.
+
+For natural-language feedback, `unstated_required` lists required issues the participant did not supply, while `invalid_required` lists supplied values that need correction. `missing_required` remains the compatibility list of all required rows without a valid choice. Use the first two fields to distinguish “still needed” from “please clarify.” Display a final value only for a `scorable` result, using `total_for_proposer`; a partial `total` is not a complete offer's value. Show the complete interpreted package for confirmation before sending it.
 
 ## Files and integration
 

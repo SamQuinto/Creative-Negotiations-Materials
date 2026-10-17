@@ -231,6 +231,48 @@ def _explicit_fair_pledge(text: str) -> bool:
     return False
 
 
+def _literal_fair_commitment(text: str) -> bool:
+    """Keep an explicit fair pledge separate from a neighboring declined duty."""
+    for match in re.finditer(r'\bcommit\s+to\s+(?:(?:an?|the)\s+)?(?:recruitment|recruiting|careers?|hiring)[-\s]+fairs?\b',text,re.I):
+        before=text[max(0,match.start()-60):match.start()]
+        after=text[match.end():match.end()+65]
+        if re.search(r"\b(?:not|never|cannot|can['’]t|won['’]t|don['’]t|without)\s+(?:(?:ready|willing|able|going|prepared|planning|required|expected|obliged|forced|to|be)\s+){0,6}$",before,re.I):
+            continue
+        if re.search(r'\b(?:optional|voluntary|subject\s+to|only\s+if|mutual\s+agreement)\b',after,re.I):
+            continue
+        return True
+    return False
+
+
+def _mentorship_option(text: str) -> str:
+    """Read a mentoring inclusion/exclusion without borrowing another duty's no."""
+    choice='Participation'
+    mentor=r'mentor(?:ing|ship)?(?:\s+program(?:me)?)?'
+    for clause in _offer_clauses(text):
+        if not re.search(r'\bmentor(?:ing|ship)?\b',clause,re.I):continue
+        negative=(re.search(r'\b(?:no|without|exclude|decline)\s+(?:(?:any|a|an|the|formal|structured|professional|internal|assigned|regular)\s+){0,5}'+mentor+r'\b',clause,re.I)
+            or re.search(r'\b(?:not|never)\s+(?:(?:want|need|receive|have|undergo|participate|in|a|an|the|be|assign|assigned|candidate|employee|me|you|experienced|internal)\s+){0,8}'+mentor+r'\b',clause,re.I)
+            or re.search(r'\b'+mentor+r'\s+(?:no|not)\s+participation\b',clause,re.I)
+            or re.search(r'\b(?:no|without)\s+(?:any\s+)?(?:professional\s+)?training(?:\s+program(?:me)?)?\s+(?:and|or)\s+'+mentor+r'\b',clause,re.I))
+        choice='No participation' if negative else 'Participation'
+    return choice
+
+
+_FOUR_DAY_PATTERN = r'(?:four|4)[-\s]?day\s+(?:working\s+)?(?:workweek|week|schedule)'
+
+
+def _explicit_workweek_trial(text: str) -> str | None:
+    """A cadence must belong to the four-day trial, not a neighboring issue."""
+    patterns=(rf'\b(weekly|monthly)\s+(?:trial|pilot)\s+(?:(?:of|for|a|the|an)\s+){{0,4}}{_FOUR_DAY_PATTERN}\b',
+        rf'\b(weekly|monthly)\s+{_FOUR_DAY_PATTERN}\s+(?:trial|pilot)\b',
+        rf'\b{_FOUR_DAY_PATTERN}\s*(?:[:=]\s*)?(?:(?:as|a|on)\s+){{0,3}}(weekly|monthly)\s+(?:trial|pilot)\b',
+        rf'\b{_FOUR_DAY_PATTERN}\s+(?:trial|pilot)\s*[:=]?\s*(weekly|monthly)(?:\s+trial)?\b')
+    for pattern in patterns:
+        match=re.search(pattern,text,re.I)
+        if match:return match.group(1).lower()
+    return None
+
+
 def _explicit_posting_pledge(text: str) -> bool:
     """A posting duty is distinct from agreeing its content or schedule.
 
@@ -576,6 +618,10 @@ def previous_offer_reference(text: str, scenario: dict[str, Any] | None) -> dict
 
 def _number_from_text(value: str) -> float:
     cleaned = value.strip().lower().replace(",", "").replace("$", "")
+    # Spaces (including pasted thin/non-breaking spaces) can group thousands.
+    # Preserve actual decimal points and units rather than reading only 30
+    # from a correctly interpreted amount such as "30 000 USD per year".
+    cleaned = re.sub(r'(?<=\d)\s+(?=\d{3}(?!\d))','',cleaned)
     if re.search(r"\b(?:no|none|zero)\b", cleaned):
         return 0.0
     match = re.search(r"-?\d+(?:\.\d+)?(?:e[+-]?\d+)?\s*k?", cleaned)
@@ -618,7 +664,7 @@ def _date_from_text(value: str, spec: dict[str, Any]) -> date:
     raise ValueError("no calendar date found")
 
 
-def _stated_start_date(text: str, scenario: dict[str, Any] | None) -> str | None:
+def _stated_start_date(text: str, scenario: dict[str, Any] | None, *, include_invalid: bool = False) -> str | None:
     """Read one stated start date; a month alone uses its first day for review.
 
     This is the existing month-only convention, not permission to choose a date
@@ -628,8 +674,8 @@ def _stated_start_date(text: str, scenario: dict[str, Any] | None) -> str | None
     if not spec:
         return None
     text = _focused_text(text)
-    month = r'(?:May|June|July|August|September|Jun|Jul|Aug|Sep|Sept)'
-    value = rf'(?:\d{{4}}-\d{{2}}-\d{{2}}|\d{{1,2}}(?:st|nd|rd|th)?\s+(?:of\s+)?{month}|{month}(?:\s+\d{{1,2}}(?:st|nd|rd|th)?)?)(?:,?\s+20\d{{2}})?'
+    month = r'(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)'
+    value = rf'(?:\d{{4}}-\d{{2}}-\d{{2}}|\d{{1,2}}(?:st|nd|rd|th)?[-\s]+(?:of\s+)?{month}|{month}(?:[-\s]*\d{{1,2}}(?:st|nd|rd|th)?)?)(?:,?\s+20\d{{2}})?'
     label = r'start(?:ing)?(?:\s+date)?'
     patterns = [rf'\b{label}\s*(?:(?:on|of|is|would\s+be|will\s+be)\s+|[:=]\s*)?({value})\b',
                 rf'\b({value})\s+{label}\b']
@@ -642,12 +688,16 @@ def _stated_start_date(text: str, scenario: dict[str, Any] | None) -> str | None
                 continue
             if re.match(rf'\s*(?:or|/|to|through|until|and)\s*(?:{month}\b|\d)', after, re.I):
                 return None
+            if re.match(r'\s*(?:next|last|this|the\s+following)\s+year\b', after, re.I):
+                return None
             try:
-                stated = _date_from_text(match.group(1), spec)
-                if date.fromisoformat(str(spec['min'])) <= stated <= date.fromisoformat(str(spec['max'])):
+                literal = re.sub(r'(?<=[A-Za-z])-(?=\d)|(?<=\d)-(?=[A-Za-z])', ' ', match.group(1))
+                stated = _date_from_text(literal, spec)
+                if include_invalid or date.fromisoformat(str(spec['min'])) <= stated <= date.fromisoformat(str(spec['max'])):
                     dates.add(stated.isoformat())
             except (ValueError, KeyError):
-                pass
+                if include_invalid:
+                    dates.add(match.group(1).strip())
     return next(iter(dates)) if len(dates) == 1 else None
 
 
@@ -750,6 +800,11 @@ def score_pair(
             raise ValueError(f"outside range {_format_continuous(low, spec)} to {_format_continuous(high, spec)}")
         fraction = (value - low).days / (high - low).days
     else:
+        if re.search(r'\b\d{4}-\d{2}-\d{2}\b',option):
+            # Never turn an interpreter's date-shaped value into its first
+            # number (for example, a $2,026 salary). This invalid mapping
+            # triggers the existing independent-review route.
+            raise ValueError('a calendar date is not a numeric issue value')
         value = _number_from_text(option)
         if not math.isfinite(value):
             raise ValueError('please use a finite number')
@@ -1229,9 +1284,10 @@ def _smart_text_findings(
                     issue="Role Review Schedule",
                 ))
 
-    remote = re.search(r"\b(?:remotely|remote(?:[-\s]+working)?|remote\s+work|wfh|home[-\s]+working|work(?:ing)?[-\s]from[-\s]home)\b.{0,24}?\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", lower)
+    remote_scan = re.sub(r"\b(days?)\s+(weekly|monthly)\b", lambda m: m.group(1) + ' per ' + ('week' if m.group(2)=='weekly' else 'month'), lower)
+    remote = re.search(r"\b(?:remotely|remote(?:[-\s]+working)?|remote\s+work|wfh|home[-\s]+working|work(?:ing)?[-\s]from[-\s]home)\b.{0,24}?\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", remote_scan)
     if not remote:
-        remote = re.search(r"\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+(?:remote(?:[-\s]+working)?|wfh|home[-\s]+working)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", lower)
+        remote = re.search(r"\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+(?:remote(?:[-\s]+working)?|wfh|home[-\s]+working)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", remote_scan)
     if remote:
         number = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7"}.get(remote.group(1), remote.group(1))
         option = f"{number} days / {remote.group(2)}"
@@ -1329,6 +1385,11 @@ def _smart_text_findings(
 def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     """Deterministic aliases for the documented study issues missing in the old run."""
     lower = _focused_text(text).lower()
+    for short, expanded in {"won't":"will not","wouldn't":"would not","don't":"do not",
+            "doesn't":"does not","shouldn't":"should not","can't":"cannot","couldn't":"could not",
+            "isn't":"is not","aren't":"are not","wasn't":"was not","weren't":"were not",
+            "needn't":"need not","mustn't":"must not"}.items():
+        lower=lower.replace(short,expanded).replace(short.replace("'","’"),expanded)
     # Preserve common participant spelling while keeping the original offer
     # unchanged for display and audit.
     lower = re.sub(r'\bprobstion\b','probation',lower)
@@ -1340,7 +1401,9 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     additions: list[tuple[str, str]] = []
     # A fully explicit start-date phrase can recover an omitted model field.
     # Restrict this to the start-date clause, not any date elsewhere in a story.
-    stated_start = _stated_start_date(text, scenario)
+    # Preserve a stated but invalid date so validation can explain the issue.
+    # Otherwise an extractor dropping January becomes a misleading "add date".
+    stated_start = _stated_start_date(text, scenario, include_invalid=True)
     if stated_start:
         additions.append(('Starting Date', stated_start))
     if re.search(r'\b(?:standard\s+(?:company\s+)?non[-\s]?compete|company[’\x27]s\s+standard\s+non[-\s]?compete|non[-\s]?compete\s+(?:clause\s+)?(?:kept|remains?|stays?)\s+in\s+place)\b',lower) and not re.search(r'\b(?:no|without|waiv\w*|remov\w*)\b[^.;]{0,45}\bnon[-\s]?compete\b',lower):
@@ -1379,6 +1442,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     def optional_or_declined(issue_pattern: str) -> bool:
         wrapped_issue = rf"(?:{issue_pattern})"
         general_marker = (
+            r"\bnot\s+(?:have|need|want)\s+to\b|"
             r"\b(?:voluntar(?:y|ily)|optional(?:ly)?)\b|\bagreed\b.{0,35}\bin\s+advance\b|"
             r"\bopt[-\s]?in\b|\bnot\s+(?:be\s+)?mandatory\b|\bshould\s+not\s+be\s+mandatory\b|"
             r"\brather\s+than\s+(?:a\s+)?recurring\s+obligation\b|\bcannot\s+agree\s+to\b|"
@@ -1398,6 +1462,8 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
             if not re.search(issue_pattern, clause):
                 continue
             if re.search(issue_pattern,'linkedin') and _explicit_posting_pledge(clause):
+                continue
+            if re.search(issue_pattern,'recruitment fair') and _literal_fair_commitment(clause):
                 continue
             if re.search(general_marker, clause):
                 return True
@@ -1454,10 +1520,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     if "earliest possible start" in lower:
         additions.append(("Starting Date", "May"))
     if re.search(r"\b(?:mentor|mentoring|mentorship)\b", lower):
-        option = "No participation" if re.search(
-            r"\b(?:no|not|without)\b.{0,90}\b(?:assign\w*.{0,45})?(?:mentor|mentorship)\b",
-            lower,
-        ) else "Participation"
+        option = _mentorship_option(lower)
         additions.append(("Mentorship Program", option))
     recruitment_involvement_marker = (
         r"\b(?:i|you|candidate|employee|new\s+hire|they)\b.{0,70}"
@@ -1544,8 +1607,9 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         rf"\b({number_token})\s+{remote_context}\s+days?(?:\s+(?:each|every|per|a)\s+(week|month))?\b",
         rf"\b{remote_context}\b.{{0,22}}?\b(?<![\d.,])({number_token})\s+days?(?:\s+(?:each|every|per|a)\s+(week|month))?\b",
     ]
+    remote_scan = re.sub(r"\b(days?)\s+(weekly|monthly)\b", lambda m: m.group(1) + ' per ' + ('week' if m.group(2)=='weekly' else 'month'), numeric_lower)
     for pattern in remote_patterns:
-        match = re.search(pattern, numeric_lower)
+        match = re.search(pattern, remote_scan)
         if match:
             days = word_number(match.group(1))
             spec = _scenario_issue_map(scenario).get("Remote Working Days")
@@ -1650,15 +1714,17 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         r"participat\w*.{0,20}\bmentorship)\b",
         lower,
     ):
-        negative = bool(re.search(r"\b(?:no|not|without)\b.{0,90}\bmentor(?:ing|ship)?\b", lower))
+        negative = _mentorship_option(lower)=='No participation'
         additions.append(("Mentorship Program", "No participation" if negative else "Participation"))
 
     mentor_frequency = re.search(
-        r"\b(?:mentor|mentoring)\b.{0,45}\b(monthly|weekly|each\s+month|every\s+month|each\s+week|every\s+week)\b"
-        r"|\b(monthly|weekly|each\s+month|every\s+month|each\s+week|every\s+week)\b.{0,45}\bmentor(?:ing)?\b",
+        r"\b(?:mentor|mentoring)\b(?:\s+(?:meetings?|sessions?|catch[-\s]?ups?|check[-\s]?ins?|conversations?|with|are|is|will|be|held|scheduled|happen|occur|once)){0,6}\s+"
+        r"(monthly|weekly|each\s+month|every\s+month|each\s+week|every\s+week)\b"
+        r"|\b(monthly|weekly|each\s+month|every\s+month|each\s+week|every\s+week)\s+"
+        r"(?:mentor(?:ing)?\b|(?:meetings?|sessions?)\s+with\s+(?:a|my|the)\s+mentor\b)",
         lower,
     )
-    if mentor_frequency:
+    if mentor_frequency and 'Mentor Meeting Frequency' in _scenario_issue_map(scenario):
         cadence = next((value for value in mentor_frequency.groups() if value), "")
         additions.append((
             "Mentor Meeting Frequency",
@@ -1676,6 +1742,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
             or re.search(r"\b(?:opportunit(?:y|ies)|let|allow|glad)\b.{0,100}\bvolunteer(?:ing)?\b.{0,45}" + recruitment_issue_pattern, lower)
             or re.search(r"\bvolunteer(?:ing)?\b.{0,45}" + recruitment_issue_pattern, lower)
         )
+        if _literal_fair_commitment(lower):negative=False
         additions.append(("Role in Recruitment Fair", "No commitment" if negative else "Commit"))
 
     if re.search(r"\bconferences?\b", lower) and re.search(r"\b(?:present(?:ation|ations|ing)?|speaking|speak|talks?|activities|commitment)\b", lower):
@@ -1941,12 +2008,9 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         additions.append(("Notice Period Length", f"{weeks} weeks"))
     if re.search(r"\b(?:candidate\s+will\s+)?handle\b.{0,35}\bcustomer\s+questions?\b.{0,30}\b(?:on\s+(?:their|his|her)\s+own|alone)\b", lower):
         additions.append(("Specialist Help for Customer Questions", "Self-answering"))
-    workweek_trial = re.search(r"\b(weekly|monthly)\s+trial\b.{0,35}\bfour[-\s]day\s+workweek\b", lower) or re.search(
-        r"\bfour[-\s]day\s+workweek\b.{0,35}\b(weekly|monthly)\s+trial\b",
-        lower,
-    )
+    workweek_trial = _explicit_workweek_trial(lower)
     if workweek_trial:
-        additions.append(("Four-Day Workweek Trial", f"{workweek_trial.group(1)} trial"))
+        additions.append(("Four-Day Workweek Trial", f"{workweek_trial} trial"))
 
     # Natural-language offers often place one negative predicate before or
     # after a list. Apply it to every supported duty named in that list.
@@ -1982,7 +2046,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     )
     if explicit_social_commitment:
         additions.append(("Role in Organizing Social Events", "Commitment"))
-    if _explicit_fair_pledge(lower):
+    if _explicit_fair_pledge(lower) or _literal_fair_commitment(lower):
         additions.append(('Role in Recruitment Fair','Commit'))
     # "Event-organizing duties" is an ordinary short form of the social-event
     # role. Do not conflate generic publicity with LinkedIn posting duties.
@@ -2511,7 +2575,7 @@ def evaluate_offer(
         )
 
     optional_continuous_evidence = {
-        "Vacation Days": numbered_issue(r"vacation|annual\s+leave|holiday|paid\s+days?\s+off"),
+        "Vacation Days": numbered_issue(r"vacation|annual\s+leave|holiday|(?:paid\s+)?days?\s+off"),
         "Remote Working Days": numbered_issue(r"remote(?:ly|[-\s]+working|\s+work)?|wfh|home[-\s]+working|work(?:ing)?[-\s]from[-\s]home"),
         "Probation Length": (
             numbered_issue(r"probation(?:ary)?|trial(?:\s+period)?")
@@ -2519,6 +2583,8 @@ def evaluate_offer(
             + rf"|\b{number_evidence}[-\s]?(?:months?|mos?|mo)\b[^.;]{{0,35}}\b(?:probation(?:ary)?|trial(?:\s+period)?)\b"
             + rf"|\b{number_evidence}\s*(?:months?|mos?|mo)\b[^.;]{{0,35}}\bbefore\s+(?:permanent|becoming\s+permanent)\b"
             + r"|\b(?:waiv(?:e|ed|ing)|skip(?:ping)?)\s+(?:the\s+)?(?:probation(?:ary)?|trial(?:\s+period)?)\b"
+            + rf"|\bprob\b[^.;]{{0,25}}\b{number_evidence}\s*(?:months?|mos?|mo)\b"
+            + rf"|\b{number_evidence}\s*(?:months?|mos?|mo)\b[^.;]{{0,25}}\bprob\b"
         ),
         "Contract Length": numbered_issue(r"contract|deal|employment\s+(?:term|agreement)|fixed[-\s]?(?:term\s+)?appointment|term"),
     }
@@ -2626,10 +2692,16 @@ def evaluate_offer(
         "Early Progress Reviews": r"\b(?:early\s+)?(?:progress|performance|development|onboarding|ramp)[-\s]+(?:reviews?|check[-\s]?ins?|conversations?)\b|\b(?:reviews?|check[-\s]?ins?)\b[^.;]{0,50}\b(?:first\s+90\s+days|first\s+three\s+months|onboarding|ramp)\b",
     }
     evidence_required['Mentorship Program'] = r'\bmentor(?:ing|ship)?\b'
+    evidence_required['Professional Associations Membership'] += r'|\b(?:sales|industry|trade)[-\s]+associations?\b'
+    evidence_required['Professional Associations Membership'] += r'|\b(?:firm|company|employer)\s+sponsors?\s+(?:professional\s+)?associations?\b'
+    evidence_required['Travel Meal Reimbursement'] = r'\b(?:meals?|breakfast|lunch|dinner|food|subsistence|per\s+diem)\b'
+    evidence_required['Commuting Support'] = r'\bcommut\w*\b|\btravel\s+to\s+work\b|\b(?:transport|parking)\s+(?:allowance|reimbursement|payment|costs?)\b'
+    evidence_required['Four-Day Workweek Trial'] = r'\b'+_FOUR_DAY_PATTERN+r'\b|\bcompressed[-\s]+workweek\b'
     evidence_required['Pay Review Timing'] += r'|\breview\s+of\s+(?:pay|salary|compensation)\b[^.;]{0,90}\bpromot\w*\b'
     evidence_required['Role in Recruitment Fair'] = evidence_required['Role in Recruitment Fair'].replace(r'take\s+part',r'tak(?:e|ing)\s+part')
     evidence_required['Role in Recruitment Fair'] += r'|\bcommit\s+to\s+(?:taking\s+part|participating|helping|assisting)\b[^.;]{0,60}\b(?:recruitment|recruiting|careers?|hiring)[-\s]+(?:fairs?|events?)\b'
     evidence_required['Role in Recruitment Fair'] += r'|\bcommit\w*\s+to\b[^.;]{0,65}\b(?:recruitment|recruiting|careers?|hiring)[-\s]+(?:fairs?|events?)\b'
+    evidence_required['Role in Recruitment Fair'] += r'|\bstaff(?:ing)?\s+(?:the\s+)?(?:recruitment|recruiting|careers?|hiring)[-\s]+fairs?\b'
     # Explicit actor + future duty is evidence regardless of the chosen verb.
     # Background mentions of a fair, without participation, remain insufficient.
     evidence_required['Role in Recruitment Fair'] += r"|\b(?:i|you|candidate|employee|new\s+hire|they)(?:\s+(?:will|would|must|shall)|['’]ll)\b[^.;]{0,65}\b(?:recruitment|recruiting|careers?|hiring)[-\s]+(?:fairs?|events?)\b"
@@ -2677,6 +2749,11 @@ def evaluate_offer(
             ),
         })
     evidence_required['Regular Linkedin Posts for Company'] += '|'+_LINKEDIN_CONTRIBUTION
+    evidence_required['Regular Linkedin Posts for Company'] += r'|\bpost(?:s|ing)?\s+(?:on|to)\s+linkedin\b'
+    evidence_required['Regular Linkedin Posts for Company'] += r'|\blinkedin\b[^.;]{0,70}\bcommitments?\b'
+    evidence_required['Mandatory Conference Presentations'] += r'|\bpresent(?:ing)?\s+at\s+(?:required\s+)?(?:industry\s+)?conferences?\b'
+    evidence_required['Mandatory Conference Presentations'] += r'|\bconferences?[-\s]+commitments?\b'
+    evidence_required['Role in Organizing Social Events'] += r'|\bteam[-\s]+building\b|\bsocial[-\s]+events?\b[^.;]{0,70}\bcommitments?\b'
     evidence_required['Regular Linkedin Posts for Company'] += r'|\bnot\s+be\s+responsible\s+for\b[^.;]{0,200}\blinkedin\b[^.;]{0,70}\b(?:publicity|posts?|content|communications?)\b'
     evidence_required['Regular Linkedin Posts for Company'] += r'|\b(?:not\s+include|not\s+take\s+on|not\s+have)\b[^.;]{0,200}\blinkedin\b[^.;]{0,70}\b(?:promoti\w*|activities|publicity|posts?|content)\b|\b(?:not\s+include|not\s+take\s+on|not\s+have)\b[^.;]{0,180}\bpromotional\s+linkedin\b'
     evidence_required['Regular Linkedin Posts for Company'] += r'|\b(?:regular|recurring)\s+linkedin\s+publicity\b'
@@ -2969,6 +3046,11 @@ def evaluate_offer(
     deterministic_relative_terms = ("maximum salary", "maximum work-expense", "maximum work expense", "earliest possible start")
     relative_context_terms = ("same offer", "same as before", "previous offer", "last offer") if previous_offer else ()
     irrelevant_questions={str(item.get('question','')) for item in extraction.get('ambiguity_details',[]) if isinstance(item,dict) and item.get('issue') in evidence_required and not re.search(evidence_required[item['issue']],affirmative_text,re.I)} if isinstance(extraction,dict) else set()
+    if _open_capture_enabled(scenario):
+        for parking in re.finditer(r'\b(?:reserved|dedicated|free|on[-\s]?site)\s+parking(?:\s+(?:space|spot|bay))?\b',_focused_text(text),re.I):
+            # An in-kind space is not the catalogue's annual cash commuting
+            # payment. Keep the new feature visible without inventing dollars.
+            captured_novel_terms.append(parking.group(0))
     stated_start = _stated_start_date(text, scenario)
     if stated_start and isinstance(extraction, dict):
         irrelevant_questions.update(str(item.get('question', ''))
@@ -3033,6 +3115,13 @@ def evaluate_offer(
             continue
         issue_spec=issue_specs_for_questions.get(issue_name)
         source=str(detail.get('source_text',''))
+        if (issue_spec and issue_name.lower() not in validated_issue_names
+                and source_quote_is_grounded(source, _focused_text(text))):
+            # A known issue name does not make its unresolved value valid.
+            # Keep its question even when it contains a familiar alias, a
+            # stated number, or an out-of-range date.
+            bare_value_questions.add(str(detail.get('question', '')))
+            continue
         # A model may have guessed a catalog value for a bare issue name.  Do
         # not treat that guess as participant evidence.  If the participant
         # named a continuous or multi-option issue without a value, keep the
@@ -3111,6 +3200,19 @@ def evaluate_offer(
         ))
 
     last_by_issue: OrderedDict[str, dict[str, Any]] = OrderedDict()
+    current_issues=_scenario_issue_map(scenario)
+    if ('Company Car' in current_issues and re.search(r'\bcompany\s+car\b',lower_text)
+            and not re.search(r'\b(?:dedicated|exclusive|shared|pool|private|personal|own)\s+(?:company\s+)?car\b|\b(?:no|without)\s+(?:(?:a|the|any)\s+)?(?:company\s+)?car\b|\bcompany\s+car\s+(?:(?:is|would|will|be|a|the)\s+){0,3}(?:shared|pool|dedicated|exclusive|not\s+included)\b',lower_text)):
+        findings.append(_finding(CLARIFICATION_NEEDED,'ambiguous_catalogue_choice',
+            'For the company car, do you mean access to a shared pool car or a dedicated company car? Please choose one.',
+            issue='Company Car',allowed=[o['label'] for o in current_issues['Company Car']['options']]))
+    if ('Four-Day Workweek Trial' in current_issues
+            and re.search(r'\b'+_FOUR_DAY_PATTERN+r'\b',lower_text)
+            and not re.search(r'\b(?:no|without)\s+(?:a\s+)?(?:trial|four[-\s]?day)\b',lower_text)
+            and not _explicit_workweek_trial(lower_text)):
+        findings.append(_finding(CLARIFICATION_NEEDED,'ambiguous_catalogue_choice',
+            'For the four-day week, do you mean a weekly or monthly trial with the same weekly hours, or a different work arrangement? Please specify.',
+            issue='Four-Day Workweek Trial',allowed=[o['label'] for o in current_issues['Four-Day Workweek Trial']['options']]))
     malformed = False
     for pair in combined_pairs:
         if not isinstance(pair, dict):
@@ -3155,6 +3257,10 @@ def evaluate_offer(
             continue
         spec = issue_specs.get(issue)
         public_issue = str((spec or {}).get("name", issue))
+        if any(f.get('issue')==issue and f.get('code') in {'invalid_unit','invalid_unit_or_option','ambiguous_catalogue_choice'} for f in findings):
+            # Do not display the model's guessed weekly value when the offer
+            # actually supplied a monthly one. The clarification acknowledges it.
+            continue
         if issue == "Remote Working Days":
             expected_period = "week" if "week" in str((spec or {}).get("unit", "")).lower() else "month"
             stated_period = re.search(r"(?:/|\b(?:per|each|every|a))\s*(week|month)\b", option, re.I)
@@ -3227,6 +3333,24 @@ def evaluate_offer(
 
     missing = [issue for issue in required_issues if issue not in valid_pairs]
     unstated_missing = [issue for issue in missing if issue not in raw_issue_names]
+    # An interpreter may ask about an impossible date without returning a
+    # usable pair. Give the participant the actual permitted dates as well,
+    # rather than leaving them to guess what a correction would look like.
+    date_attempt = _stated_start_date(text, scenario, include_invalid=True)
+    date_spec = _scenario_issue_map(scenario).get("Starting Date")
+    if (date_attempt and date_spec and date_spec.get("value_type") == "date"
+            and "Starting Date" not in valid_pairs
+            and not any(f.get("code") == "invalid_option" and f.get("issue") == "Starting Date" for f in findings)):
+        try:
+            score_pair("Starting Date", date_attempt, role, payoff, scenario)
+        except (ValueError, KeyError, TypeError):
+            low_label = _format_continuous(date.fromisoformat(str(date_spec["min"])), date_spec)
+            high_label = _format_continuous(date.fromisoformat(str(date_spec["max"])), date_spec)
+            findings.append(_finding(
+                CLARIFICATION_NEEDED, "invalid_option",
+                f"I read your starting date as {date_attempt}. Please choose a valid calendar date from {low_label} to {high_label}.",
+                issue="Starting Date", option=date_attempt, allowed=[low_label, high_label],
+            ))
     existing_clarification = any(item["decision"] == CLARIFICATION_NEEDED for item in findings)
     if unstated_missing and not existing_clarification:
         missing_text = ", ".join(unstated_missing)
@@ -3235,6 +3359,14 @@ def evaluate_offer(
             f"Please add {missing_text}. I have not scored this offer yet.",
             missing=unstated_missing,
         ))
+    salary_domain = (issue_specs.get('Salary') or {}).get('proposal_domain')
+    if isinstance(salary_domain, dict) and salary_domain.get('max') is None:
+        # Current open-money scenarios offer a correction path for a stated
+        # invalid value. Keep the frozen older scenario's response unchanged.
+        for item in findings:
+            if (item.get('decision')==REJECTED and item.get('code') in {'invalid_option','invalid_start_month','invalid_unit_or_option'}
+                    and (issue_specs.get(item.get('issue')) or {}).get('kind')=='continuous'):
+                item['decision']=CLARIFICATION_NEEDED
     has_rejection = any(item["decision"] == REJECTED for item in findings)
     has_clarification = any(item["decision"] == CLARIFICATION_NEEDED for item in findings)
     has_substantive_clarification = any(
@@ -3290,6 +3422,8 @@ def evaluate_offer(
         "invalid_present": any(item["code"] in {"invalid_issue", "invalid_option", "invalid_unit_or_option", "unsupported_currency"} for item in findings),
         "required_ok": not missing,
         "missing_required": missing,
+        "unstated_required": unstated_missing,
+        "invalid_required": [issue for issue in missing if issue not in unstated_missing],
         "valid_pairs": dict(valid_pairs),
         "novel_terms": list(dict.fromkeys(term.strip() for term in captured_novel_terms if term.strip())),
         "unpriced_details": unpriced_details,
