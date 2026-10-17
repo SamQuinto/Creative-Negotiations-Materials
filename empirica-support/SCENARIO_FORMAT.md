@@ -11,7 +11,7 @@ The generated JSONs follow the supplied 200-issue sample's structure. Each has `
 | `flexible-215.json` | Salary, budget, starting date | Three required rows |
 | `tutorial.json` | Venue fee, event date, closing time | Three practice rows |
 
-A byte-identical copy of `flexible-215.json` is also available directly in `empirica/` for easy sharing. The 200-issue scenario in `app/config/large-200.json` is archived, not the current expanded task. Historical experiments in `replication/` retain their original files and values.
+A byte-identical copy of `flexible-215.json` is also available directly in `empirica/` for easy sharing. The public engine and default definitions are now inside `empirica/app/`; downloading that entire `empirica/` folder is sufficient for scoring. The 200-issue scenario in `empirica/app/config/large-200.json` is archived, not the current expanded task. Historical experiments in `replication/` retain their original files and values.
 
 ## What is in the fixed table?
 
@@ -106,6 +106,6 @@ python developer/test_scorer.py
 python developer/test_experiment_materials.py
 ```
 
-These rebuild commands belong to the full prototype checkout, which keeps its original development layout. Edit the payoff definitions in `app/config/`, then rebuild the exports. When publishing here, place those exports in `empirica-support/scenarios/` and refresh the matching `empirica/flexible-215.json` copy. Tables and continuous rules are derived from the same definitions; do not maintain a separate table by hand. The generator also refreshes Fixed 15's private display table.
+These rebuild commands belong to the full prototype checkout, which keeps its original development layout. Edit the prototype payoff definitions in `app/config/`, then rebuild the exports. When publishing here, mirror the engine into `empirica/app/`, place those exports in `empirica-support/scenarios/`, and refresh the matching `empirica/flexible-215.json` copy. Tables and continuous rules are derived from the same definitions; do not maintain a separate table by hand. The generator also refreshes Fixed 15's private display table.
 
 Checks cover all 256 discrete packages for both roles, fractional values, open money, calendar limits, browser/Python agreement, external files in paths with spaces, missing fixed choices, and agreement from both sides. These are offline checks, not a claim of perfect live language interpretation. Final deployment still requires connecting the reader to these inputs and verifying the live server's version.

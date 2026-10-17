@@ -12,7 +12,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT/'app/backend'))
+APP=ROOT/'empirica/app'
+sys.path.insert(0,str(APP/'backend'))
 sys.path.insert(0,str(ROOT/'developer'))
 from structured_offer import structured_interpretation
 from scenario_rules import is_fixed, own_acceptance_allowed
@@ -34,7 +35,7 @@ def load():
             path=Path(__file__).resolve().parent/'scenarios'/f'{name}.json'
             SCENARIOS[name]=json.loads(path.read_text(encoding='utf-8'))
             os.environ['NEGOTIATOR_SCENARIO_FILE']=str(path)
-            spec=importlib.util.spec_from_file_location('preview_'+name,ROOT/'app/backend/stream.py')
+            spec=importlib.util.spec_from_file_location('preview_'+name,APP/'backend/stream.py')
             module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
             ENGINES[name]=module
             GAMES[name]={'offers':[],'accepted':set()}

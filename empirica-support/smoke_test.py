@@ -10,12 +10,12 @@ import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / 'app/backend'))
+sys.path.insert(0, str(ROOT / 'empirica/app/backend'))
 from offer_engine import score_pair
 
 
 def main():
-    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'flexible-215.json'}
+    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'flexible-215.json', 'app', 'README.md'}
     published_files = {p.name for p in (ROOT / 'empirica').iterdir() if p.name != '__pycache__'}
     assert published_files == expected_files, published_files
     assert (ROOT / 'empirica/flexible-215.json').read_bytes() == (ROOT / 'empirica-support/scenarios/flexible-215.json').read_bytes(), '215 scenario copies differ'
@@ -69,13 +69,23 @@ def main():
             assert not response.get('error'),response
             assert 'could not convert string to float' not in completed.stdout,completed.stdout
             count+=1
-        flat=Path(folder)/'flat';flat.mkdir()
+        # Copy only the handoff folder. No sibling engine, developer files,
+        # PYTHONPATH, or API key may help this isolated installation pass.
+        handoff=Path(folder)/'standalone handoff'
+        shutil.copytree(ROOT/'empirica',handoff,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+        standalone_env={k:v for k,v in env.items() if k not in {'PYTHONPATH','PYTHONHOME','CREATIVE_NEGOTIATIONS_KEYS_DIR'} and not k.startswith('NEGOTIATOR_')}
+        completed=subprocess.run([sys.executable,str(handoff/'app/check_installation.py')],cwd=folder,env=standalone_env,
+            capture_output=True,text=True,encoding='utf-8',timeout=60)
+        assert completed.returncode==0,completed.stderr or completed.stdout
+        print(completed.stdout.strip())
+        flat=Path(folder)/'legacy layout';flat.mkdir()
         for relative in ('app/backend','app/config'):
-            shutil.copytree(ROOT/relative,flat/relative,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+            shutil.copytree(ROOT/'empirica'/relative,flat/relative,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+        (flat/'empirica').mkdir()
         for script in ('score_offer.py','score_tutorial_offer.py'):
-            shutil.copy2(ROOT/'empirica'/script,flat/script)
+            shutil.copy2(ROOT/'empirica'/script,flat/'empirica'/script)
         for script,wanted in (('score_offer.py',15),('score_tutorial_offer.py',9)):
-            completed=subprocess.run([sys.executable,str(flat/script),'--version'],cwd=folder,env=env,
+            completed=subprocess.run([sys.executable,str(flat/'empirica'/script),'--version'],cwd=folder,env=env,
                 capture_output=True,text=True,encoding='utf-8',timeout=20)
             assert completed.returncode==0,completed.stderr or completed.stdout
             assert json.loads(completed.stdout)['issue_count']==wanted,completed.stdout
@@ -85,7 +95,7 @@ def main():
     spec.loader.exec_module(preview)
     preview.load()
     assert set(preview.SCENARIOS) == {'fixed-15', 'flexible-15', 'flexible-215', 'tutorial'}
-    print(f'PASS: {count} real CLI checks, all four scenarios, both roles, invalid dates, both folder layouts, the three-file Empirica folder, identical 215 exports, and preview imports. No AI calls.')
+    print(f'PASS: {count} additional CLI checks, all four exports, both roles, invalid dates, the old and new layouts, identical 215 exports, and preview imports. No AI calls.')
 
 
 if __name__ == '__main__':

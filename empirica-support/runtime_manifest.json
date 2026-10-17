@@ -2,67 +2,19 @@
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
   "source_commit": "3be4ff4cf1535bf19e7402683fe462fceda71b01",
   "date": "2026-10-17",
-  "description": "Public shared-engine mirror with a three-file Empirica handoff folder. Scoring logic and payoffs are unchanged by this layout revision.",
+  "description": "Self-contained Empirica handoff: download the entire empirica/ folder, including app/. Engine logic and payoffs are unchanged.",
   "files": [
-    {
-      "path": "app/backend/api_budget.py",
-      "sha256": "1ed17810240d8cf9f8b8f64d6370116e2f4815c3926951737ee39349bf8f998d"
-    },
-    {
-      "path": "app/backend/offer_engine.py",
-      "sha256": "bff3d99071523f9ccf3e8081fcab01fe8027ac8aa99ea42984819bc3563213f6"
-    },
-    {
-      "path": "app/backend/scenario_rules.py",
-      "sha256": "cea6523d521706aa777843d85df80a0ccbc8fcec68cd12b22171587e374c8320"
-    },
-    {
-      "path": "app/backend/scorer_routing.py",
-      "sha256": "0aa2abcbb7d23f2c691b23e5deb088caa45e9e7d7bd6dc336fa8cc7e82018e3d"
-    },
-    {
-      "path": "app/backend/stream.py",
-      "sha256": "15ba4994212cfbaa0dc6e08e7b97eae220f49280ca18645fbea4b24379f725b2"
-    },
-    {
-      "path": "app/backend/structured_offer.py",
-      "sha256": "e57cf998b56566c6a6595ade67862be487e9e0f2f0a2e71e824885dac5289b4f"
-    },
-    {
-      "path": "app/config/fixed-15.json",
-      "sha256": "2e9e01ee25bc0d3e98f87c290e504713bb6546fabd5b005eeafb8b4d4f39044f"
-    },
-    {
-      "path": "app/config/issue-phrase-registry.json",
-      "sha256": "d0e5321c30d291679469d7806a266105f39636ca35ee957a448095aeb0da08c9"
-    },
-    {
-      "path": "app/config/large-200.json",
-      "sha256": "8b6aeffd82045fc141a3001cf6e866fd73677367d857b686d8f73458b1c36746"
-    },
-    {
-      "path": "app/config/large-215.json",
-      "sha256": "336a492bbb05cd5ac33c2d6200eb2970eccaf8608049cdcd53fbeb32b64267e5"
-    },
-    {
-      "path": "app/config/small-15.json",
-      "sha256": "baf64bc25192830336b3bb3919953d19a07e20d754153ddce0fe52a9eb66aa09"
-    },
-    {
-      "path": "app/config/tutorial.json",
-      "sha256": "6d7533ef6901a6d3f7e8a482dd7bf121f49eebfa65f804c30d7280d5608d268f"
-    },
     {
       "path": "developer/role_presentation.py",
       "sha256": "1b3ac2e12bdc5858616eb4902cb082ee49ab8c3eaab81c13a194309c06b017ca"
     },
     {
       "path": "empirica-support/README.md",
-      "sha256": "44d5fa430991af648d27e10335b2764bb092f61699a356932b212b4402d0706f"
+      "sha256": "363a06ef06aec29b24ecc9cd37d7ae3baf39dc8375fbc3c5a61ffbe6d503f270"
     },
     {
       "path": "empirica-support/SCENARIO_FORMAT.md",
-      "sha256": "410497e9b4d8e66605b417445594eac62cf08f7c6f83f596c52b4784c194e7a6"
+      "sha256": "4279c4deff2200ac20ab2d7ec9132069a69ac7d839ffaed9dc94568d0661ac2c"
     },
     {
       "path": "empirica-support/deterministic_score.mjs",
@@ -74,7 +26,7 @@
     },
     {
       "path": "empirica-support/preview_server.py",
-      "sha256": "f8b3bbeeb65feae35bf1926dc45a7a1d685f6746f574638b91aff35a5247e710"
+      "sha256": "31cf5f87e34987c11ad3eb51601af13f2bc704a5804bff6f9adc47f1d92239a5"
     },
     {
       "path": "empirica-support/scenarios/fixed-15.json",
@@ -94,11 +46,67 @@
     },
     {
       "path": "empirica-support/smoke_test.py",
-      "sha256": "aab5899e1a84ba865121e4af8acaffc5a55bae4ce79e80132bbb2ed8a3593fa3"
+      "sha256": "747821bff321946ce9d5c45ccb40ce8574187ffa3ed251293234c57ebd50978a"
     },
     {
       "path": "empirica-support/test_language_rules.py",
-      "sha256": "62fdf7fc2ddfb7212e48c376f9e1dadebe575ae59df90e61c237922bda66372e"
+      "sha256": "c9cc1bf502b188cee7e85d16fd489f6b591206ff966aad5fb8a77808e9e28788"
+    },
+    {
+      "path": "empirica/README.md",
+      "sha256": "06fdd1ee3f950a1e0a5b5c0da6481595ba186759538613ceb9779f052a99c3e9"
+    },
+    {
+      "path": "empirica/app/backend/api_budget.py",
+      "sha256": "1ed17810240d8cf9f8b8f64d6370116e2f4815c3926951737ee39349bf8f998d"
+    },
+    {
+      "path": "empirica/app/backend/offer_engine.py",
+      "sha256": "bff3d99071523f9ccf3e8081fcab01fe8027ac8aa99ea42984819bc3563213f6"
+    },
+    {
+      "path": "empirica/app/backend/scenario_rules.py",
+      "sha256": "cea6523d521706aa777843d85df80a0ccbc8fcec68cd12b22171587e374c8320"
+    },
+    {
+      "path": "empirica/app/backend/scorer_routing.py",
+      "sha256": "0aa2abcbb7d23f2c691b23e5deb088caa45e9e7d7bd6dc336fa8cc7e82018e3d"
+    },
+    {
+      "path": "empirica/app/backend/stream.py",
+      "sha256": "15ba4994212cfbaa0dc6e08e7b97eae220f49280ca18645fbea4b24379f725b2"
+    },
+    {
+      "path": "empirica/app/backend/structured_offer.py",
+      "sha256": "e57cf998b56566c6a6595ade67862be487e9e0f2f0a2e71e824885dac5289b4f"
+    },
+    {
+      "path": "empirica/app/check_installation.py",
+      "sha256": "4fff638ac73661b9a04d7b0c708d350e9a06792e05576753d0a5ed2a50b8dd10"
+    },
+    {
+      "path": "empirica/app/config/fixed-15.json",
+      "sha256": "2e9e01ee25bc0d3e98f87c290e504713bb6546fabd5b005eeafb8b4d4f39044f"
+    },
+    {
+      "path": "empirica/app/config/issue-phrase-registry.json",
+      "sha256": "d0e5321c30d291679469d7806a266105f39636ca35ee957a448095aeb0da08c9"
+    },
+    {
+      "path": "empirica/app/config/large-200.json",
+      "sha256": "8b6aeffd82045fc141a3001cf6e866fd73677367d857b686d8f73458b1c36746"
+    },
+    {
+      "path": "empirica/app/config/large-215.json",
+      "sha256": "336a492bbb05cd5ac33c2d6200eb2970eccaf8608049cdcd53fbeb32b64267e5"
+    },
+    {
+      "path": "empirica/app/config/small-15.json",
+      "sha256": "baf64bc25192830336b3bb3919953d19a07e20d754153ddce0fe52a9eb66aa09"
+    },
+    {
+      "path": "empirica/app/config/tutorial.json",
+      "sha256": "6d7533ef6901a6d3f7e8a482dd7bf121f49eebfa65f804c30d7280d5608d268f"
     },
     {
       "path": "empirica/flexible-215.json",
@@ -113,5 +121,5 @@
       "sha256": "e7272b4c92f1e0a1fa3357c14e5f631e99ef6aaace285eb1ac8d4a4b364a0b83"
     }
   ],
-  "layout_revision": "2026-10-17-three-file-handoff"
+  "layout_revision": "2026-10-17-self-contained-empirica"
 }

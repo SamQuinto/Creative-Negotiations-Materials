@@ -8,9 +8,7 @@ from pathlib import Path
 import sys
 import unittest
 
-ROOT = Path(__file__).resolve().parent
-if not (ROOT / 'app/backend/offer_engine.py').is_file():
-    ROOT = ROOT.parent
+ROOT = Path(__file__).resolve().parents[1] / 'empirica'
 sys.path.insert(0, str(ROOT / 'app/backend'))
 import offer_engine as engine
 

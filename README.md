@@ -31,9 +31,9 @@ The HTML files are visual, interactive previews only. They do not save or transm
 
 ### Empirica scorer and scenarios
 
-[Open the public Empirica folder](empirica/). It contains just the two Python commands and a copy of the current 215-issue scenario. The commands are **not standalone**: keep the shared `app/` folder in the repository layout. The local preview also uses `developer/`.
+[Open the public Empirica folder](empirica/). **Download everything inside that folder, including `app/`.** It now contains both Python commands, the current 215-issue scenario, and the complete shared scoring engine. No other repository folder is needed to run the scorers. [The short setup guide](empirica/README.md) includes a no-key installation check.
 
-[Setup instructions, tests, the preview, and other scenarios](empirica-support/) are kept separately to make the download folder easier to navigate. The exact engine revision and file hashes are in the [runtime manifest](empirica-support/runtime_manifest.json). This is a folder cleanup; the scoring logic and payoffs are unchanged.
+[Detailed instructions, extra tests, the preview, and other scenario exports](empirica-support/) are kept separately. The optional preview also uses `developer/`. The exact engine revision and file hashes are in the [runtime manifest](empirica-support/runtime_manifest.json). This is a folder cleanup; the scoring logic and payoffs are unchanged.
 
 | Backend scenario | Public raw JSON |
 |---|---|
