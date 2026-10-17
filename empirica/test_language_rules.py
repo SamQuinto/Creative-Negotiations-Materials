@@ -86,6 +86,28 @@ class LanguageRules(unittest.TestCase):
         self.assertEqual(result['valid_pairs'].get('Food and refreshments'), 'Organizer provides refreshments')
         self.assertEqual(result['valid_pairs'].get('Cleanup'), 'Venue handles cleanup')
 
+    def test_full_year_end_and_mid_months(self):
+        for raw, expected in [('end May','May 31'),('mid Jan','January 15'),('end February','February 28'),('December 31','December 31')]:
+            result=self.evaluate('salary 50k budget 10k start '+raw)
+            self.assertEqual(result['decision'],'scorable',result)
+            self.assertEqual(result['valid_pairs']['Starting Date'],expected)
+
+    def test_weekly_vacation_and_physical_limits(self):
+        result=self.evaluate('salary 50k budget 10k start Jan 1 1 vacay day a week')
+        self.assertEqual(result['valid_pairs']['Vacation Days'],'52 days per year')
+        self.assertIn('52 weeks',result['display_text'])
+        for phrase in ['366 vacation days','-1 vacation day','7 remote days per week','-1 remote days per week']:
+            self.assertEqual(self.evaluate('salary 50k budget 10k start Jan 1 '+phrase)['decision'],'clarification_needed',phrase)
+
+    def test_date_day_does_not_supply_vacation(self):
+        result=self.evaluate('salary 50k budget 10k start Jan 1 vacation days')
+        self.assertNotIn('Vacation Days',result['valid_pairs'])
+
+    def test_bare_company_car_has_the_approved_default(self):
+        for phrase,expected in [('a company car','Dedicated company car'),('no company car','No company car'),('a shared company car','Access to a shared pool car')]:
+            result=self.evaluate('salary 50k budget 10k start Jan 1 '+phrase)
+            self.assertEqual(result['valid_pairs']['Company Car'],expected)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

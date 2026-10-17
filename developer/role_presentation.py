@@ -166,10 +166,12 @@ def review_blocks(blocks, policy='open'):
                 prefix = 'Each additional supported feature is worth between '
                 assert remainder.startswith(prefix)
                 revised.append({'type': 'numbered', 'number': 3, 'runs': [
-                    {'text': 'Each additional contract feature introduced in the negotiation is worth '},
+                    {'text': 'Each additional contract feature introduced in the negotiation is normally worth ' if any('Choose a starting date' in ''.join(r.get('text', '') for r in b['runs']) for b in blocks) else 'Each additional contract feature introduced in the negotiation is worth '},
                     {'text': 'between', 'bold': True, 'underline': True},
                     {'text': ' ' + remainder[len(prefix):]},
                 ]})
+                if any('Choose a starting date' in ''.join(r.get('text', '') for r in b['runs']) for b in blocks):
+                    revised[-1]['runs'].append({'text': ' Numerical vacation and remote-work allowances can score outside that range.'})
                 if policy == 'open':
                     revised.append({'type': 'numbered', 'number': 4,
                                     'runs': [{'text': 'You are not limited to the job features described or suggested here. '
@@ -209,7 +211,7 @@ def presentation_parts(blocks):
         elif text.startswith('You prefer a '):
             boundaries = [('Salary and personal work-expense budget may be any non-negative amount', 'paragraph'),
                           ('Annual salary:', 'bullet'),
-                          ('Starting dates may range', 'bullet'),
+                          ('Choose a starting date' if 'Choose a starting date' in text else 'Starting dates may range', 'bullet'),
                           ('The personal budget:', 'bullet'),
                           ('Salary and budget amounts between', 'paragraph'),
                           ('The platform calculates', 'paragraph'),
@@ -217,7 +219,7 @@ def presentation_parts(blocks):
         elif text.startswith('On the way home,'):
             boundaries = [('Still, more flexibility', 'paragraph'),
                           ('For vacation,', 'bullet'), ('For remote work,', 'bullet'),
-                          ('The two terms are scored', 'paragraph')]
+                          ('The two features are scored' if 'The two features are scored' in text else 'The two terms are scored', 'paragraph')]
         elif text.startswith('Looking over your notes,'):
             boundaries = [('Still, the sales manager', 'paragraph'),
                           ('A longer probation', 'bullet'),
@@ -310,8 +312,8 @@ def inline_text(block, start, end):
         value = html.escape(match.group(), quote=False)
         if match.group()[0] in '+−-':
             positive = match.group()[0] == '+'
-            date_endpoint = (text[start:end].startswith('Starting dates may range') and
-                             match.group() in ('+1', '−3', '-3'))
+            date_endpoint = (text[start:end].startswith(('Starting dates may range', 'Choose a starting date')) and
+                             match.group() in ('+1', '−3', '-3', '−4', '-4'))
             if match.group() in ('+2', '−2', '-2') or date_endpoint:
                 value = '<u>' + value + '</u>'
             result.append('<strong style="color:' + (GREEN if positive else RED) + ';">' + value + '</strong>')

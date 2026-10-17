@@ -1,6 +1,6 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "dc7891ad7cd62f8e57c78494b72037a25356b6d8",
+  "source_commit": "864317be0632cbe59578b41a3620543ff79ff381",
   "date": "2026-10-17",
   "description": "Generated public runtime mirror; edit the canonical project, then republish.",
   "files": [
@@ -10,11 +10,11 @@
     },
     {
       "path": "app/backend/offer_engine.py",
-      "sha256": "75904b4784acbe448c4faa42bbefef07fc65b7569b9c6abb1d42cd0f0636fefb"
+      "sha256": "886096a520e2fe6f791908431a190423e389abd81710ffa1ea48496d95a0a43a"
     },
     {
       "path": "app/backend/scenario_rules.py",
-      "sha256": "bc2a2e055ee5418cfbf245e4c73f5db81a33f9f39cd8e0fac207e45b9c648606"
+      "sha256": "cea6523d521706aa777843d85df80a0ccbc8fcec68cd12b22171587e374c8320"
     },
     {
       "path": "app/backend/scorer_routing.py",
@@ -22,7 +22,7 @@
     },
     {
       "path": "app/backend/stream.py",
-      "sha256": "c96f8cd80a4b0a24f0da1b31032dc470b7506cf3fb6a74fa48b1f89d4ac58a97"
+      "sha256": "73858b39c6f42039a3c958330429fc514e889186ee394826df3be059316e0255"
     },
     {
       "path": "app/backend/structured_offer.py",
@@ -30,7 +30,7 @@
     },
     {
       "path": "app/config/fixed-15.json",
-      "sha256": "6b2c35f2b894e4cb2665fde708ee2c1f04b487d8529e29fe8ecbfb8ae9b71727"
+      "sha256": "3dd8fa690741a245887eda786411b4603106e4b9710747235b25ec72b7652359"
     },
     {
       "path": "app/config/issue-phrase-registry.json",
@@ -42,11 +42,11 @@
     },
     {
       "path": "app/config/large-215.json",
-      "sha256": "4c5daec8a09b5c68d7fb835d6d5a75ec121c0b1a2e20fbbf9ebcf474504b1f22"
+      "sha256": "3beb9cb92a3ee36ecf5fa6bfdfa935ac6937e2bf9d5d37dbde284cbd2f0a80ea"
     },
     {
       "path": "app/config/small-15.json",
-      "sha256": "84b47c87b1f2843b2958ce4694b60f257b038cfe73f054c9956e92bbe34698e4"
+      "sha256": "d4e89362b07e160ab8d6520d9c1fa5f1d6c7f0aedf748245fcf94df877d5a938"
     },
     {
       "path": "app/config/tutorial.json",
@@ -54,7 +54,7 @@
     },
     {
       "path": "developer/role_presentation.py",
-      "sha256": "0fc118900e3932d8649c823392a6adf3413ca4f8ae3fc81e725defbd5c742ae6"
+      "sha256": "ba77c0b2febc865f25d180efda02280c1078288cc7d4d779d2e553d8911135de"
     },
     {
       "path": "empirica/deterministic_score.mjs",
@@ -70,23 +70,23 @@
     },
     {
       "path": "empirica/SCENARIO_FORMAT.md",
-      "sha256": "669b46e2f71e40667a73be8218c00721c0535e069c9af8b4a728c216d3d37e21"
+      "sha256": "ff56475deac510ba01d040f28a80c7f8391669840ca3f670a941301c6ea86932"
     },
     {
       "path": "empirica/scenarios/fixed-15.json",
-      "sha256": "6f04a389e08d1285cf769029a51fda5f0465fddbd9bbb453aff473e16b18d087"
+      "sha256": "948a3dde60d72f0a5c5595ecaa5e861ce7e05cf1adfc006d90b15b9b7b8ff2b8"
     },
     {
       "path": "empirica/scenarios/flexible-15.json",
-      "sha256": "c2cee67ad4b88a081cd7815bda5e40dfcc848a9ef42d70f9e14f60b0b6b72c94"
+      "sha256": "f66e1280da8d8d3aa82971fceaabdd099d21dc124cdcc0efd3f3721aaaeda259"
     },
     {
       "path": "empirica/scenarios/flexible-215.json",
-      "sha256": "241636fea5934d6014f55c1786c4cb97e7accc62f36c0a6049fbb2cfdeac4925"
+      "sha256": "cfe9927d7e1f97cd06389c3cd50f3ae60732e087d571b47047f2b8be4ec13ab5"
     },
     {
       "path": "empirica/scenarios/tutorial.json",
-      "sha256": "64dc0f27f873ba408e3fd6bb8de7b1eb401e84a12dc1c781a2ee4d05265aa61b"
+      "sha256": "3a9d401a8eddaf286cf9f92192f939fbb64e80743a3ddd330e0ce3a968104350"
     },
     {
       "path": "empirica/score_offer.py",
@@ -98,7 +98,7 @@
     },
     {
       "path": "empirica/test_language_rules.py",
-      "sha256": "773a668bd4000009757180f05db6a0c2e9a7e321ee564d4f58d47b9dc10ad74e"
+      "sha256": "cfbf74316991084bddc41fafb28044bfb16219a9a17578fb379340c327c447c3"
     }
   ]
 }

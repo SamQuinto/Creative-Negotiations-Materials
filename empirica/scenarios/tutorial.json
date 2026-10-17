@@ -609,7 +609,7 @@
   "tips": "<p>You can review your own role information while negotiating. Check the system’s interpretation before sending an offer. An agreement requires both parties to accept the same offer, worth more than zero to each.</p>",
   "empirica_export": {
     "version": "empirica-continuous-v1",
-    "date": "2026-10-16",
+    "date": "2026-10-17",
     "source": "app/config/tutorial.json",
     "source_sha256": "6d7533ef6901a6d3f7e8a482dd7bf121f49eebfa65f804c30d7280d5608d268f",
     "scoring_contract": "determinatescoretable arrays plus continuous_scoring rules",

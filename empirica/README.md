@@ -1,6 +1,6 @@
 # Empirica scorer download
 
-This public package contains the current main and tutorial scorer commands, scenario JSONs, and the shared files they need. [runtime_manifest.json](runtime_manifest.json) records the exact source revision and file hashes. The October 17 update improves date feedback, monetary shorthand, explicit references to earlier offers and optional-feature recognition. The venue tutorial also handles more ordinary wording and keeps projector costs separate from venue fees. Scenario payoffs have not changed.
+This public package contains the current main and tutorial scorer commands, scenario JSONs, and the shared files they need. [runtime_manifest.json](runtime_manifest.json) records the exact source revision and file hashes. The latest October 17 update uses January–December starting dates and more natural date/leave shorthand. Update the shared `app/` folder and scenario JSONs together, not just the two Python entry points. Archived experimental versions keep their earlier payoffs.
 
 ## Download and run
 
@@ -27,7 +27,7 @@ The main command defaults to Flexible 15. Use `--issue-space fixed-15`, `15`, or
 
 Natural-language offers use Nano for routine interpretation and independent Luna review when flagged. Payoffs are calculated by the shared deterministic engine. A month-only start such as May is shown as May 1 for confirmation; a supplied day is preserved. Salary and budget accept any non-negative amount, with proportional scoring beyond the displayed reference anchors.
 
-A stated date outside May 1–September 30 is acknowledged with a correction question, not called missing or silently replaced. The date interval remains intentional. `--version` prints the selected scenario's ID, issue count, and shared-file fingerprints without an AI call; use it to check the actual server installation.
+Current job scenarios use the full 2026 calendar: January 1 = +1, June 1 ≈ −1.07, and December 31 = −4 for both roles. A supplied year is normalized to 2026. A month alone means day 1; mid-month means day 15; end-month means the last calendar day. Impossible dates prompt a correction, not a missing-date error. Vacation allows 0–365 days per year, with explicit weekly allowances converted using 52 weeks and shown for confirmation. Remote work allows 0–5 days per week. Existing vacation and remote-work scoring anchors still apply proportionally outside the examples. A bare company-car request means a dedicated company car; explicit shared/pool/no-car wording takes precedence. `--version` prints the selected scenario's ID, issue count, and shared-file fingerprints without an AI call.
 
 The supplied layout keeps the commands in `empirica/`. A server may also put both commands directly beside `app/`; both layouts work without editing `ROOT`. Replace the shared `app/` files as well as the commands when updating. A new JSON URL alone cannot update Python interpretation or feedback behavior. The original root-level commands in the private prototype were not overwritten.
 

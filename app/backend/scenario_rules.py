@@ -57,6 +57,8 @@ def private_payoff_rows(scenario, role):
             else:
                 kind_label = f'Continuous · {unit}'
                 value_label = '; '.join(values)
+                if isinstance(proposal_domain, dict):
+                    value_label += f". Scoring anchors, not proposal limits. You may propose {proposal_domain.get('min')}–{proposal_domain.get('max')} {unit}; points continue at the same rate."
             rows.append([name, kind_label, value_label])
         else:
             rows.append([name, 'Choice-based', '; '.join(f"{opt['label']}: {opt[role]:+g}" for opt in issue['options'])])

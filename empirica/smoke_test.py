@@ -46,7 +46,7 @@ def main():
         assert completed.returncode == 0, completed.stderr or completed.stdout
         assert json.loads(completed.stdout)['scenario_id'].startswith('community-'), completed.stdout
         count += 1
-        for literal in ('2026-01-01','2026-02-30','2027-05-01'):
+        for literal in ('2026-02-29','2026-02-30','2026-04-31'):
             completed=subprocess.run([sys.executable,str(ROOT/'empirica/score_offer.py'),'--issue-space','215',
                 '--choices-json',json.dumps({'Salary':25000,'Personal Budget':19000,'Starting Date':literal}),'--json'],
                 cwd=folder,env=env,capture_output=True,text=True,encoding='utf-8',timeout=20)

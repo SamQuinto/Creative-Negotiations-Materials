@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 import math
+import calendar
 from collections import OrderedDict
 from datetime import date, datetime
 from decimal import Decimal
@@ -129,7 +130,15 @@ def _affirmative_numeric_text(text: str) -> str:
               r'^\s*(?:there\s+(?:would|will)\s+be\s+)?no\b[^.;]{0,260}\b(?:\d+|one|two|three|four|five|six|ten|twenty|thirty|forty)[-\s]+(?:day|month|year)s?\b')
     # Preserve boundaries: a date's day must not become evidence for a later
     # unnumbered vacation/remote-work clause.
-    return '; '.join(p for p in parts if not re.search(negative,p,re.I))
+    value = '; '.join(p for p in parts if not re.search(negative,p,re.I))
+    months = r'(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)'
+    # Mid/end already supplies its own day. In "mid Jan 1 vacay day a
+    # week", the following 1 belongs to vacation, not January 1.
+    value = re.sub(rf'\b(?:mid|middle|end|beginning)(?:[-\s]+(?:of\s+)?(?:the\s+)?)?{months}\b', ' calendar-date ', value, flags=re.I)
+    # A date's day belongs to that date, not to an adjacent unnumbered
+    # allowance in punctuation-free text: "start Jan 1 vacation days".
+    value = re.sub(rf'\b{months}\s+\d{{1,2}}(?:st|nd|rd|th)?(?:\s*,?\s*20\d{{2}})?\b(?!\s*(?:months?|mos?|mo|years?|yrs?)\b)|\b\d{{1,2}}(?:st|nd|rd|th)?\s+(?:of\s+)?{months}\b|\b20\d{{2}}-\d{{2}}-\d{{2}}\b', ' calendar-date ', value, flags=re.I)
+    return value
 
 
 _EXCLUDED_CONTRACT = (
@@ -681,15 +690,21 @@ def _explicit_cash_pairs(text: str) -> list[dict[str, Any]]:
 
 def _date_from_text(value: str, spec: dict[str, Any]) -> date:
     raw = value.strip()
+    base_year = int(spec.get('assume_year') or date.fromisoformat(str(spec['min'])).year)
     iso = re.search(r"\b(\d{4})-(\d{2})-(\d{2})\b", raw)
     if iso:
-        return date(int(iso.group(1)), int(iso.group(2)), int(iso.group(3)))
-    base_year = date.fromisoformat(str(spec["min"])).year
+        return date(base_year if spec.get('assume_year') else int(iso.group(1)), int(iso.group(2)), int(iso.group(3)))
     month_names = {name.lower(): number for number, name in enumerate(
         ("", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
     ) if name}
     month_names.update({name[:3].lower(): number for name, number in list(month_names.items())})
     month_token = r"January|February|March|April|May(?!\s+(?:we|i|you|they|he|she|it)\b)|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec"
+    if spec.get('natural_date_conventions'):
+        relative = re.search(rf'\b(end|mid|middle|beginning)(?:[-\s]+(?:of\s+)?(?:the\s+)?)?({month_token})\b', raw, re.I)
+        if relative:
+            month = month_names[relative.group(2)[:3].lower()]
+            day = calendar.monthrange(base_year, month)[1] if relative.group(1).lower() == 'end' else 15 if relative.group(1).lower() in {'mid', 'middle'} else 1
+            return date(base_year, month, day)
     month_first = re.search(
         rf"\b({month_token})\s*(\d{{1,2}})?(?:st|nd|rd|th)?(?:\s*,?\s*(20\d{{2}}))?\b",
         raw, re.I,
@@ -701,11 +716,11 @@ def _date_from_text(value: str, spec: dict[str, Any]) -> date:
     if day_first:
         token = day_first.group(2).lower()
         month = 9 if token == "sept" else month_names[token[:3]]
-        return date(int(day_first.group(3) or base_year), month, int(day_first.group(1)))
+        return date(base_year if spec.get('assume_year') else int(day_first.group(3) or base_year), month, int(day_first.group(1)))
     if month_first:
         token = month_first.group(1).lower()
         month = 9 if token == "sept" else month_names[token[:3]]
-        return date(int(month_first.group(3) or base_year), month, int(month_first.group(2) or 1))
+        return date(base_year if spec.get('assume_year') else int(month_first.group(3) or base_year), month, int(month_first.group(2) or 1))
     raise ValueError("no calendar date found")
 
 
@@ -721,8 +736,10 @@ def _stated_start_date(text: str, scenario: dict[str, Any] | None, *, include_in
     text = _focused_text(text)
     month = r'(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec)'
     value = rf'(?:\d{{4}}-\d{{2}}-\d{{2}}|\d{{1,2}}(?:st|nd|rd|th)?[-\s]+(?:of\s+)?{month}|{month}(?:[-\s]*\d{{1,2}}(?:st|nd|rd|th)?)?)(?:,?\s+20\d{{2}})?'
+    if spec.get('natural_date_conventions'):
+        value = rf'(?:(?:end|mid|middle|beginning)(?:[-\s]+(?:of\s+)?(?:the\s+)?)?{month}|{value})'
     label = r'start(?:ing)?(?:\s+date)?'
-    patterns = [rf'\b{label}\s*(?:(?:on|of|is|would\s+be|will\s+be)\s+|[:=]\s*)?({value})\b',
+    patterns = [rf'\b{label}\s*(?:(?:on|in|of|is|would\s+be|will\s+be)\s+|[:=]\s*)?({value})\b',
                 rf'\b({value})\s+{label}\b']
     dates = set()
     for pattern in patterns:
@@ -732,11 +749,15 @@ def _stated_start_date(text: str, scenario: dict[str, Any] | None, *, include_in
             if re.search(r'\b(?:around|about|early|late|mid|before|after)\s*$', before, re.I):
                 continue
             if re.match(rf'\s*(?:or|/|to|through|until|and)\s*(?:{month}\b|\d)', after, re.I):
-                return None
-            if re.match(r'\s*(?:next|last|this|the\s+following)\s+year\b', after, re.I):
+                next_issue = re.match(r'\s*and\s*\$?[-+]?\d[\d,.]*\s*k?\s*(?:vacay|vacation|holiday|remote|wfh|days?|months?|years?|salary|budget|USD)\b', after, re.I)
+                if not next_issue:
+                    return None
+            if not spec.get('assume_year') and re.match(r'\s*(?:next|last|this|the\s+following)\s+year\b', after, re.I):
                 return None
             try:
                 literal = re.sub(r'(?<=[A-Za-z])-(?=\d)|(?<=\d)-(?=[A-Za-z])', ' ', match.group(1))
+                if re.match(r'\s*(?:months?|mos?|mo|years?|yrs?)\b', after, re.I):
+                    literal = re.sub(r'\s*\d{1,2}$', '', literal)
                 stated = _date_from_text(literal, spec)
                 if include_invalid or date.fromisoformat(str(spec['min'])) <= stated <= date.fromisoformat(str(spec['max'])):
                     dates.add(stated.isoformat())
@@ -758,6 +779,8 @@ def _format_continuous(value: float | date, spec: dict[str, Any]) -> str:
     unit = str(spec.get("unit", "")).strip()
     if numeric == 1 and unit.startswith("days /"):
         unit = "day" + unit[4:]
+    if numeric == 1 and unit.startswith('days per'):
+        unit = 'day' + unit[4:]
     singular = {"months": "month", "years": "year", "days": "day"}.get(unit, unit)
     return f"{shown} {singular if numeric == 1 else unit}".strip()
 
@@ -1070,7 +1093,7 @@ def _smart_text_findings(
         r"\b(?:start(?:ing)?(?:\s+date)?\s+(?:in\s+)?)((?:around\s+)?(?:mid[-\s]?)?(?:May|June|July|August|September)(?:\s+\d{1,2})?)\b",
         raw, re.I,
     )
-    if approximate_date and re.search(r"\b(?:around|mid[-\s]?)", approximate_date.group(1), re.I):
+    if approximate_date and re.search(r"\b(?:around|mid[-\s]?)", approximate_date.group(1), re.I) and not (_scenario_issue_map(scenario).get('Starting Date', {}).get('natural_date_conventions') and not re.search(r'\baround\b', approximate_date.group(1), re.I)):
         phrase = approximate_date.group(1)
         findings.append(_finding(
             CLARIFICATION_NEEDED, "approximate_start_date",
@@ -1203,7 +1226,7 @@ def _smart_text_findings(
     ]
     word_numbers = {"one": "1", "two": "2", "three": "3", "four": "4"}
     for pattern, issue, template in invalid_checks:
-        match = re.search(pattern, lower)
+        match = re.search(pattern, _affirmative_numeric_text(lower))
         if not match:
             continue
         number = word_numbers.get(match.group(1), match.group(1))
@@ -1215,8 +1238,9 @@ def _smart_text_findings(
             try:
                 score_pair(issue, option, "Candidate", payoff, scenario)
             except ValueError:
-                low_value = _format_continuous(float(spec["min"]), spec)
-                high_value = _format_continuous(float(spec["max"]), spec)
+                domain = spec.get('proposal_domain') or spec
+                low_value = _format_continuous(float(domain["min"]), spec)
+                high_value = _format_continuous(float(domain["max"]), spec)
                 findings.append(_finding(
                     REJECTED, "invalid_option",
                     f"{option} is outside the available range for {issue}. Please choose a value from {low_value} to {high_value}.",
@@ -1370,11 +1394,13 @@ def _smart_text_findings(
             try:
                 score_pair("Remote Working Days", option, "Candidate", payoff, scenario)
             except ValueError:
-                low_value = _format_continuous(float(spec["min"]), spec)
-                high_value = _format_continuous(float(spec["max"]), spec)
+                domain = spec.get('proposal_domain') or spec
+                low_value = _format_continuous(float(domain["min"]), spec)
+                high_value = _format_continuous(float(domain["max"]), spec)
                 findings.append(_finding(
                     REJECTED, "invalid_option",
-                    f"{option} is outside the available range for Remote Working Days. Please choose a whole value from {low_value} to {high_value}.",
+                    ('There are five working days per week in this scenario. Please choose 0–5 remote-working days per week.' if spec.get('proposal_domain') else
+                     f"{option} is outside the available range for Remote Working Days. Please choose a value from {low_value} to {high_value}."),
                     issue="Remote Working Days", option=option, allowed=[low_value, high_value],
                 ))
         elif option not in payoff.get("Remote Working Days", {}):
@@ -1459,6 +1485,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     # Preserve common participant spelling while keeping the original offer
     # unchanged for display and audit.
     lower = re.sub(r'\bprobstion\b','probation',lower)
+    lower = re.sub(r'\bvacay\b', 'vacation', lower)
     lower = re.sub(r'\bprofessional[-\s]+associations?\b','professional association',lower)
     lower = re.sub(_EXCLUDED_CONTRACT,' ',lower,flags=re.I)
     numeric_lower = _affirmative_numeric_text(lower)
@@ -1472,6 +1499,14 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     stated_start = _stated_start_date(text, scenario, include_invalid=True)
     if stated_start:
         additions.append(('Starting Date', stated_start))
+    car_spec = _scenario_issue_map(scenario).get('Company Car', {})
+    if car_spec.get('bare_request_default') and re.search(r'\bcompany\s+car\b', lower):
+        if re.search(r'\b(?:no|without)\s+(?:(?:a|the|any)\s+)?company\s+car\b|\bcompany\s+car\s+(?:is\s+)?not\s+included\b', lower):
+            additions.append(('Company Car', 'No company car'))
+        elif re.search(r'\b(?:shared|pool)\s+(?:company\s+)?car\b|\bcompany\s+car\s+(?:(?:is|would|will|be|a|the)\s+){0,3}(?:shared|pool)\b', lower):
+            additions.append(('Company Car', 'Access to a shared pool car'))
+        elif not re.search(r'\b(?:or|either|whether)\b[^.;\n]{0,30}\bcompany\s+car\b|\bcompany\s+car\b[^.;\n]{0,30}\bor\b[^.;\n]{0,30}\bcar\b', lower):
+            additions.append(('Company Car', car_spec['bare_request_default']))
     if re.search(r'\b(?:standard\s+(?:company\s+)?non[-\s]?compete|company[’\x27]s\s+standard\s+non[-\s]?compete|non[-\s]?compete\s+(?:clause\s+)?(?:kept|remains?|stays?)\s+in\s+place)\b',lower) and not re.search(r'\b(?:no|without|waiv\w*|remov\w*)\b[^.;]{0,45}\bnon[-\s]?compete\b',lower):
         additions.append(('Non-compete Clause','Keep'))
     # A decimal point is part of a value, not a sentence boundary.  Preserving
@@ -1665,7 +1700,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     vacation_patterns = [
         rf"\b({number_token})\s+(?:paid\s+)?days?\s+(?:of\s+)?(?:annual\s+leave|holiday|vacation|off)\b",
         rf"\b({number_token})\s+days?\s+of\s+paid\s+(?:annual\s+leave|holiday|vacation|time\s+off)\b",
-        rf"\b({number_token})\s+(?:vacation|holiday)\s+days?\b",
+        rf"\b({number_token})\s+(?:vacation|holiday|time\s+off)\s+days?\b",
         rf"\b(?:vacation|annual\s+leave|holiday)\b.{{0,20}}?\b(?<![\d.,])({number_token})\s+days?\b",
     ]
     for pattern in vacation_patterns:
@@ -1673,7 +1708,12 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         if match:
             days = word_number(match.group(1))
             spec = _scenario_issue_map(scenario).get("Vacation Days")
-            if spec and float(spec["min"]) <= float(days) <= float(spec["max"]):
+            if match.start(1) > 0 and numeric_lower[match.start(1)-1] in '-−':
+                days = -abs(days)
+            if spec:
+                tail = numeric_lower[match.end():match.end()+24]
+                if spec.get('weekly_to_annual_factor') and re.match(r'\s*(?:per|each|every|a)\s+week\b|\s+weekly\b', tail):
+                    days *= float(spec['weekly_to_annual_factor'])
                 additions.append(("Vacation Days", f"{days} days"))
             elif not spec and days in {10, 20, 30}:
                 additions.append(("Vacation Days", f"{days} days"))
@@ -1689,12 +1729,14 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         match = re.search(pattern, remote_scan)
         if match:
             days = word_number(match.group(1))
+            if match.start(1) > 0 and remote_scan[match.start(1)-1] in '-−':
+                days = -abs(days)
             spec = _scenario_issue_map(scenario).get("Remote Working Days")
             expected_period = "week" if "week" in str((spec or {}).get("unit", "")).lower() else "month"
             stated_period = match.group(2) if len(match.groups()) > 1 else None
             if stated_period and stated_period != expected_period:
                 break
-            if spec and spec.get("kind") == "continuous" and float(spec["min"]) <= float(days) <= float(spec["max"]):
+            if spec and spec.get("kind") == "continuous":
                 additions.append(("Remote Working Days", f"{days} days / {expected_period}"))
             elif not spec and days in {0, 3, 6}:
                 additions.append(("Remote Working Days", f"{days} days / month"))
@@ -2728,7 +2770,7 @@ def evaluate_offer(
         )
 
     optional_continuous_evidence = {
-        "Vacation Days": numbered_issue(r"vacation|annual\s+leave|holiday|(?:paid\s+)?days?\s+off"),
+        "Vacation Days": numbered_issue(r"vacation|vacay|annual\s+leave|holiday|(?:paid\s+)?days?\s+off|time\s+off"),
         "Remote Working Days": numbered_issue(r"remote(?:ly|[-\s]+working|\s+work)?|wfh|home[-\s]+working|work(?:ing)?[-\s]from[-\s]home"),
         "Probation Length": (
             numbered_issue(r"probation(?:ary)?|trial(?:\s+period)?")
@@ -3354,7 +3396,12 @@ def evaluate_offer(
 
     last_by_issue: OrderedDict[str, dict[str, Any]] = OrderedDict()
     current_issues=_scenario_issue_map(scenario)
-    if ('Company Car' in current_issues and re.search(r'\bcompany\s+car\b',lower_text)
+    if ('Company Car' in current_issues and current_issues['Company Car'].get('bare_request_default')
+            and re.search(r'\b(?:company|dedicated)\s+car\s+or\s+(?:(?:a|the)\s+)?(?:shared\s+)?pool\s+car\b|\bpool\s+car\s+or\s+(?:(?:a|the)\s+)?(?:company|dedicated)\s+car\b', lower_text)):
+        combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict) and p.get('issue') == 'Company Car')]
+        findings.append(_finding(CLARIFICATION_NEEDED, 'company_car_alternatives',
+            'For this offer, would you like a dedicated company car or access to a shared pool car? Please choose one.', issue='Company Car'))
+    if ('Company Car' in current_issues and not current_issues['Company Car'].get('bare_request_default') and re.search(r'\bcompany\s+car\b',lower_text)
             and not re.search(r'\b(?:dedicated|exclusive|shared|pool|private|personal|own)\s+(?:company\s+)?car\b|\b(?:no|without)\s+(?:(?:a|the|any)\s+)?(?:company\s+)?car\b|\bcompany\s+car\s+(?:(?:is|would|will|be|a|the)\s+){0,3}(?:shared|pool|dedicated|exclusive|not\s+included)\b',lower_text)):
         findings.append(_finding(CLARIFICATION_NEEDED,'ambiguous_catalogue_choice',
             'For the company car, do you mean access to a shared pool car or a dedicated company car? Please choose one.',
@@ -3466,7 +3513,9 @@ def evaluate_offer(
                         message = f"{option} is not a valid amount for {issue}. Please enter a non-negative annual amount in US dollars."
                     else:
                         allowed = [str(value) for value in (domain_low, domain_high) if value is not None]
-                        message = f"{option} does not match the allowed proposal values for {issue}."
+                        message = (f'Vacation cannot be negative or exceed 365 days per year. Please choose one annual allowance (0–365 days).' if issue == 'Vacation Days' else
+                            'There are five working days per week in this scenario. Please choose 0–5 remote-working days per week.' if issue == 'Remote Working Days' else
+                            f'{option} does not match the allowed proposal values for {issue}. Please choose from {domain_low} to {domain_high}.')
                 elif spec.get("value_type") == "date":
                     low_label = _format_continuous(date.fromisoformat(str(spec["min"])), spec)
                     high_label = _format_continuous(date.fromisoformat(str(spec["max"])), spec)
@@ -3599,6 +3648,13 @@ def evaluate_offer(
     result["display_text"] = format_system_output(result)
     if unpriced_details:
         result['display_text'] += '\n\nExtra details retained without additional points:\n' + '\n'.join('- '+item['detail'] for item in unpriced_details)
+    vacation_spec = _scenario_issue_map(scenario).get('Vacation Days', {})
+    if (vacation_spec.get('weekly_to_annual_factor') and 'Vacation Days' in valid_pairs
+            and re.search(r'\b(?:vacay|vacation|holiday|time\s+off|days?\s+off)\b[^.;\n]{0,30}\b(?:per|a|each|every)\s+week\b', text, re.I)):
+        annual = valid_pairs['Vacation Days']
+        note = 'Weekly vacation allowance shown as ' + annual + ('' if 'year' in annual else ' per year') + ' (52 weeks). Please check this interpretation before sending.'
+        result['interpretation_notes'] = [note]
+        result['display_text'] += '\n\n' + note
     return result
 
 

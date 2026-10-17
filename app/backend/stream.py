@@ -16,7 +16,7 @@ from offer_engine import SCORABLE, evaluate_offer, score_pair, source_quote_is_g
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCORER_VERSION = '2026-10-17-human-tutorial-audit-v11'
+SCORER_VERSION = '2026-10-17-full-year-leave-v12'
 SHARED_KEYS_DIR = Path(os.environ["CREATIVE_NEGOTIATIONS_KEYS_DIR"]) if os.environ.get("CREATIVE_NEGOTIATIONS_KEYS_DIR") else None
 
 
@@ -344,7 +344,11 @@ def _llm_extract_once(text: str, previous_offer: str = "", dense_audit: bool = F
         "Read ordinary spelling errors in context: salry means salary; personnel/personalm expenses and work-experience budget can mean the personal work-expense budget. Preserve the stated number, not a corrected or invented amount. In monetary wording, $70.000 and $4.000 use a period as the thousands separator; 52.5k means 52,500.\n"
         "For a continuous_range issue, any value inside its configured range is valid. For a continuous_value issue, use its proposal minimum/maximum; its scoring reference values are anchors, not proposal limits, so preserve valid values beyond those anchors. Do not snap to a sample value, round, convert units/currency, invent values, or silently omit material terms.\n"
         "Keep a clearly stated value even when it is outside the allowed domain or is an invalid calendar date, such as January 1 or February 30. The validator must explain the problem; never silently omit that issue or substitute an allowed value.\n"
-        "Starting-date convention: a month alone, such as 'starting date of May', 'start May', or 'May start', means the first day of that month in the scenario year. Return May 1 for May alone, not a missing-day question. Preserve an explicitly stated day exactly. Alternatives such as May or June, and approximate dates such as late May, still need clarification. The complete interpreted date is shown for confirmation.\n"
+        + ("Starting dates use 2026 regardless of any supplied year. A month alone means day 1; 'mid Jan' or 'middle of January' means January 15; 'end May' or 'end of May' means May 31. Preserve exact stated days. Alternatives and vague wording such as 'around May' or 'late May' still need one date. Show the interpreted date for confirmation.\n"
+           if any(i.get('assume_year') for i in SCENARIO.get('issues', [])) else
+           "Starting-date convention: a month alone means the first day of that month in the scenario year. Preserve an explicitly stated day exactly. Alternatives and approximate dates still need clarification.\n") +
+        ("Vacation aliases include vacay, holiday, annual leave, and time off. An explicit weekly vacation allowance is converted using 52 weeks per year and shown as an annual allowance for confirmation. Vacation can be 0–365 days per year; remote work can be 0–5 days per week (five working days). Do not apply the old scoring anchors as proposal limits. A bare request for a company car means Dedicated company car; explicit shared/pool/no-car wording overrides this default.\n"
+           if any(i.get('weekly_to_annual_factor') for i in SCENARIO.get('issues', [])) else '') +
         "Put unresolved ranges, mutually exclusive alternatives, conditional IF/THEN packages, vague offered values, unclear references, sarcasm, and hypotheticals in ambiguities. Ask only for information needed to select a configured issue/choice or a single numeric value. Ordinary descriptions or fixed qualifications are not automatically unresolved conditions. Do not ask a question whose answer is already stated. Do not mark polite willingness to discuss as an ambiguity when one complete concrete offer is already present, unless the participant also presents a second material package.\n"
         "The personal work-expense budget already covers business/client travel, meals and lodging in this scenario. When its dollar amount is stated, do not request expense examples, reimbursement criteria, receipts, or approval-policy details merely to score that amount. Do not invent additional requirements that the negotiator must add. An independently proposed approval rule belongs to its own catalog issue when one exists; a truly new term is captured/rejected under the scenario policy, not turned into a series of questions about unpriced details.\n"
         "A concrete request phrased as a question is still an offer in this Score Offer action. For example, 'Could we set 4 paid hours each week?' offers 4 hours; it is not uncertain.\n"
@@ -530,6 +534,10 @@ def _issue_value_question(issue: dict[str, object]) -> str:
     name = str(issue.get("name", "this issue"))
     if issue.get("kind") == "continuous":
         proposal_domain = issue.get("proposal_domain")
+        if name == 'Vacation Days' and isinstance(proposal_domain, dict):
+            return 'How many vacation days per year do you propose? You may choose 0–365 days. A weekly allowance is shown as an annual total for confirmation.'
+        if name == 'Remote Working Days' and isinstance(proposal_domain, dict):
+            return 'How many remote-working days per week do you propose? There are five working days per week, so choose 0–5.'
         if isinstance(proposal_domain, dict) and issue.get("value_type") == "currency" and proposal_domain.get("min") == 0 and proposal_domain.get("max") is None:
             return f"What annual USD amount do you propose for {name}? Enter 0 or more."
         minimum = issue.get("min")
@@ -545,8 +553,9 @@ def _issue_value_question(issue: dict[str, object]) -> str:
         elif value_type == "date":
             # Date bounds are ISO strings, not ordinary numeric anchors. A
             # month-only proposal should prompt for an exact date, not crash.
-            low = str(minimum)
-            high = str(maximum)
+            from datetime import date
+            low = date.fromisoformat(str(minimum)).strftime('%B %d').replace(' 0', ' ')
+            high = date.fromisoformat(str(maximum)).strftime('%B %d').replace(' 0', ' ')
         else:
             low_number = float(minimum)
             high_number = float(maximum)
