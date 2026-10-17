@@ -4,6 +4,14 @@ The [Empirica folder](../empirica/) contains both scorer commands, the current 2
 
 ## Download and run
 
+The October 17 contextual-request update was checked with the original 32
+creative offers plus 16 variations, and 24 maintained main/tutorial offers.
+All 72 final live cases matched their checks. The maintained offline suites
+also passed. A separate comparison found unchanged results for 1,228 saved
+interpretations under the old and patched rules with the same current scenarios;
+that comparison is not 1,228 fresh language-model calls. The complete audit
+workbook stays private because it includes human response text.
+
 Use the [public repository](https://github.com/SamQuinto/Creative-Negotiations-Materials). **Download everything in `empirica/`, including its `app/` subfolder.** No sibling folder is needed to run the two scoring commands. From inside `empirica/`, run `python app/check_installation.py` for a no-key check. Keep `empirica-support/` and `developer/` too only if you want the additional tests or local preview. Moving the engine does not change the scoring logic or payoffs.
 
 Use Python 3.11 or later. No extra Python packages are required. From the extracted folder, run:

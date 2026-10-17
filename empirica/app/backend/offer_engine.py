@@ -191,6 +191,54 @@ def _explicit_training_participation(text: str) -> bool:
     return False
 
 
+def _contextual_request_clauses(text: str) -> list[str]:
+    return [piece.strip() for clause in _offer_clauses(text)
+            for piece in re.split(r'\b(?:and|plus)\s+(?:also\s+)?(?=(?:i|we)\s+(?:want|need|request|would\s+like)\b)', clause, flags=re.I)
+            if piece.strip()]
+
+
+def unpriced_personal_travel_requests(text: str) -> list[str]:
+    """Keep a relative's personal-trip request even when the model omits it."""
+    return [clause for clause in _contextual_request_clauses(text)
+            if incidental_numeric_issue_reference('Vacation Days', clause, text)]
+
+
+def incidental_numeric_issue_reference(issue: str, source: str, text: str,
+                                      unpriced_terms: list[str] | None = None) -> bool:
+    """A word in somebody else's trip or an unpriced object is not an allowance.
+
+    Check each matching clause separately. A real vacation or cash-commuting
+    request elsewhere must still be recognized, including one with no amount.
+    """
+    if issue not in {'Vacation Days', 'Commuting Support'}:
+        return False
+    cue = (r'\b(?:holiday|vacay|vacation|annual\s+leave|time\s+off)\b'
+           if issue == 'Vacation Days' else r'\bcommut\w*\b|\btravel\s+to\s+work\b')
+    clauses = _contextual_request_clauses(text)
+    matches = [clause for clause in clauses if re.search(cue, clause, re.I)
+               and (not source or source_quote_is_grounded(source, clause))]
+    if not matches:
+        return False
+
+    def incidental(clause: str) -> bool:
+        if issue == 'Vacation Days':
+            relative = r'\b(?:uncle|aunt|cousin|nephew|niece|brother|sister|friend|relative|mother|father|parents?|spouse)\b'
+            other_person = re.search(relative, clause, re.I) or (
+                re.search(r'\b(?:his|her|their)\b', clause, re.I) and re.search(relative, text, re.I))
+            trip = re.search(r'\b(?:fly|flights?|airfare|tickets?|first[-\s]+class|book|pay\s+for|fund|send|travel|trip|holiday)\b', clause, re.I)
+            own_leave = re.search(r'\b(?:my|our|candidate[’\x27]s)\s+(?:annual\s+)?(?:leave|vacation|holiday|time\s+off)|\b(?:annual\s+leave|leave\s+allowance|vacation\s+days?|holiday\s+days?|days?\s+off|time\s+off)\b', clause, re.I)
+            return bool(other_person and trip and not own_leave)
+        # Commuting Support prices a cash contribution, not every object that
+        # could be used to commute. Do not ask for dollars for an unpriced idea.
+        outside = any(source_quote_is_grounded(str(term), clause)
+                      or source_quote_is_grounded(clause, str(term))
+                      for term in (unpriced_terms or []) if str(term).strip())
+        cash_request = re.search(r'\b(?:commut\w*\s+(?:support|allowance|reimbursement|benefit)|allowance|reimburse\w*|subsid\w*|cash|dollars?|payment|costs?|fares?|expenses?)\b|\$\s*\d', clause, re.I)
+        return outside and not cash_request
+
+    return all(incidental(clause) for clause in matches)
+
+
 def _complete_quote_clause(quote: str, text: str) -> str:
     """Keep a duty's qualifier when the model copied only its short noun phrase.
 
@@ -2830,6 +2878,12 @@ def evaluate_offer(
             findings.append(_finding(CLARIFICATION_NEEDED,'unverified_negative_choice',f'Please clarify {issue}: is it included in this offer, or explicitly excluded?',issue=issue))
     if shared_optional_duties:
         combined_pairs=[p for p in combined_pairs if not (isinstance(p,dict) and p.get('issue') in {'Role in Organizing Social Events','Regular Linkedin Posts for Company'})]
+    outside_requests = [*(model_novel if isinstance(model_novel, list) else []),
+                        *(model_unsupported if isinstance(model_unsupported, list) else [])]
+    combined_pairs = [pair for pair in combined_pairs if not (
+        isinstance(pair, dict) and incidental_numeric_issue_reference(
+            str(pair.get('issue', '')), str(pair.get('source_text', '')),
+            _focused_text(text), outside_requests))]
     omitted_entitlements={name for name in ('Remote Working Days','Vacation Days') if _no_numeric_entitlement(name,_focused_text(text))}
     combined_pairs=[p for p in combined_pairs if not (isinstance(p,dict) and p.get('issue') in omitted_entitlements)]
     # A reference to unspecified company policy does not commit the company
@@ -3335,9 +3389,20 @@ def evaluate_offer(
             REJECTED, "model_unsupported_terms",
             f"This offer has not been scored because these terms are not available in this scenario: {terms}. Please remove them or choose listed job features.",
         ))
+    if _open_capture_enabled(scenario):
+        for request in unpriced_personal_travel_requests(_focused_text(text)):
+            if not any(source_quote_is_grounded(request, str(term))
+                       or source_quote_is_grounded(str(term), request)
+                       for term in captured_novel_terms):
+                captured_novel_terms.append(request)
     deterministic_relative_terms = ("maximum salary", "maximum work-expense", "maximum work expense", "earliest possible start")
     relative_context_terms = ("same offer", "same as before", "previous offer", "last offer") if previous_offer else ()
     irrelevant_questions={str(item.get('question','')) for item in extraction.get('ambiguity_details',[]) if isinstance(item,dict) and item.get('issue') in evidence_required and not re.search(evidence_required[item['issue']],affirmative_text,re.I)} if isinstance(extraction,dict) else set()
+    if isinstance(extraction, dict):
+        irrelevant_questions.update(str(item.get('question', ''))
+            for item in extraction.get('ambiguity_details', []) if isinstance(item, dict)
+            and incidental_numeric_issue_reference(str(item.get('issue', '')),
+                str(item.get('source_text', '')), _focused_text(text), outside_requests))
     if _open_capture_enabled(scenario):
         for parking in re.finditer(r'\b(?:reserved|dedicated|free|on[-\s]?site)\s+parking(?:\s+(?:space|spot|bay))?\b',_focused_text(text),re.I):
             # An in-kind space is not the catalogue's annual cash commuting

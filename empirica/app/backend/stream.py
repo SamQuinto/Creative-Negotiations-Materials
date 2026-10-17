@@ -12,11 +12,11 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from offer_engine import SCORABLE, evaluate_offer, score_pair, source_quote_is_grounded, _affirmative_numeric_text, _focused_text, previous_offer_reference, _explicit_cash_pairs
+from offer_engine import SCORABLE, evaluate_offer, score_pair, source_quote_is_grounded, _affirmative_numeric_text, _focused_text, previous_offer_reference, _explicit_cash_pairs, incidental_numeric_issue_reference, unpriced_personal_travel_requests
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCORER_VERSION = '2026-10-17-september-usual-v13'
+SCORER_VERSION = '2026-10-17-contextual-requests-v14'
 SHARED_KEYS_DIR = Path(os.environ["CREATIVE_NEGOTIATIONS_KEYS_DIR"]) if os.environ.get("CREATIVE_NEGOTIATIONS_KEYS_DIR") else None
 
 
@@ -358,6 +358,7 @@ def _llm_extract_once(text: str, previous_offer: str = "", dense_audit: bool = F
         "For novel_terms quote only exact words from the offer that describe an actually new negotiable term; do not invent labels, restate catalog issues, or fill defaults. Distinguish receiving mentoring from being assigned to mentor other employees. A rejected comparison such as 'rather than a two-year contract' does not propose a two-year contract.\n"
         "Distinguish neighboring issues by the exact object in each definition. Do not substitute a broader issue merely because it shares words such as mentor, coaching, travel, approval, recovery, reference, or commission.\n"
         "A word inside one complete choice does not independently propose another issue. For example, a coaching duty that starts after probation does not specify probation length; a primary-manager decision about conflicts does not propose a different primary manager. Office decoration is not a request for a dedicated office. An optional sponsored hobby is not a required after-hours business-event obligation. Preserve unmatched concrete requests in novel_terms.\n"
+        "Keep the beneficiary and type of request straight. Paying for a relative's personal holiday does not request the Candidate's vacation allowance. An unpriced object or impossible travel arrangement is not a cash commuting allowance merely because it is for commuting. Retain such requests without inventing a priced issue or asking an unrelated allowance question. Separate actual leave or cash-support requests elsewhere still count.\n"
         "Building relationships with senior colleagues through a recruitment fair does not offer scheduled career-development conversations. Do not ask for their frequency unless those conversations or career guidance are actually proposed. An explicitly non-obligatory generic publicity activity does not require naming a platform to score the rest of the package; retain that wording without inventing LinkedIn work.\n"
         "A professional-development course offers Professional Training Program = Participation, not a Professional Development Budget unless money is stated. A mentoring relationship for twelve months offers Mentorship Program = Participation; it does not specify Mentor Meeting Frequency. Recruitment fairs are not sales coaching. Waiver of a non-compete means Waive. Choose exact discrete labels and keep unpriced frequency/duration detail as a note, not as an invalid option.\n"
         "An annual or yearly performance assessment is a review-frequency request, not a guaranteed salary increase. Do not ask for an increase percentage unless a guaranteed increase is actually proposed.\n"
@@ -615,6 +616,12 @@ def _restore_recognized_human_phrases(text: str, parsed: dict) -> None:
     still omits a matched issue, this repair asks an issue-specific question.
     """
     lower = _normalized_phrase_text(text)
+    if SCENARIO.get('issue_space', {}).get('unknown_term_policy') == 'capture_unscored':
+        for request in unpriced_personal_travel_requests(text):
+            existing=[*parsed.get('novel_terms', []), *parsed.get('unsupported_terms', [])]
+            if not any(source_quote_is_grounded(request, str(term))
+                       or source_quote_is_grounded(str(term), request) for term in existing):
+                parsed.setdefault('novel_terms', []).append(request)
     probation_mentions=list(re.finditer(r'\bprobation\b',lower))
     probation_only_timing=bool(probation_mentions) and all(re.search(r'\b(?:after|following)\s*$',lower[max(0,m.start()-20):m.start()]) for m in probation_mentions)
     if SCENARIO.get('issue_space', {}).get('unknown_term_policy')=='capture_unscored':
@@ -648,9 +655,13 @@ def _restore_recognized_human_phrases(text: str, parsed: dict) -> None:
             for match in re.finditer(re.escape(normalized), lower):
                 protected.append((match.start(), match.end(), name))
     redundant_questions=set()
+    outside_requests=[*parsed.get('novel_terms', []), *parsed.get('unsupported_terms', [])]
     retained_details=[]
     for detail in parsed.get('ambiguity_details', []):
         name=str(detail.get('issue',''))
+        if incidental_numeric_issue_reference(name, str(detail.get('source_text', '')), text, outside_requests):
+            redundant_questions.add(str(detail.get('question', '')))
+            continue
         if name=='Probation Length' and probation_only_timing:
             redundant_questions.add(str(detail.get('question','')))
             continue
@@ -688,6 +699,8 @@ def _restore_recognized_human_phrases(text: str, parsed: dict) -> None:
             continue
         aliases = _issue_phrases(issue)
         for alias in aliases:
+            if incidental_numeric_issue_reference(str(issue.get('name', '')), str(alias), text, outside_requests):
+                continue
             normalized = _normalized_phrase_text(alias)
             occurrences = list(re.finditer(r'\b'+re.escape(normalized)+r'\b', lower)) if normalized else []
             independent = any(not any(a<=m.start() and m.end()<=b and owner!=issue.get('name') for a,b,owner in protected) for m in occurrences)

@@ -1,8 +1,8 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "3be4ff4cf1535bf19e7402683fe462fceda71b01",
+  "source_commit": "ea378f5c941d2e989909b7140896030ec1fdd6d2",
   "date": "2026-10-17",
-  "description": "Self-contained Empirica handoff: download the entire empirica/ folder, including app/. Engine logic and payoffs are unchanged.",
+  "description": "Self-contained Empirica package. Contextual-request repair keeps unpriced personal ideas separate from numeric job allowances; payoffs unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
@@ -10,7 +10,7 @@
     },
     {
       "path": "empirica-support/README.md",
-      "sha256": "363a06ef06aec29b24ecc9cd37d7ae3baf39dc8375fbc3c5a61ffbe6d503f270"
+      "sha256": "cd06f0f21983893c7cd67df300e4952c14cf9bc6be7609c1cea391000747790e"
     },
     {
       "path": "empirica-support/SCENARIO_FORMAT.md",
@@ -50,11 +50,11 @@
     },
     {
       "path": "empirica-support/test_language_rules.py",
-      "sha256": "c9cc1bf502b188cee7e85d16fd489f6b591206ff966aad5fb8a77808e9e28788"
+      "sha256": "97fde7be80086c1549fc49ba7402d95dc8947077fc0d4bce5d7f6dc41d4f9a0b"
     },
     {
       "path": "empirica/README.md",
-      "sha256": "06fdd1ee3f950a1e0a5b5c0da6481595ba186759538613ceb9779f052a99c3e9"
+      "sha256": "6c636e622992f14056da7c87db2a7f34b1a4b53669709d024e335a1e57a02c47"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -62,7 +62,7 @@
     },
     {
       "path": "empirica/app/backend/offer_engine.py",
-      "sha256": "bff3d99071523f9ccf3e8081fcab01fe8027ac8aa99ea42984819bc3563213f6"
+      "sha256": "01a50090561833b9972fb96642a0428916735cd47e01eae66f5fd2ed9b0d14cf"
     },
     {
       "path": "empirica/app/backend/scenario_rules.py",
@@ -74,7 +74,7 @@
     },
     {
       "path": "empirica/app/backend/stream.py",
-      "sha256": "15ba4994212cfbaa0dc6e08e7b97eae220f49280ca18645fbea4b24379f725b2"
+      "sha256": "68a58f9007e6a48c61810af4bd187ddacb121ed5f62611e34462b461cff76708"
     },
     {
       "path": "empirica/app/backend/structured_offer.py",

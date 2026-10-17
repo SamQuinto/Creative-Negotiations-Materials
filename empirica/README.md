@@ -44,6 +44,11 @@ Python files. Natural-language scoring uses Nano for routine interpretation,
 with Luna review for flagged cases; the payoff calculation is deterministic.
 The installation check uses explicit choices, not live language-model calls.
 
+The latest language update keeps unpriced personal requests separate from known
+allowances. A relative's holiday does not request the Candidate's vacation days;
+an unpriced object for commuting does not automatically request cash support.
+Separate real vacation or cash-support requests still count.
+
 Keep API keys and both roles' full payoff definitions server-side. Show each
 participant only the information they are allowed to see. Replace the visible
 `readrole_instructions` test placeholder before participant collection.

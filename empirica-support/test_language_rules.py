@@ -141,6 +141,40 @@ class LanguageRules(unittest.TestCase):
                 self.assertIn('one calendar day in August or September', result['message'])
                 self.assertNotIn('Please add Event date', result['message'])
 
+    def test_unpriced_commuting_idea_does_not_request_cash(self):
+        text='salary 50k budget 10k start January 1. Buy me a unicorn for my commute.'
+        question='What commuting amount do you propose?'
+        parsed={'pairs':[], 'novel_terms':['Buy me a unicorn for my commute.'],
+                'ambiguities':[question], 'ambiguity_details':[{'issue':'Commuting Support',
+                'source_text':'Buy me a unicorn for my commute.','question':question}]}
+        result=engine.evaluate_offer(text,'Candidate',parsed,{},self.study['required_issues'],self.study)
+        self.assertEqual(result['decision'],'scorable',result)
+        self.assertEqual(result['total'],1)
+        self.assertNotIn('Commuting Support',result['valid_pairs'])
+
+    def test_relative_holiday_is_not_candidate_vacation(self):
+        text='salary 50k budget 10k start January 1. Fly my uncle to his personal holiday.'
+        question='How many vacation days?'
+        parsed={'pairs':[], 'unsupported_terms':['Fly my uncle to his personal holiday.'],
+                'ambiguities':[question], 'ambiguity_details':[{'issue':'Vacation Days',
+                'source_text':'holiday','question':question}]}
+        result=engine.evaluate_offer(text,'Candidate',parsed,{},self.study['required_issues'],self.study)
+        self.assertEqual(result['decision'],'scorable',result)
+        self.assertEqual(result['total'],1)
+        self.assertNotIn('Vacation Days',result['valid_pairs'])
+
+    def test_relative_request_survives_beside_real_own_leave(self):
+        result=self.evaluate('salary 50k budget 10k start January 1. Fly my uncle on his personal holiday and I want 40 vacation days per year.')
+        self.assertEqual(result['valid_pairs']['Vacation Days'],'40 days per year')
+        self.assertTrue(any('uncle' in term for term in result['novel_terms']),result)
+
+    def test_real_cash_and_vacation_requests_still_need_quantities(self):
+        for phrase,issue in [('I want vacation days.','Vacation Days'),('I want a commuting allowance.','Commuting Support')]:
+            question='What amount for '+issue+'?'
+            parsed={'pairs':[], 'ambiguities':[question], 'ambiguity_details':[{'issue':issue,'source_text':phrase,'question':question}]}
+            result=engine.evaluate_offer('salary 50k budget 10k start January 1. '+phrase,'Candidate',parsed,{},self.study['required_issues'],self.study)
+            self.assertEqual(result['decision'],'clarification_needed',result)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
