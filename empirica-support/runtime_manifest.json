@@ -1,8 +1,8 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "ea378f5c941d2e989909b7140896030ec1fdd6d2",
+  "source_commit": "5f3bc8a822fe35c02fddbb322942cc682990a97c",
   "date": "2026-10-17",
-  "description": "Self-contained Empirica package. Contextual-request repair keeps unpriced personal ideas separate from numeric job allowances; payoffs unchanged.",
+  "description": "Self-contained Empirica package. Participant-facing year instruction removed; scorer, date handling and payoff rules unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
@@ -30,15 +30,15 @@
     },
     {
       "path": "empirica-support/scenarios/fixed-15.json",
-      "sha256": "f999655b05b7cf6fd78fdb9b234bc0cabf3f7677dc0cd09f58e0269dac8dba9b"
+      "sha256": "efb2ebf927a07057973bcd24cea75f8a658791f470f7baa1837b8ce2ac1afb61"
     },
     {
       "path": "empirica-support/scenarios/flexible-15.json",
-      "sha256": "b334af4f51ba03c8f39d8bbeade5c472cf4798a54dcd4a5bfd4f3adb3611fa97"
+      "sha256": "062db662b40ff395be2df5e669ac273e614810fe9d620934b7e0b98d8574edca"
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "ac36e5b6b44a5b72d2ae70077666ba789529cab68d2605161e4559642db8d4f1"
+      "sha256": "6f8c0ab531334310d1582984b71d9832f0a54883d83ba4bc79442508868eb62e"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -86,7 +86,7 @@
     },
     {
       "path": "empirica/app/config/fixed-15.json",
-      "sha256": "2e9e01ee25bc0d3e98f87c290e504713bb6546fabd5b005eeafb8b4d4f39044f"
+      "sha256": "9ad2bf285d11ba173ce67b3aeb2feeba8eb0a0b5e9a560b25caca44788e178b3"
     },
     {
       "path": "empirica/app/config/issue-phrase-registry.json",
@@ -98,11 +98,11 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "336a492bbb05cd5ac33c2d6200eb2970eccaf8608049cdcd53fbeb32b64267e5"
+      "sha256": "0f6bfc5bb577bacb6a54c1ec602d3d44ed51825034c755956bd52a1662668c55"
     },
     {
       "path": "empirica/app/config/small-15.json",
-      "sha256": "baf64bc25192830336b3bb3919953d19a07e20d754153ddce0fe52a9eb66aa09"
+      "sha256": "7c5d4cf1ae50b9ea00de67242f5fa1963dc14710a6e9c5e7f9e68abc82322e9c"
     },
     {
       "path": "empirica/app/config/tutorial.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "ac36e5b6b44a5b72d2ae70077666ba789529cab68d2605161e4559642db8d4f1"
+      "sha256": "6f8c0ab531334310d1582984b71d9832f0a54883d83ba4bc79442508868eb62e"
     },
     {
       "path": "empirica/score_offer.py",
