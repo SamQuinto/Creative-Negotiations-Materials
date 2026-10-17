@@ -673,7 +673,9 @@ def _explicit_cash_pairs(text: str) -> list[dict[str, Any]]:
             correction=re.search(r'(?:actually\s+(?:make\s+(?:that|it)\s+)?|correction\s*:\s*|no\s*,?\s*(?:sorry\s*,?\s*)?make\s+(?:that|it)\s+)('+token+')',tail,re.I)
             if correction:
                 raw=correction.group(1).strip()
-            if re.match(r'\s*(?:[-–—]|to|through|or|and)\s*\$?\s*\d',text[match.end():],re.I):continue
+            following = text[match.end():]
+            different_allowance = re.match(r'\s+and\s+[-+]?\d[\d,.]*\s*(?:vacay|vacation|holiday|remote|wfh|days?|months?|years?)\b', following, re.I)
+            if not different_allowance and re.match(r'\s*(?:[-–—]|to|through|or|and)\s*\$?\s*\d',following,re.I):continue
             # A named calendar date or range cannot supply an amount.
             if re.search(r'^\d{4}-\d{2}-',raw):continue
             result.append(dict(issue=name,option=str(_money_number_from_text(raw)),confidence=1,source_text=match.group(),source='explicit_cash'))
@@ -691,6 +693,8 @@ def _explicit_cash_pairs(text: str) -> list[dict[str, Any]]:
 def _date_from_text(value: str, spec: dict[str, Any]) -> date:
     raw = value.strip()
     base_year = int(spec.get('assume_year') or date.fromisoformat(str(spec['min'])).year)
+    if spec.get('natural_date_conventions', {}).get('asap') and re.fullmatch(r'(?:asap|as soon as possible)', raw, re.I):
+        return date.fromisoformat(spec['natural_date_conventions']['asap'])
     iso = re.search(r"\b(\d{4})-(\d{2})-(\d{2})\b", raw)
     if iso:
         return date(base_year if spec.get('assume_year') else int(iso.group(1)), int(iso.group(2)), int(iso.group(3)))
@@ -742,6 +746,16 @@ def _stated_start_date(text: str, scenario: dict[str, Any] | None, *, include_in
     patterns = [rf'\b{label}\s*(?:(?:on|in|of|is|would\s+be|will\s+be)\s+|[:=]\s*)?({value})\b',
                 rf'\b({value})\s+{label}\b']
     dates = set()
+    if spec.get('natural_date_conventions', {}).get('asap'):
+        asap = r'(?:asap|as\s+soon\s+as\s+possible)'
+        for match in re.finditer(rf'\b(?:{label}\s*(?:(?:on|in|of|is|would\s+be|will\s+be)\s+|[:=]\s*)?{asap}|{asap}\s+{label})\b', text, re.I):
+            before = text[max(0, match.start()-22):match.start()]
+            after = text[match.end():match.end()+35]
+            if re.search(r"\b(?:not|cannot|can't|won't|wouldn't|do\s+not)\s*$", before, re.I):
+                continue
+            if re.match(rf'\s*(?:or|/|to|through|until)\s*(?:{month}\b|\d)', after, re.I):
+                return None
+            dates.add(spec['natural_date_conventions']['asap'])
     for pattern in patterns:
         for match in re.finditer(pattern, text, re.I):
             before = text[max(0, match.start() - 16):match.start()]
@@ -1024,7 +1038,8 @@ def _smart_text_findings(
         r"(?:personal\s+)?(?:work[-\s]?expense\s+)?budget\s+(?:somewhere\s+)?(?:from\s+|between\s+)?(\$?\d[\d,]*(?:\.\d+)?\s*k?)\s+(?:to|through|and)\s+(\$?\d[\d,]*(?:\.\d+)?\s*k?)",
         raw, re.I,
     )
-    if budget_range:
+    next_allowance = bool(budget_range and re.match(r'\s*(?:vacay|vacation|holiday|remote|wfh|days?|months?|years?)\b', raw[budget_range.end():], re.I))
+    if budget_range and not next_allowance:
         findings.append(_finding(
             CLARIFICATION_NEEDED, "budget_range",
             f"I found a personal-budget range ({budget_range.group(1)} to {budget_range.group(2)}). Which exact budget should I score?",
@@ -1145,7 +1160,7 @@ def _smart_text_findings(
         vague.append("salary")
     if re.search(r"\b(?:good|decent|reasonable|fair)\s+(?:personal\s+)?budget\b", lower):
         vague.append("personal budget")
-    if re.search(r"\b(?:asap|as soon as possible)\b", lower):
+    if re.search(r"\b(?:asap|as soon as possible)\b", lower) and not _stated_start_date(raw, scenario):
         vague.append("start date")
     if vague:
         quoted = []
@@ -1374,10 +1389,12 @@ def _smart_text_findings(
                     issue="Role Review Schedule",
                 ))
 
-    remote_scan = re.sub(r"\b(days?)\s+(weekly|monthly)\b", lambda m: m.group(1) + ' per ' + ('week' if m.group(2)=='weekly' else 'month'), lower)
+    remote_scan = re.sub(r"\b(days?|times?)\s+(weekly|monthly)\b", lambda m: m.group(1) + ' per ' + ('week' if m.group(2)=='weekly' else 'month'), lower)
     remote = re.search(r"\b(?:remotely|remote(?:[-\s]+working)?|remote\s+work|wfh|home[-\s]+working|work(?:ing)?[-\s]from[-\s]home)\b.{0,24}?\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", remote_scan)
     if not remote:
         remote = re.search(r"\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+(?:remote(?:[-\s]+working)?|wfh|home[-\s]+working)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", remote_scan)
+    if not remote and _scenario_issue_map(scenario).get('Remote Working Days', {}).get('default_period'):
+        remote = re.search(r'\b(?:remotely|remote\s+work|wfh|work(?:ing)?\s+from\s+home)\s+(?:for\s+)?(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+times?\s+(?:each|every|per|a)\s+(week|month)\b', remote_scan)
     if remote:
         number = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7"}.get(remote.group(1), remote.group(1))
         option = f"{number} days / {remote.group(2)}"
@@ -1474,6 +1491,58 @@ def _smart_text_findings(
     return findings
 
 
+def _usual_allowance_readings(text: str, scenario: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
+    """Resolve an explicit change from the usual allowance, not from an old offer.
+
+    The baseline lives in the scenario alongside its unit. Without that setting,
+    a historical scenario retains its original behavior. Missing direction or
+    conflicting relative requests need a question, never a guessed allowance.
+    """
+    words = {'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+             'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+             'twenty': 20, 'thirty': 30, 'forty': 40}
+    number = r'(?:\d+(?:\.\d+)?|zero|one|two|three|four|five|six|seven|eight|nine|ten|twenty|thirty|forty)'
+    usual = r'(?:(?:the\s+)?(?:usual|standard|normal)(?:\s+allowance)?)'
+    direction = r'(?P<direction>more|extra|additional|fewer|less)'
+    issue_words = {
+        'Vacation Days': r'(?:(?:vacation|vacay|holiday)\s+days?|days?\s+(?:of\s+)?(?:annual\s+leave|vacation|holiday|time\s+off)|annual\s+leave|time\s+off)',
+        'Remote Working Days': r'(?:(?:remote(?:ly|[-\s]+working|[-\s]+work)?|wfh|work(?:ing)?\s+from\s+home)\s+days?|days?\s+(?:of\s+)?(?:remote\s+work|working\s+remotely|working\s+from\s+home))',
+    }
+    readings = {}
+    raw = _focused_text(text).lower()
+    for name, issue in issue_words.items():
+        spec = _scenario_issue_map(scenario).get(name, {})
+        if 'usual_value' not in spec:
+            continue
+        quantity = rf'(?P<quantity>{number})'
+        patterns = [
+            rf'\b{quantity}\s+{direction}\s+{issue}\s+(?:than\s+)?{usual}\b',
+            rf'\b{quantity}\s+{issue}\s+{direction}\s+(?:than\s+)?{usual}\b',
+            rf'\b{quantity}\s+{direction}\s+than\s+{usual}\s+{issue}\b',
+            rf'\b{issue}\s+(?:of\s+|is\s+|=\s*)?{quantity}\s+{direction}\s+(?:than\s+)?{usual}\b',
+            rf'\b{usual}\s+{issue}\s*(?P<direction>plus|minus|\+|−|-)\s*{quantity}\b',
+            rf'\b{issue}\s*(?:of\s+|is\s+|=\s*)?{usual}\s*(?P<direction>plus|minus|\+|−|-)\s*{quantity}\b',
+        ]
+        matches = [m for pattern in patterns for m in re.finditer(pattern, raw, re.I)]
+        values = set()
+        for match in matches:
+            before = raw[max(0, match.start()-18):match.start()]
+            if re.search(r"\b(?:no|not|without|reject|rejected)\s*$", before):
+                continue
+            token = match['quantity']
+            delta = words[token] if token in words else float(token)
+            sign = -1 if match['direction'] in {'fewer', 'less', 'minus', '−', '-'} else 1
+            values.add(float(spec['usual_value']) + sign * delta)
+        if len(values) == 1:
+            readings[name] = dict(value=values.pop(), source_text=matches[0].group(0),
+                note=f"Using the usual {spec['usual_value']:g} {spec['unit']} as the baseline.")
+        elif len(values) > 1:
+            readings[name] = dict(value=None, question=f'You gave different changes to the usual {name.lower()}. What single allowance would you like?')
+        elif re.search(rf'\b{number}\s+{issue}\s+than\s+{usual}\b', raw):
+            readings[name] = dict(value=None, question=f'Do you mean more or fewer than the usual {spec["usual_value"]:g} {spec["unit"]}?')
+    return readings
+
+
 def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     """Deterministic aliases for the documented study issues missing in the old run."""
     lower = _focused_text(text).lower()
@@ -1489,6 +1558,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     lower = re.sub(r'\bprofessional[-\s]+associations?\b','professional association',lower)
     lower = re.sub(_EXCLUDED_CONTRACT,' ',lower,flags=re.I)
     numeric_lower = _affirmative_numeric_text(lower)
+    usual_readings = _usual_allowance_readings(text, scenario)
     # These equivalent grammatical orders name the same review construct.
     lower = re.sub(r'\breview\s+of\s+(pay|salary|compensation)\b',r'\1 review',lower)
     additions: list[tuple[str, str]] = []
@@ -1704,6 +1774,8 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         rf"\b(?:vacation|annual\s+leave|holiday)\b.{{0,20}}?\b(?<![\d.,])({number_token})\s+days?\b",
     ]
     for pattern in vacation_patterns:
+        if 'Vacation Days' in usual_readings:
+            break
         match = re.search(pattern, numeric_lower)
         if match:
             days = word_number(match.group(1))
@@ -1724,8 +1796,12 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         rf"\b({number_token})\s+{remote_context}\s+days?(?:\s+(?:each|every|per|a)\s+(week|month))?\b",
         rf"\b{remote_context}\b.{{0,22}}?\b(?<![\d.,])({number_token})\s+days?(?:\s+(?:each|every|per|a)\s+(week|month))?\b",
     ]
+    if _scenario_issue_map(scenario).get('Remote Working Days', {}).get('default_period') == 'week':
+        remote_patterns += [rf'\b{remote_context}\s+(?:for\s+)?({number_token})\s+times?(?:\s+(?:each|every|per|a)\s+(week|month))?\b']
     remote_scan = re.sub(r"\b(days?)\s+(weekly|monthly)\b", lambda m: m.group(1) + ' per ' + ('week' if m.group(2)=='weekly' else 'month'), numeric_lower)
     for pattern in remote_patterns:
+        if 'Remote Working Days' in usual_readings:
+            break
         match = re.search(pattern, remote_scan)
         if match:
             days = word_number(match.group(1))
@@ -1741,6 +1817,10 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
             elif not spec and days in {0, 3, 6}:
                 additions.append(("Remote Working Days", f"{days} days / month"))
             break
+
+    for name, reading in usual_readings.items():
+        if reading.get('value') is not None:
+            additions.append((name, str(reading['value'])))
 
     probation_patterns = [
         rf"\b({number_token})[-\s]?(?:months?|mos?|mo)\s+(?:of\s+)?(?:initial\s+)?(?:probation(?:ary)?|trial)(?:\s+period)?\b",
@@ -2267,7 +2347,12 @@ def _tutorial_pair_enrichment(text: str, scenario: dict[str, Any]) -> list[dict[
             event_date = _date_from_text(date_text, date_spec)
             additions.append(("Event date", event_date.isoformat()))
         except (ValueError, TypeError):
-            pass
+            # Keep a stated but impossible day. Otherwise the participant sees
+            # "add Event date" even though they already entered August 32.
+            literal = re.search(r'\b(?:aug(?:ust)?|sep(?:t(?:ember)?)?)\s+\d{1,3}(?:st|nd|rd|th)?\b', lower)
+            literal = literal or re.search(r'(?<![\d.])\b\d{1,2}(?:st|nd|rd|th)?\s+(?:aug(?:ust)?|sep(?:t(?:ember)?)?)\b', lower)
+            if literal:
+                additions.append(('Event date', literal.group()))
 
     closing_label = None
     if re.search(r"\b(?:close(?:s|d)?|closing|shut(?:s|ting)?|end(?:s|ing)?|finish(?:es|ing)?|wrap(?:s|ping)?\s+up)\b", lower):
@@ -2452,9 +2537,11 @@ def _evaluate_tutorial_offer(
         try:
             canonical, points = score_pair(issue, pair["option"], role, payoff, scenario)
         except (ValueError, KeyError, TypeError):
+            message = (f'“{pair["option"]}” cannot be used for this event. Please choose one calendar day in August or September.'
+                if issue == 'Event date' else f"Please give a clearer value for {issue} using the choices shown in the practice information.")
             findings.append(_finding(
                 CLARIFICATION_NEEDED, "invalid_option",
-                f"Please give a clearer value for {issue} using the choices shown in the practice information.", issue=issue,
+                message, issue=issue,
             ))
             continue
         valid_pairs[issue] = canonical
@@ -2668,6 +2755,16 @@ def evaluate_offer(
         quote_resolutions.append(resolved)
     enriched_pairs.extend(quote_resolutions)
     combined_pairs = _repair_misrouted_discrete_pairs(list(raw_pairs) + enriched_pairs, scenario)
+    usual_readings = _usual_allowance_readings(text, scenario)
+    for name, reading in usual_readings.items():
+        # A delta is not the final allowance. Replace a model's possible "1"
+        # with the configured baseline + 1 before duplicate/value checks.
+        combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict) and p.get('issue') == name)]
+        if reading.get('value') is not None:
+            combined_pairs.append(dict(issue=name, option=str(reading['value']), confidence=1,
+                                       source_text=reading['source_text']))
+        else:
+            findings.append(_finding(CLARIFICATION_NEEDED, 'unclear_usual_change', reading['question'], issue=name))
     # If the package keeps any narrower post-employment restriction, the
     # binary non-compete choice is Keep even when it rejects a *broad* clause.
     # Preserve the narrower scope as detail; do not turn it into a third payoff
@@ -3252,6 +3349,11 @@ def evaluate_offer(
             for item in extraction.get('ambiguity_details', [])
             if isinstance(item, dict) and item.get('issue') == 'Starting Date'
             and source_quote_is_grounded(str(item.get('source_text', '')), _focused_text(text)))
+    if isinstance(extraction, dict):
+        irrelevant_questions.update(str(item.get('question', '')) for item in extraction.get('ambiguity_details', [])
+            if isinstance(item, dict) and item.get('issue') in usual_readings
+            and usual_readings[item['issue']].get('value') is not None
+            and source_quote_is_grounded(str(item.get('source_text', '')), _focused_text(text)))
     if _explicit_training_participation(_focused_text(text)):
         irrelevant_questions.update(str(item.get('question','')) for item in extraction.get('ambiguity_details',[]) if isinstance(item,dict) and item.get('issue')=='Professional Training Program' and re.search(r'\bparticipation\b[^?]{0,90}\btraining\s+program\b',str(item.get('question','')),re.I))
         irrelevant_questions.update(str(item.get('question','')) for item in extraction.get('ambiguity_details',[]) if isinstance(item,dict) and _explicit_training_participation(str(item.get('source_text',''))) and not re.search(r'\b(?:budget|money|cost|fee|amount|frequency|hours|days)\b',str(item.get('question','')),re.I))
@@ -3646,6 +3748,10 @@ def evaluate_offer(
         "semantic_repairs": semantic_repairs,
     }
     result["display_text"] = format_system_output(result)
+    interpretation_notes = []
+    for name, reading in usual_readings.items():
+        if reading.get('value') is not None and name in valid_pairs:
+            interpretation_notes.append(f"{name}: {valid_pairs[name]}. {reading['note']} Please check this interpretation before sending.")
     if unpriced_details:
         result['display_text'] += '\n\nExtra details retained without additional points:\n' + '\n'.join('- '+item['detail'] for item in unpriced_details)
     vacation_spec = _scenario_issue_map(scenario).get('Vacation Days', {})
@@ -3653,8 +3759,10 @@ def evaluate_offer(
             and re.search(r'\b(?:vacay|vacation|holiday|time\s+off|days?\s+off)\b[^.;\n]{0,30}\b(?:per|a|each|every)\s+week\b', text, re.I)):
         annual = valid_pairs['Vacation Days']
         note = 'Weekly vacation allowance shown as ' + annual + ('' if 'year' in annual else ' per year') + ' (52 weeks). Please check this interpretation before sending.'
-        result['interpretation_notes'] = [note]
-        result['display_text'] += '\n\n' + note
+        interpretation_notes.append(note)
+    if interpretation_notes:
+        result['interpretation_notes'] = interpretation_notes
+        result['display_text'] += '\n\n' + '\n'.join(interpretation_notes)
     return result
 
 

@@ -2,8 +2,9 @@
 function coordinate(value, rule) {
   if (rule.value_type === 'date') {
     if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw Error('Enter a complete calendar date.');
-    const parsed = Date.parse(value + 'T00:00:00Z');
-    if (!Number.isFinite(parsed) || new Date(parsed).toISOString().slice(0, 10) !== value) throw Error('Enter a valid calendar date.');
+    const normalized = rule.assume_year ? String(rule.assume_year) + value.slice(4) : value;
+    const parsed = Date.parse(normalized + 'T00:00:00Z');
+    if (!Number.isFinite(parsed) || new Date(parsed).toISOString().slice(0, 10) !== normalized) throw Error('Enter a valid calendar date.');
     return parsed / 86400000;
   }
   if (typeof value === 'boolean' || value === null || (typeof value !== 'number' && typeof value !== 'string')) throw Error('Enter one number.');

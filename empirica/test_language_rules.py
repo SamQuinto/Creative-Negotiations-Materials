@@ -108,6 +108,41 @@ class LanguageRules(unittest.TestCase):
             result=self.evaluate('salary 50k budget 10k start Jan 1 '+phrase)
             self.assertEqual(result['valid_pairs']['Company Car'],expected)
 
+    def test_default_units_usual_allowances_and_asap(self):
+        result = self.evaluate('salary 55k budget 9k start ASAP 40 vacay days work remotely 4 times')
+        self.assertEqual(result['decision'], 'scorable', result)
+        self.assertEqual(result['valid_pairs']['Starting Date'], 'January 1')
+        self.assertEqual(result['valid_pairs']['Vacation Days'], '40 days per year')
+        self.assertEqual(result['valid_pairs']['Remote Working Days'], '4 days per week')
+        result = self.evaluate('salary 55k budget 9k start ASAP 10 more vacation days than usual; 1 more than usual remote working day')
+        self.assertEqual(result['valid_pairs']['Vacation Days'], '40 days per year')
+        self.assertEqual(result['valid_pairs']['Remote Working Days'], '4 days per week')
+
+    def test_conjunction_does_not_create_cash_range(self):
+        result = self.evaluate('salary 55k and budget 9k and 40 vacay days and start ASAP')
+        self.assertEqual(result['decision'], 'scorable', result)
+        self.assertEqual(result['valid_pairs']['Personal Budget'], '$9,000')
+
+    def test_monthly_remote_times_require_weekly_amount(self):
+        result = self.evaluate('salary 55k budget 9k start ASAP work remotely 4 times per month')
+        self.assertEqual(result['decision'], 'clarification_needed', result)
+        self.assertNotIn('Remote Working Days', result['valid_pairs'])
+
+    def test_calendar_payoff_anchors(self):
+        for value, expected in [('January 1',1), ('March 1',0), ('May 1',-1), ('July 1',-2),
+                                ('September 1',-3), ('September 30',-3), ('October 1',-1000), ('December 31',-1000)]:
+            result = self.evaluate('salary 50k budget 10k start ' + value)
+            self.assertEqual(result['decision'], 'scorable', result)
+            self.assertAlmostEqual(result['total'], expected)
+
+    def test_tutorial_impossible_day_is_not_called_missing(self):
+        for value in ['August 32', '32 August', 'September 31']:
+            for text in ['venue fee 300 close 7pm ' + value, 'venue fee 300 ' + value + ' close 7pm']:
+                result = self.evaluate(text, tutorial=True)
+                self.assertEqual(result['decision'], 'clarification_needed', result)
+                self.assertIn('one calendar day in August or September', result['message'])
+                self.assertNotIn('Please add Event date', result['message'])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
