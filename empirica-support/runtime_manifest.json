@@ -30,15 +30,15 @@
     },
     {
       "path": "empirica-support/scenarios/fixed-15.json",
-      "sha256": "efb2ebf927a07057973bcd24cea75f8a658791f470f7baa1837b8ce2ac1afb61"
+      "sha256": "1f74a175758bc7ffa2fbf8d44724ec0dbc834c00fbebec743e99b386146ca585"
     },
     {
       "path": "empirica-support/scenarios/flexible-15.json",
-      "sha256": "062db662b40ff395be2df5e669ac273e614810fe9d620934b7e0b98d8574edca"
+      "sha256": "03ea6660f1ca5ab36a641fa376087ac0e07be783333509b881de2b6e69ea400f"
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "6f8c0ab531334310d1582984b71d9832f0a54883d83ba4bc79442508868eb62e"
+      "sha256": "6b82ec7a167f730e18178384f5b9190fc4d0958b6b69ca9eaa5d1cf10cf00231"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "6f8c0ab531334310d1582984b71d9832f0a54883d83ba4bc79442508868eb62e"
+      "sha256": "6b82ec7a167f730e18178384f5b9190fc4d0958b6b69ca9eaa5d1cf10cf00231"
     },
     {
       "path": "empirica/score_offer.py",
