@@ -40,6 +40,7 @@ def main(default_space: str | None = None) -> int:
     inputs = parser.add_mutually_exclusive_group()
     inputs.add_argument("--text", help="Offer text. If omitted, the program asks for it.")
     inputs.add_argument("--choices-json", help="JSON object of explicit issue choices; scores without an LLM call.")
+    parser.add_argument("--previous-offer", default="", help="The prior offer, used only when the new text explicitly refers back to it.")
     parser.add_argument("--json", action="store_true", help="Print the complete structured result.")
     parser.add_argument("--scenario-file", help="Path to an external scenario JSON (both roles' issues/ranges/payoffs); overrides --issue-space.")
     parser.add_argument('--version', action='store_true', help='Print runtime/scenario fingerprints without making an AI call.')
@@ -72,7 +73,7 @@ def main(default_space: str | None = None) -> int:
         if not offer_text:
             print("Please provide an offer.", file=sys.stderr)
             return 2
-        payload = {"text": offer_text, "previous_offer": ""}
+        payload = {"text": offer_text, "previous_offer": clean_unicode(args.previous_offer).strip()}
 
     environment = {
         **os.environ,

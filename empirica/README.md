@@ -1,6 +1,6 @@
 # Empirica scorer download
 
-This public package contains the current main and tutorial scorer commands, scenario JSONs, and the shared files they need. [runtime_manifest.json](runtime_manifest.json) records the exact source revision and file hashes. The October 17 update improves stated-date feedback, preserves short labels and clear optional duties, and prevents several neighboring issues from changing one another's meaning.
+This public package contains the current main and tutorial scorer commands, scenario JSONs, and the shared files they need. [runtime_manifest.json](runtime_manifest.json) records the exact source revision and file hashes. The October 17 update improves date feedback, monetary shorthand, explicit references to earlier offers and optional-feature recognition. The venue tutorial also handles more ordinary wording and keeps projector costs separate from venue fees. Scenario payoffs have not changed.
 
 ## Download and run
 
@@ -10,6 +10,7 @@ Use Python 3.11 or later. No extra Python packages are required. From the extrac
 
 ```text
 python empirica/smoke_test.py
+python empirica/test_language_rules.py
 ```
 
 This tests the actual command-line scripts, all four current scenarios, both roles, invalid calendar dates, both supported folder layouts, and the local preview imports. It makes no AI calls and does not need a key. It is a packaging and rule check, not a live language-model test.
@@ -29,6 +30,10 @@ Natural-language offers use Nano for routine interpretation and independent Luna
 A stated date outside May 1–September 30 is acknowledged with a correction question, not called missing or silently replaced. The date interval remains intentional. `--version` prints the selected scenario's ID, issue count, and shared-file fingerprints without an AI call; use it to check the actual server installation.
 
 The supplied layout keeps the commands in `empirica/`. A server may also put both commands directly beside `app/`; both layouts work without editing `ROOT`. Replace the shared `app/` files as well as the commands when updating. A new JSON URL alone cannot update Python interpretation or feedback behavior. The original root-level commands in the private prototype were not overwritten.
+
+When a participant explicitly refers back, pass the relevant offer using `--previous-offer "..."`. “Same other details but salary 60k” may retain that package; “keep their start date” may retain only the named date. Missing information is not automatically inherited just because context is supplied. Show the resulting complete package for confirmation before sending it. A new feature without a specified numerical choice should be acknowledged with a focused question, not assigned a guessed amount. A genuinely new idea outside the catalogue is kept visible without invented points in the expanded task.
+
+The private development audit includes verbatim survey responses, earlier simulated offers and constructed main/tutorial edge cases. Its individual records stay private. These public checks contain constructed examples only. Passing a development collection is not a guarantee that every future message will be interpreted correctly.
 
 For natural-language feedback, `unstated_required` lists required issues the participant did not supply, while `invalid_required` lists supplied values that need correction. `missing_required` remains the compatibility list of all required rows without a valid choice. Use the first two fields to distinguish “still needed” from “please clarify.” Display a final value only for a `scorable` result, using `total_for_proposer`; a partial `total` is not a complete offer's value. Show the complete interpreted package for confirmation before sending it.
 
