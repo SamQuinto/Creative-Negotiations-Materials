@@ -12308,13 +12308,13 @@
     "private_table_disclosed": false,
     "all_issue_definitions_stay_on_server": true
   },
-  "readrole_instructions": "<p>Read the materials below and <strong>get into character!</strong> What matters to you, and what would you like to get from this job offer?</p><p><strong>Take notes on the right</strong> to help you prepare. You can use those notes when the negotiation starts. <strong>Try the scoring calculator</strong> to see what different offers would be worth to you.</p>",
+  "readrole_instructions": "<p>Read the materials below. While you do, try to get into character—figure out: what matters to you? And what would you like to get from this negotiation?</p><p><strong>Take notes on the right</strong> to help you prepare. You can use those notes when the negotiation starts.<br><strong>Try the scoring calculator</strong> to see what different offers would be worth to you.</p>",
   "tips": "<p>Get into character and think about what your first couple of offers would be, based on what matters to you and what you anticipate from your counterpart. When making offers remember the following:</p><ol style=\"padding-left:1.6em;margin:.4em 0;\"><li style=\"margin:.55em 0;\"><strong>Include the three required features:</strong> salary, a personal work-expense budget and a starting date. Write your offer in your own words.</li><li style=\"margin:.55em 0;\"><strong>Calculate, check, then submit.</strong> The platform calculates points automatically using rules set by the researchers. Check that it understood your offer before sending it.</li><li style=\"margin:.55em 0;\"><strong>You may introduce other plausible job or contract features.</strong> Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, depending on your interests. The other party may value it differently.</li><li style=\"margin:.55em 0;\"><strong>Some features may not fit the situation and will be worth 0 points.</strong> That doesn’t mean you should hold back on creative and thoughtful ideas!</li><li style=\"margin:.55em 0;\"><strong>Both parties must officially accept the same offer,</strong> worth more than 0 points to each. Without an agreement, both receive 0 points.</li></ol>",
   "empirica_export": {
     "version": "empirica-continuous-v1",
     "date": "2026-10-18",
     "source": "app/config/large-215.json",
-    "source_sha256": "ba3b07f12dd2d4d3c7a72e78d0af257e052f9f5647aa13e6a5d4479170aea1ce",
+    "source_sha256": "b788146717af3b37fed265cf7934d0056c4486183569c0dc178f97f8c4b55c23",
     "scoring_contract": "determinatescoretable arrays plus continuous_scoring rules",
     "readrole_instructions_is_placeholder": false,
     "display_settings": {

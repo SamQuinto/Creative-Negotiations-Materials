@@ -21,10 +21,10 @@ TIPS_INTRO = ('Get into character and think about what your first couple of offe
               'based on what matters to you and what you anticipate from your counterpart. '
               'When making offers remember the following:')
 READROLE_INSTRUCTIONS = (
-    '<p>Read the materials below and <strong>get into character!</strong> '
-    'What matters to you, and what would you like to get from this job offer?</p>'
+    '<p>Read the materials below. While you do, try to get into character—figure out: '
+    'what matters to you? And what would you like to get from this negotiation?</p>'
     '<p><strong>Take notes on the right</strong> to help you prepare. You can use those notes '
-    'when the negotiation starts. <strong>Try the scoring calculator</strong> to see what '
+    'when the negotiation starts.<br><strong>Try the scoring calculator</strong> to see what '
     'different offers would be worth to you.</p>'
 )
 

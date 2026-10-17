@@ -1,12 +1,12 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "dde6e04144d29742e69fde53128702dd8d679a8a",
+  "source_commit": "db12a569612846ffa50d585d07a5c7afdab783fb",
   "date": "2026-10-18",
   "description": "Participant preparation, role information and negotiation tips separated; existing UI headings retained. Scoring engine and payoff rules unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
-      "sha256": "b7463678e1d0b5e93d02aee209e237598ce9fd68856507539cbd3a86ffc87340"
+      "sha256": "1613ef3a4a571b2042dfe71e924939eb7f583b09f899fa950aae87c70da68849"
     },
     {
       "path": "empirica-support/README.md",
@@ -30,15 +30,15 @@
     },
     {
       "path": "empirica-support/scenarios/fixed-15.json",
-      "sha256": "49f01b456335261dbcd1c6edea284950864019cfda910283d3a90216f934a065"
+      "sha256": "bd6ce48095f5f39609acdc92a97810f05b785a82d26f878ff70805215b160d69"
     },
     {
       "path": "empirica-support/scenarios/flexible-15.json",
-      "sha256": "3fa660ebe3f4ccbea7830e42e6f9f61830b3a9259e5e72fb9091908cd0a43a2d"
+      "sha256": "30c0f2e5b775423d299e71528df3e6af29ab1cc406ec3a2c3d09bc0ea8f296e4"
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "66fe10b7873ba2b0d26d58a27c2edc51de743c0132efcc8272c9c584205f8b86"
+      "sha256": "b815e9ead7e8646343037929573207f03f65a473eabe2e40fc5fd13b20e856e2"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -86,7 +86,7 @@
     },
     {
       "path": "empirica/app/config/fixed-15.json",
-      "sha256": "1f7b8fa09e5b8111385edfb8f03676ca48eb0852875f82052e1fcbe979a4bb9f"
+      "sha256": "0fdfb324b371f390ed63491eac5420f40e5f52c2931ce29465700bfaf293b15c"
     },
     {
       "path": "empirica/app/config/issue-phrase-registry.json",
@@ -98,11 +98,11 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "ba3b07f12dd2d4d3c7a72e78d0af257e052f9f5647aa13e6a5d4479170aea1ce"
+      "sha256": "b788146717af3b37fed265cf7934d0056c4486183569c0dc178f97f8c4b55c23"
     },
     {
       "path": "empirica/app/config/small-15.json",
-      "sha256": "de1e955bcc20bc37b35c68d61aad58c089306c936a758ce2dd7f85fd5fe1413c"
+      "sha256": "ab71b62ab9462047b58a1d1093892bd07b39ee0c8e02a02546774d411f6b1f4c"
     },
     {
       "path": "empirica/app/config/tutorial.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "66fe10b7873ba2b0d26d58a27c2edc51de743c0132efcc8272c9c584205f8b86"
+      "sha256": "b815e9ead7e8646343037929573207f03f65a473eabe2e40fc5fd13b20e856e2"
     },
     {
       "path": "empirica/score_offer.py",
