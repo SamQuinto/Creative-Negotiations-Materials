@@ -50,8 +50,24 @@ an unpriced object for commuting does not automatically request cash support.
 Separate real vacation or cash-support requests still count.
 
 Keep API keys and both roles' full payoff definitions server-side. Show each
-participant only the information they are allowed to see. Replace the visible
-`readrole_instructions` test placeholder before participant collection.
+participant only the information they are allowed to see.
+
+### Participant instructions
+
+The scenario now separates the short preparation message (`readrole_instructions`)
+from the role narrative and offer instructions (`tips`). Keep the interface headings
+**Your role** and **Tips on Negotiation**. Both JSON fields contain trusted HTML
+for paragraphs and bold emphasis; do not display them as literal HTML source.
+
+The suggested offer-box placeholder is saved in
+`empirica_export.display_settings.main_offer_placeholder`. This is a reference
+for the experiment's placeholder factor, not an automatic change to a hard-coded
+Empirica interface. The user will set that factor. Use actual line breaks in the
+textarea placeholder, not HTML `<br>` tags. In JSON, those line breaks are written
+as `\n`. If the admin editor keeps them as literal backslash-n, the interface
+must translate them into newlines. Fixed 15 has a separate all-15-issues prompt.
+The offer box should let Enter add a line break, rather than submit or calculate
+an offer. Check the live interface's keyboard handler before using that wording.
 
 [Further integration instructions, tests, and optional preview](../empirica-support/)
 are available separately; they are not needed to run these two commands.

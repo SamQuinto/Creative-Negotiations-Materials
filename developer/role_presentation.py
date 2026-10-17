@@ -15,6 +15,62 @@ BLUE = '#1d4ed8'
 DARK_BLUE = '#1e3a8a'
 SCORING_HEADING = 'Important notes on offers and scoring'
 LIST_WRAPPER = '<span style="display:block;margin-left:1.5em;padding-left:1.25em;text-indent:-1.25em;">'
+ROLE_INFORMATION_HEADING = 'Your role'
+TIPS_HEADING = 'Tips on Negotiation'
+TIPS_INTRO = ('Get into character and think about what your first couple of offers would be, '
+              'based on what matters to you and what you anticipate from your counterpart. '
+              'When making offers remember the following:')
+READROLE_INSTRUCTIONS = (
+    '<p>Read the materials below and <strong>get into character!</strong> '
+    'What matters to you, and what would you like to get from this job offer?</p>'
+    '<p><strong>Take notes on the right</strong> to help you prepare. You can use those notes '
+    'when the negotiation starts. <strong>Try the scoring calculator</strong> to see what '
+    'different offers would be worth to you.</p>'
+)
+
+
+def participant_display_settings(policy='open'):
+    if policy == 'fixed':
+        placeholder = ('Write an offer covering all 15 issues in your private payoff table.\n'
+                       'Include a value or choice for every issue.')
+    else:
+        last = 'Other job or contract features: [your choices]' if policy == 'open' else 'Other features from your role materials: [your choices]'
+        placeholder = ('Write your offer here. Press Enter for a new line, or use commas to separate job or contract features.\n\n'
+                       'Example:\nSalary: [amount]\nWork-expense budget: [amount]\nStarting date: [date]\n'
+                       + last + '\n...(add as many features as you like)\n' + last)
+    return {'role_information_heading': ROLE_INFORMATION_HEADING, 'tips_heading': TIPS_HEADING,
+            'main_offer_placeholder': placeholder}
+
+
+def negotiation_tips(policy='open'):
+    """Task instructions, separated from the role narrative and private interests."""
+    if policy not in {'fixed', 'bounded', 'open'}:
+        raise ValueError('Unknown material policy: ' + policy)
+    first = ('<strong>Include all 15 issues in every offer.</strong> Use your private payoff table '
+             'and state a value or choice for each issue, including those you want unchanged.' if policy == 'fixed' else
+             '<strong>Include the three required features:</strong> salary, a personal work-expense '
+             'budget and a starting date. Write your offer in your own words.')
+    entries = [first,
+        '<strong>Calculate, check, then submit.</strong> The platform calculates points automatically '
+        'using rules set by the researchers. Check that it understood your offer before sending it.']
+    if policy == 'fixed':
+        entries += ['<strong>Stay within the 15 issues in your private payoff table.</strong> '
+                    'Do not add other issues. Salary and budget reference points are not proposal limits.']
+    elif policy == 'bounded':
+        entries += ['<strong>You may negotiate the job or contract features described or suggested in your role materials.</strong> '
+                    'Features outside this set are not negotiable and do not affect your score.',
+                    'Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, '
+                    'depending on your interests. The other party may value it differently.']
+    else:
+        entries += ['<strong>You may introduce other plausible job or contract features.</strong> '
+                    'Each additional feature is normally worth <strong>between −1 and +1 points</strong> '
+                    'to you, depending on your interests. The other party may value it differently.',
+                    '<strong>Some features may not fit the situation and will be worth 0 points.</strong> '
+                    'That doesn’t mean you should hold back on creative and thoughtful ideas!']
+    entries += ['<strong>Both parties must officially accept the same offer,</strong> worth more than '
+                '0 points to each. Without an agreement, both receive 0 points.']
+    return '<p>' + TIPS_INTRO + '</p><ol style="padding-left:1.6em;margin:.4em 0;">' + ''.join(
+        '<li style="margin:.55em 0;">' + entry + '</li>' for entry in entries) + '</ol>'
 
 
 def unwrap_list_item(paragraph):
@@ -195,6 +251,54 @@ def normalize_words(value):
     return re.sub(r'\s+', ' ', value).strip()
 
 
+def _block_slice(block, start=0, end=None):
+    """Keep run formatting while taking just the requested part of a paragraph."""
+    result = deepcopy(block)
+    total = sum(len(run.get('text', '')) for run in block['runs'])
+    end = total if end is None else end
+    position = 0
+    result['runs'] = []
+    for run in block['runs']:
+        raw = run.get('text', '')
+        left, right = max(start, position), min(end, position + len(raw))
+        if left < right:
+            result['runs'].append({**run, 'text': raw[left-position:right-position]})
+        position += len(raw)
+    return result
+
+
+def role_information_blocks(blocks, policy='open'):
+    """Keep the narrative, value clues and role-specific fallback, not UI steps."""
+    result = []
+    for block in review_blocks(blocks, policy=policy):
+        text = ''.join(run.get('text', '') for run in block['runs'])
+        if text in {'CANDIDATE ROLE INFORMATION', 'RECRUITER ROLE INFORMATION', 'INSTRUCTIONS', SCORING_HEADING}:
+            continue
+        if text.startswith(('Negotiate with the ', 'For example:')):
+            continue
+        if block.get('type') == 'numbered':
+            if block.get('number') != 1:
+                continue
+            block = deepcopy(block)
+            block.pop('number', None)
+            block['type'] = 'paragraph'
+        elif text.startswith('Your objective is to reach'):
+            boundary = text.index('Every offer must address all 15 job terms' if policy == 'fixed'
+                                  else 'Every complete offer must include')
+            block = _block_slice(block, end=len(text[:boundary].rstrip()))
+        elif text.startswith('Your score is private'):
+            sentence = 'Your score is private and translates directly into the bonus payment you can earn from this task.'
+            block = _block_slice(block, end=len(sentence))
+        elif text.startswith('You prefer a '):
+            # The worked example remains. The generic calculation instruction
+            # now lives in tips instead of being repeated above that example.
+            block = deepcopy(block)
+            for run in block['runs']:
+                run['text'] = run.get('text', '').replace('The platform calculates scores automatically.', '')
+        result.append(block)
+    return result
+
+
 def presentation_parts(blocks):
     """Split selected long paragraphs at exact source phrases, without rewriting.
 
@@ -216,8 +320,9 @@ def presentation_parts(blocks):
                           ('Starting date:' if 'Starting date:' in text else 'Choose a starting date' if 'Choose a starting date' in text else 'Starting dates may range', 'bullet'),
                           ('The personal budget:', 'bullet'),
                           ('Salary and budget amounts between', 'paragraph'),
-                          ('The platform calculates', 'paragraph'),
                           ('For example,', 'worked_example')]
+            if 'The platform calculates' in text:
+                boundaries.insert(-1, ('The platform calculates', 'paragraph'))
         elif text.startswith('On the way home,'):
             boundaries = [('Still, more flexibility', 'paragraph'),
                           ('For vacation,', 'bullet'), ('For remote work,', 'bullet'),
@@ -252,11 +357,10 @@ def presentation_parts(blocks):
             required_transition = ('Every complete offer must include'
                                    if 'Every complete offer must include' in text
                                    else 'Every offer must address all 15 job terms')
-            boundaries = [(required_transition, 'paragraph')]
+            boundaries = [(required_transition, 'paragraph')] if required_transition in text else []
         elif text.startswith('Your score is private'):
             starts[0] = (0, 'payment_note')
-            boundaries = [('You may propose', 'bullet'),
-                          ('An agreement requires', 'bullet')]
+            boundaries = [(phrase, 'bullet') for phrase in ('You may propose', 'An agreement requires') if phrase in text]
         elif text.startswith('The researchers set the scoring rules'):
             boundaries = [('Each additional supported feature', 'paragraph'),
                           ('Separate commitments', 'paragraph'),
@@ -329,9 +433,10 @@ def inline_text(block, start, end):
     return ''.join(result)
 
 
-def role_narrative(blocks, policy='open'):
+def role_narrative(blocks, policy='open', *, separated=True):
     parts = []
-    for block, start, end, kind in presentation_parts(review_blocks(blocks, policy=policy)):
+    reviewed = role_information_blocks(blocks, policy=policy) if separated else review_blocks(blocks, policy=policy)
+    for block, start, end, kind in presentation_parts(reviewed):
         value = inline_text(block, start, end)
         # A soft break keeps each neutral option within its original bullet.
         # Retain a space too so tag-stripping readers do not join adjacent words.

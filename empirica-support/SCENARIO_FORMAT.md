@@ -2,7 +2,9 @@
 
 The generated JSONs follow the supplied 200-issue sample's structure. Each has `roles.Candidate` and `roles.Recruiter`, with `narrative`, `full_text`, `full_blocks`, `BATNA`, `RP`, and `determinatescoretable`. The narratives carry the approved headings, bullets, indentation, emphasis, and payoff colors. Dates in scored offers show the day as well as the month.
 
-`readrole_instructions` keeps the visible **test placeholder** requested by the researcher. Replace it before collecting participant data. The old office-sharing introduction, pounds, and three-party agreement wording are not copied into these files. The general `tips` do not promise an outdated feedback-survey bonus.
+`readrole_instructions` contains the short preparation message. The role narrative explains the participant's interests; `tips` holds the offer and scoring instructions under **Tips on Negotiation**. Keep **Your role** as the interface's role heading, without repeating a Candidate/Recruiter role-information heading inside the narrative. These fields use trusted, researcher-authored HTML. The old office-sharing introduction, pounds, and three-party agreement wording are not copied into these files. The general `tips` do not promise an outdated feedback-survey bonus.
+
+`empirica_export.display_settings.main_offer_placeholder` provides the suggested multiline offer-box prompt. Set it through the live experiment's placeholder factor; this metadata does not change hard-coded interface elements. A textarea needs actual newlines, written as `\n` in JSON, not HTML `<br>` tags. If Enter currently submits an offer, change that handler before displaying instructions to use Enter for a new line. Fixed 15 has its own all-15-issues placeholder.
 
 | File under `empirica-support/scenarios/` | Required issues | Own-payoff display |
 |---|---|---|

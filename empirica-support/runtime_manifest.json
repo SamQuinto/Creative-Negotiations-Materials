@@ -1,12 +1,12 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "5f3bc8a822fe35c02fddbb322942cc682990a97c",
-  "date": "2026-10-17",
-  "description": "Self-contained Empirica package. Participant-facing year instruction removed; scorer, date handling and payoff rules unchanged.",
+  "source_commit": "dde6e04144d29742e69fde53128702dd8d679a8a",
+  "date": "2026-10-18",
+  "description": "Participant preparation, role information and negotiation tips separated; existing UI headings retained. Scoring engine and payoff rules unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
-      "sha256": "1b3ac2e12bdc5858616eb4902cb082ee49ab8c3eaab81c13a194309c06b017ca"
+      "sha256": "b7463678e1d0b5e93d02aee209e237598ce9fd68856507539cbd3a86ffc87340"
     },
     {
       "path": "empirica-support/README.md",
@@ -14,7 +14,7 @@
     },
     {
       "path": "empirica-support/SCENARIO_FORMAT.md",
-      "sha256": "4279c4deff2200ac20ab2d7ec9132069a69ac7d839ffaed9dc94568d0661ac2c"
+      "sha256": "beb8c7fd793e28654c56abe91b64976fd90753c2a02e8259159e30326b535734"
     },
     {
       "path": "empirica-support/deterministic_score.mjs",
@@ -22,27 +22,27 @@
     },
     {
       "path": "empirica-support/preview.html",
-      "sha256": "b05edf45318425ecf1604e3d00c69eaa58bc63d7d3733287355ad9954be828df"
+      "sha256": "f5caf8f1c17a87baa223f147a8a4ef7f2889938fafb5156f90be59e74d0c116f"
     },
     {
       "path": "empirica-support/preview_server.py",
-      "sha256": "31cf5f87e34987c11ad3eb51601af13f2bc704a5804bff6f9adc47f1d92239a5"
+      "sha256": "0895a46d059723abe071bb247e574392687e934a1ec41f435180c35b5bd60866"
     },
     {
       "path": "empirica-support/scenarios/fixed-15.json",
-      "sha256": "1f74a175758bc7ffa2fbf8d44724ec0dbc834c00fbebec743e99b386146ca585"
+      "sha256": "49f01b456335261dbcd1c6edea284950864019cfda910283d3a90216f934a065"
     },
     {
       "path": "empirica-support/scenarios/flexible-15.json",
-      "sha256": "03ea6660f1ca5ab36a641fa376087ac0e07be783333509b881de2b6e69ea400f"
+      "sha256": "3fa660ebe3f4ccbea7830e42e6f9f61830b3a9259e5e72fb9091908cd0a43a2d"
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "6b82ec7a167f730e18178384f5b9190fc4d0958b6b69ca9eaa5d1cf10cf00231"
+      "sha256": "66fe10b7873ba2b0d26d58a27c2edc51de743c0132efcc8272c9c584205f8b86"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
-      "sha256": "3a9d401a8eddaf286cf9f92192f939fbb64e80743a3ddd330e0ce3a968104350"
+      "sha256": "8cc853a4a38ea4badf600d136d401f3ecd834ca5a26fb7cd1edb4da22387eb8b"
     },
     {
       "path": "empirica-support/smoke_test.py",
@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "6c636e622992f14056da7c87db2a7f34b1a4b53669709d024e335a1e57a02c47"
+      "sha256": "96ddf657e3da652f48a6396e19826bb6de2d9bef20d5a93e23b2879f4033eb9e"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -86,7 +86,7 @@
     },
     {
       "path": "empirica/app/config/fixed-15.json",
-      "sha256": "9ad2bf285d11ba173ce67b3aeb2feeba8eb0a0b5e9a560b25caca44788e178b3"
+      "sha256": "1f7b8fa09e5b8111385edfb8f03676ca48eb0852875f82052e1fcbe979a4bb9f"
     },
     {
       "path": "empirica/app/config/issue-phrase-registry.json",
@@ -98,11 +98,11 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "0f6bfc5bb577bacb6a54c1ec602d3d44ed51825034c755956bd52a1662668c55"
+      "sha256": "ba3b07f12dd2d4d3c7a72e78d0af257e052f9f5647aa13e6a5d4479170aea1ce"
     },
     {
       "path": "empirica/app/config/small-15.json",
-      "sha256": "7c5d4cf1ae50b9ea00de67242f5fa1963dc14710a6e9c5e7f9e68abc82322e9c"
+      "sha256": "de1e955bcc20bc37b35c68d61aad58c089306c936a758ce2dd7f85fd5fe1413c"
     },
     {
       "path": "empirica/app/config/tutorial.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "6b82ec7a167f730e18178384f5b9190fc4d0958b6b69ca9eaa5d1cf10cf00231"
+      "sha256": "66fe10b7873ba2b0d26d58a27c2edc51de743c0132efcc8272c9c584205f8b86"
     },
     {
       "path": "empirica/score_offer.py",

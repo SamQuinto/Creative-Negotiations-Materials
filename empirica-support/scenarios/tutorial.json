@@ -605,14 +605,20 @@
     "private_table_disclosed": false,
     "all_issue_definitions_stay_on_server": true
   },
-  "readrole_instructions": "[TEST PLACEHOLDER: Instructions shown before reading your role materials go here. Replace this text before launching the study.]",
-  "tips": "<p>You can review your own role information while negotiating. Check the system’s interpretation before sending an offer. An agreement requires both parties to accept the same offer, worth more than zero to each.</p>",
+  "readrole_instructions": "<p>Read your practice role information and try the scoring calculator before sending an offer.</p>",
+  "tips": "<p>Include the venue fee, event date and closing time. Calculate, check the interpretation, then send your offer.</p>",
   "empirica_export": {
     "version": "empirica-continuous-v1",
-    "date": "2026-10-17",
+    "date": "2026-10-18",
     "source": "app/config/tutorial.json",
     "source_sha256": "6d7533ef6901a6d3f7e8a482dd7bf121f49eebfa65f804c30d7280d5608d268f",
     "scoring_contract": "determinatescoretable arrays plus continuous_scoring rules",
-    "readrole_instructions_is_placeholder": true
+    "readrole_instructions_is_placeholder": false,
+    "display_settings": {
+      "role_information_heading": "Role information",
+      "tips_heading": "Making practice offers",
+      "main_offer_placeholder": "Venue fee: [amount]\nEvent date: [date]\nClosing time: [time]"
+    },
+    "display_settings_note": "Headings and the main offer placeholder require corresponding interface or factor settings; the JSON does not rename hard-coded Empirica headings by itself."
   }
 }

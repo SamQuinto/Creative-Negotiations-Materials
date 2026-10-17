@@ -96,7 +96,9 @@ class Handler(BaseHTTPRequestHandler):
                 info=s['roles'][role]
                 visible=s['issues'] if is_fixed(s) else [i for i in s['issues'] if i['name'] in s['required_issues']]
                 return self.respond({'title':s['title'],'role_html':narrative_to_html(info['narrative']),
-                    'instructions':s['readrole_instructions'],'required':s['required_issues'],'fixed':is_fixed(s),
+                    'instructions':s['readrole_instructions'],'tips':s['tips'],
+                    'display_settings':s['empirica_export']['display_settings'],
+                    'required':s['required_issues'],'fixed':is_fixed(s),
                     'table':info['determinatescoretable'],'continuous':info['continuous_scoring'],
                     'fields':[field(i) for i in visible]})
             if route.path=='/api/issue':
