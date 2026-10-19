@@ -70,4 +70,26 @@ The offer box should let Enter add a line break, rather than submit or calculate
 an offer. Check the live interface's keyboard handler before using that wording.
 
 [Further integration instructions, tests, and optional preview](../empirica-support/)
+
+### Tutorial wording checks
+
+The October 19 update reads `cancelation` and `cancellation` consistently, along
+with many ordinary spelling changes. Unfamiliar wording is kept visible under
+"Recorded but not scored" rather than silently dropped. Where the choice is
+unclear, such as who will do cleanup, the scorer asks instead of guessing.
+This does not change the tutorial's nine issues or payoffs. Unread wording is
+not automatically a new negotiation issue.
+
+The tutorial command still calls the shared engine: download the whole folder,
+including `app/`, to receive the fix. The entry-point file alone is not enough.
+Run the small tutorial regression suite from the repository root with:
+
+```text
+python empirica-support/test_tutorial_language.py
+```
+
+The larger development check covered 4,440 constructed cases, including 4,279
+single-letter changes and 96 order/separator combinations. A separate 12-case
+live check passed. These are documented development tests, not a promise that
+every possible human sentence will be understood.
 are available separately; they are not needed to run these two commands.

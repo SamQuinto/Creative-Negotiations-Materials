@@ -1,8 +1,8 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "db12a569612846ffa50d585d07a5c7afdab783fb",
-  "date": "2026-10-18",
-  "description": "Participant preparation, role information and negotiation tips separated; existing UI headings retained. Scoring engine and payoff rules unchanged.",
+  "source_commit": "38b6fe2adb5a0e1d5c7279ae18edb539cfde1d2c",
+  "date": "2026-10-19",
+  "description": "Self-contained Empirica scoring package with tutorial spelling recovery and visible acknowledgment of unread wording. Tutorial catalogue and payoff rules unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "96ddf657e3da652f48a6396e19826bb6de2d9bef20d5a93e23b2879f4033eb9e"
+      "sha256": "19383abeeeb76524e475e6e5c0006bf51be3e6730f12d61bdc0ce466f6e7b3f5"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -62,7 +62,7 @@
     },
     {
       "path": "empirica/app/backend/offer_engine.py",
-      "sha256": "01a50090561833b9972fb96642a0428916735cd47e01eae66f5fd2ed9b0d14cf"
+      "sha256": "503f30b2e4b1818b35dde93c903cc90434d6c5a0422e4093558c689beff0c081"
     },
     {
       "path": "empirica/app/backend/scenario_rules.py",
@@ -74,7 +74,7 @@
     },
     {
       "path": "empirica/app/backend/stream.py",
-      "sha256": "68a58f9007e6a48c61810af4bd187ddacb121ed5f62611e34462b461cff76708"
+      "sha256": "428b97f2364c1eee1b48bed85afe00bd8a6a4ec164ea29ab3fa706e77eeb2a33"
     },
     {
       "path": "empirica/app/backend/structured_offer.py",
@@ -119,6 +119,10 @@
     {
       "path": "empirica/score_tutorial_offer.py",
       "sha256": "e7272b4c92f1e0a1fa3357c14e5f631e99ef6aaace285eb1ac8d4a4b364a0b83"
+    },
+    {
+      "path": "empirica-support/test_tutorial_language.py",
+      "sha256": "ecf9ded2171c2a44de4d12789d889f99578dba067ab97aee9d7df2e8a8ab41e4"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"

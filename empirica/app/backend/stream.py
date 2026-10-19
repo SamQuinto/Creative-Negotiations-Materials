@@ -16,7 +16,7 @@ from offer_engine import SCORABLE, evaluate_offer, score_pair, source_quote_is_g
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCORER_VERSION = '2026-10-17-contextual-requests-v14'
+SCORER_VERSION = '2026-10-19-tutorial-language-v15'
 SHARED_KEYS_DIR = Path(os.environ["CREATIVE_NEGOTIATIONS_KEYS_DIR"]) if os.environ.get("CREATIVE_NEGOTIATIONS_KEYS_DIR") else None
 
 

@@ -15,6 +15,7 @@ from collections import OrderedDict
 from datetime import date, datetime
 from decimal import Decimal
 from difflib import SequenceMatcher
+from functools import lru_cache
 from typing import Any
 
 
@@ -2341,7 +2342,160 @@ def _tutorial_money_value(raw: str) -> float | None:
     return None
 
 
-def _tutorial_pair_enrichment(text: str, scenario: dict[str, Any]) -> list[dict[str, Any]]:
+TUTORIAL_OPTIONAL_EVIDENCE = {
+    'Projector': r'\b(?:projector|screen|presentation\s+(?:equipment|screen)|av\s+(?:equipment|screen)|display\s+screen)\b',
+    'Cleanup': r'\b(?:clean\w*|tidy\w*|clear\s+the\s+room|leave\s+the\s+room\s+clean)\b',
+    'Cancellation notice': r'\b(?:cancel|cancellation|refund(?:able)?|non[-\s]?refundable)\b|\bmoney\s+back\b',
+    'Setup access': r'\b(?:setup|set\s+up|early\s+access|load[-\s]?in|access\s+(?:before|early)|arrive\s+early|get\s+in\s+early)\b',
+    'Door staffing': r'\b(?:door|entrance|check[-\s]?in|registration)\s+(?:staff|volunteers?|people|greeters?)\b|\b(?:staff|cover|work|manage)\s+(?:at\s+)?the\s+(?:door|entrance|check[-\s]?in|registration)\b|\b(?:someone|a\s+person|a\s+staff\s+member)\s+(?:on|at)\s+the\s+(?:door|entrance)\b|\b(?:greeters?|event\s+security|security\s+staff)\b',
+    'Food and refreshments': r'\b(?:food|refreshments?|snacks?|drinks?|cater(?:ing|ed)?|food\s+service|tea|coffee|soft\s+drinks)\b',
+}
+TUTORIAL_SPELLING_WORDS = (
+    'venue', 'august', 'september', 'closing', 'projector', 'cleanup', 'cleaning',
+    'cancellation', 'refundable', 'refund', 'nonrefundable', 'setup', 'entrance',
+    'registration', 'greeters', 'refreshments', 'catering', 'snacks', 'drinks',
+    'volunteers', 'organizer', 'manager', 'included', 'excluded', 'without', 'access',
+)
+TUTORIAL_SPELLING_VARIANTS = {
+    'cancelation':'cancellation', 'cancelations':'cancellation', 'cancellations':'cancellation',
+    'cancelled':'cancel', 'canceled':'cancel', 'cancelling':'cancel', 'canceling':'cancel',
+    'venu':'venue', 'vneue':'venue', 'veneu':'venue', 'vennue':'venue',
+    'setp':'setup', 'setpu':'setup', 'setupp':'setup',
+    'foood':'food', 'fod':'food', 'dooor':'door', 'dor':'door',
+}
+
+
+def _tutorial_one_edit(left: str, right: str) -> bool:
+    """One insertion, deletion, substitution or adjacent-letter swap."""
+    if left == right:return True
+    if abs(len(left)-len(right)) > 1:return False
+    if len(left) == len(right):
+        different=[i for i,(a,b) in enumerate(zip(left,right)) if a!=b]
+        return len(different)==1 or (len(different)==2 and different[1]==different[0]+1
+            and left[different[0]]==right[different[1]] and left[different[1]]==right[different[0]])
+    if len(left)>len(right):left,right=right,left
+    i=0
+    while i<len(left) and left[i]==right[i]:i+=1
+    return left[i:]==right[i+1:]
+
+
+@lru_cache(maxsize=16384)
+def _tutorial_spelling_word(word: str) -> str:
+    if word in TUTORIAL_SPELLING_VARIANTS:return TUTORIAL_SPELLING_VARIANTS[word]
+    if word in TUTORIAL_SPELLING_WORDS:return word
+    # Do not fuzzy-match short ordinary words such as food, door, fee or no.
+    # Ambiguous near-matches are retained for review instead of guessed.
+    candidates=[known for known in TUTORIAL_SPELLING_WORDS if len(known)>=6
+                and len(word)>=5 and _tutorial_one_edit(word,known)]
+    return candidates[0] if len(candidates)==1 else word
+
+
+def _tutorial_language_text(text: str) -> str:
+    lower=_focused_text(text).lower().replace('’',"'")
+    lower=re.sub(r'\bclean[-\s]+up\b','cleanup',lower)
+    lower=re.sub(r'\bset[-\s]+up\b','setup',lower)
+    # A space or hyphen accidentally placed inside a long issue word.
+    words=list(re.finditer(r'\b[a-z]{2,}\b',lower));joins=[]
+    for left,right in zip(words,words[1:]):
+        if not re.fullmatch(r'[-\s]+',lower[left.end():right.start()]):continue
+        corrected=_tutorial_spelling_word(left.group()+right.group())
+        if corrected in TUTORIAL_SPELLING_WORDS and len(corrected)>=6 and (not joins or left.start()>=joins[-1][1]):
+            joins.append((left.start(),right.end(),corrected))
+    for start,end,corrected in reversed(joins):lower=lower[:start]+corrected+lower[end:]
+    lower=re.sub(r'\b[a-z]+\b',lambda m:_tutorial_spelling_word(m.group()),lower)
+    return lower
+
+
+def _tutorial_unread_wording(text: str, scenario: dict[str, Any]) -> list[str]:
+    """Keep unfamiliar offer wording visible even when extraction omits it.
+
+    This is a conservative coverage backstop, not a claim to understand every
+    English sentence. It never creates an issue choice or assigns points.
+    """
+    ordinary=set('''a an the i we you your yours our ours my mine their they them its it
+        is are be been being was were am will would could should can may might shall do
+        does did have has had to of for from with without and or but if then so as at on
+        in into out by up down before after during until per each every this that these
+        those there here also too just please thanks thank yes no not neither nor only
+        all any some same other both either more less than very really how what which
+        when where who whose want wants need needs like love prefer request ask asking
+        offer offers offering propose proposal include includes including included
+        exclude excludes excluding excluded provide provides provided supply supplies
+        supplied bring brings handle handles arrange allow allowed give giving get use
+        uses used using make makes making take taking keep leave leaves let lets let's
+        us me must don't doesn't won't can't cannot isn't aren't wasn't weren't
+        nothing everything something anything worth cost costs charge charges charged
+        free paid pay payment price fee fees dollar dollars usd bucks amount total
+        event events date dates day days week weeks month months year years next
+        august aug september sept sep first second third fourth fifth sixth seventh
+        eighth ninth tenth eleventh twelfth thirteenth fourteenth fifteenth sixteenth
+        seventeenth eighteenth nineteenth twentieth twenty thirtieth thirty one two
+        three four five six seven eight nine ten eleven twelve hundred fifty
+        close closes closed closing end ends ending finish finishes finished evening
+        night time times hour hours early earlier earliest late later latest pm am p m
+        setup access room hall venue space booking book booked community meet meeting
+        projector projectors presentation equipment screen display av own organizer
+        organizers manager venue's organizer's manager's cleaning cleanup clean cleans
+        cleaned tidy tidying clear volunteers volunteer staff staffing people person
+        someone members member door doors entrance registration check checkin greeters
+        greeter welcome guests guest security refreshments refreshment food drinks
+        drink snacks snack catering catered service cancellation cancel cancellations
+        refund refunds refundable nonrefundable money back notice full fully partial
+        advance extra additional penalty penalties accepted accept works work deal
+        good well happy cover covers covered tea coffee'''.split())
+    # Definitions/choice labels are fixed by the researchers, not inferred from
+    # whatever unusual text a participant happens to enter.
+    for issue in scenario.get('issues',[]):
+        for label in [issue.get('name',''),*issue.get('aliases',[]),
+                      *(o.get('label','') for o in issue.get('options',[]))]:
+            ordinary.update(re.findall(r"[a-z]+(?:'[a-z]+)?",str(label).lower()))
+    ordinary.update(TUTORIAL_SPELLING_WORDS)
+    kept=[]
+    for clause in re.split(r'[,;\n|•]+|(?<=[a-z])\.(?=\s+[A-Z])',text):
+        tokens=list(re.finditer(r"[A-Za-z]+(?:['’][A-Za-z]+)?",clause))
+        joined_indices=set()
+        for i,(left,right) in enumerate(zip(tokens,tokens[1:])):
+            combined=_tutorial_spelling_word((left.group()+right.group()).lower())
+            if len(left.group())>=2 and len(right.group())>=2 and re.fullmatch(r'[-\s]+',clause[left.end():right.start()]) and combined in TUTORIAL_SPELLING_WORDS and len(combined)>=6:
+                joined_indices.update((i,i+1))
+        unknown=[i for i,m in enumerate(tokens) if i not in joined_indices and _tutorial_spelling_word(m.group().lower().replace('’',"'")) not in ordinary]
+        if not unknown:continue
+        # Keep each run of unfamiliar words plus ordinary connecting words;
+        # stop at a recognized issue word so a scored feature is not relabelled.
+        start=last=unknown[0]
+        for index in unknown[1:]+[None]:
+            if index is not None and index-last<=3 and not any(
+                _tutorial_spelling_word(tokens[j].group().lower()) in TUTORIAL_SPELLING_WORDS
+                for j in range(last+1,index)):
+                last=index;continue
+            kept.append(clause[tokens[start].start():tokens[last].end()].strip())
+            if index is not None:start=last=index
+    return list(dict.fromkeys(part for part in kept if part))
+
+
+def _tutorial_owner(text: str, issue: str, role: str) -> str | None:
+    """Read who supplies/does this feature, without borrowing a distant actor."""
+    pattern=TUTORIAL_OPTIONAL_EVIDENCE[issue]
+    for clause in re.split(r'[,;\n|]|\b(?:but|if)\b',text):
+        mention=re.search(pattern,clause)
+        if not mention:continue
+        actors=[]
+        for actor in re.finditer(r"\b(?:organizer(?:'s)?|venue(?:'s)?|manager(?:'s)?|volunteers?|(?:our|my|your)\s+(?:staff|team)|we|i|our|my|you|your|staff)\b",clause):
+            if actor.end()<=mention.start() and mention.start()-actor.end()<=45:
+                actors.append((mention.start()-actor.end(),actor.group()))
+            elif actor.start()>=mention.end() and actor.start()-mention.end()<=45 and re.search(
+                r'\b(?:by|from)\b',clause[mention.end():actor.start()]):
+                actors.append((actor.start()-mention.end(),actor.group()))
+        if not actors:continue
+        actor=min(actors)[1]
+        if 'volunteer' in actor or actor.startswith('organizer'):return 'organizer'
+        if actor.startswith(('venue','manager')) or actor=='staff':return 'venue'
+        own=bool(re.match(r'\b(?:we|i|our|my)\b',actor))
+        return 'organizer' if (role=='Candidate')==own else 'venue'
+    return None
+
+
+def _tutorial_pair_enrichment(text: str, scenario: dict[str, Any], role: str = 'Candidate') -> list[dict[str, Any]]:
     """Deterministic safety net for terse practice offers.
 
     The tutorial deliberately teaches ordinary-language entry, so it accepts
@@ -2349,7 +2503,7 @@ def _tutorial_pair_enrichment(text: str, scenario: dict[str, Any]) -> list[dict[
     relative closing-time language. The resulting interpretation is still
     shown to the participant for confirmation before it is sent.
     """
-    lower = _focused_text(text).lower()
+    lower = _tutorial_language_text(text)
     additions: list[tuple[str, str]] = []
 
     money_pattern = re.compile(
@@ -2428,25 +2582,16 @@ def _tutorial_pair_enrichment(text: str, scenario: dict[str, Any]) -> list[dict[
     if closing_label:
         additions.append(("Closing time", closing_label))
 
-    if re.search(r"\b(?:projector|presentation\s+(?:equipment|screen)|av\s+(?:equipment|screen)|display\s+screen)\b", lower) and not re.search(r'\b(?:no|without)\s+(?:a\s+)?projector\b|\bprojector\s+(?:is\s+)?not\s+(?:needed|required|included)\b',lower):
-        if re.search(r"\b(?:your|venue(?:'s)?|manager(?:'s)?)\s+projector\b",lower):
-            additions.append(("Projector", "Venue projector included"))
-        elif re.search(r"\b(?:my|our)(?:\s+own)?\s+projector\b|\borganizer(?:'s)?\s+projector\b", lower) or (
-            re.search(r"\b(?:bring|provide|supply|use)\b.{0,25}\bprojector\b", lower)
-            and re.search(r"\b(?:we|i|organizer|our|my)\b", lower)
-        ):
-            additions.append(("Projector", "Organizer brings a projector"))
-        else:
-            additions.append(("Projector", "Venue projector included"))
-    if re.search(r"\b(?:clean\w*|tidy\w*|clear\s+the\s+room|leave\s+the\s+room\s+clean)\b", lower):
-        if re.search(r"\b(?:venue|you|manager|staff)\b.{0,28}\b(?:clean\w*|tidy\w*|handle\w*)\b|\b(?:clean\w*|tidy\w*|handle\w*)\b.{0,28}\b(?:venue|you|manager|staff)\b", lower):
-            additions.append(("Cleanup", "Venue handles cleanup"))
-        elif re.search(r"\b(?:we|i|organizer|volunteers?)\b", lower):
-            additions.append(("Cleanup", "Organizer handles cleanup"))
-    if re.search(r"\b(?:cancel|cancellation|refund(?:able)?|non[-\s]?refundable)\b|\bmoney\s+back\b", lower):
-        if re.search(r"\b(?:non[-\s]?refundable|no\s+(?:refund|cancellation)|cannot\s+cancel)\b", lower):
+    if re.search(TUTORIAL_OPTIONAL_EVIDENCE['Projector'], lower) and not re.search(r'\b(?:no|without)\s+(?:a\s+)?projector\b|\bprojector\s+(?:is\s+)?not\s+(?:needed|required|included)\b',lower):
+        owner=_tutorial_owner(lower,'Projector',role)
+        additions.append(('Projector','Organizer brings a projector' if owner=='organizer' else 'Venue projector included'))
+    if re.search(TUTORIAL_OPTIONAL_EVIDENCE['Cleanup'],lower):
+        owner=_tutorial_owner(lower,'Cleanup',role)
+        if owner:additions.append(('Cleanup','Organizer handles cleanup' if owner=='organizer' else 'Venue handles cleanup'))
+    if re.search(TUTORIAL_OPTIONAL_EVIDENCE['Cancellation notice'], lower):
+        if re.search(r"\b(?:non[-\s]?refundable|no\s+(?:free\s+)?(?:refund|cancellation)\b(?!\s+(?:fee|charge|penalty))|cannot\s+cancel|can't\s+cancel|cancellation\s+(?:is\s+)?not\s+allowed)\b", lower):
             additions.append(("Cancellation notice", "Booking is non-refundable"))
-        else:
+        elif not re.search(r'\bnot\s+free\b',lower) and re.search(r'\b(?:free\s+(?:cancellation|cancel)|(?:can|may)\s+cancel|money\s+back|full\s+refund|fully\s+(?:refundable|refunded)|refundable\s+booking|cancel\s+(?:with|without)|cancellation\s+(?:is\s+)?allowed|no\s+(?:(?:refund|cancellation)\s+)?(?:fee|charge|penalty))\b',lower):
             additions.append(("Cancellation notice", "Free cancellation allowed with notice"))
     if re.search(r"\b(?:setup|set\s+up|early\s+access|load[-\s]?in|access\s+(?:before|early)|arrive\s+early|get\s+in\s+early)\b", lower):
         if re.search(r"\b(?:no|without|not\s+allow(?:ed)?)\b.{0,25}\b(?:setup|set\s+up|early\s+access|load[-\s]?in)\b", lower):
@@ -2454,21 +2599,12 @@ def _tutorial_pair_enrichment(text: str, scenario: dict[str, Any]) -> list[dict[
         else:
             additions.append(("Setup access", "Early setup access included"))
     if re.search(r"\b(?:door|entrance|check[-\s]?in|registration)\s+(?:staff|volunteers?|people|greeters?)\b|\b(?:staff|cover|work|manage)\s+(?:at\s+)?the\s+(?:door|entrance|check[-\s]?in|registration)\b|\b(?:someone|a\s+person|a\s+staff\s+member)\s+(?:on|at)\s+the\s+(?:door|entrance)\b|\b(?:greeters?|event\s+security|security\s+staff)\b", lower):
-        organizer_staff = bool(re.search(
-            r"\b(?:organizer|we|i|our|my|volunteers?)\b.{0,35}\b(?:door|entrance|check[-\s]?in|registration|greeters?|security)\b|"
-            r"\b(?:door|entrance|check[-\s]?in|registration|greeters?|security)\b.{0,35}\b(?:organizer|we|i|our|my|volunteers?)\b|"
-            r"\b(?:organizer|we|i|our|my|volunteers?)\b.{0,35}\b(?:staff|cover|work|manage)\s+(?:at\s+)?the\s+(?:door|entrance|check[-\s]?in|registration)\b",
-            lower,
-        ))
+        organizer_staff = _tutorial_owner(lower,'Door staffing',role)=='organizer'
         additions.append(("Door staffing", "Organizer provides door staff" if organizer_staff else "Venue provides door staff"))
-    if re.search(r"\b(?:food|refreshments?|snacks?|drinks?|cater(?:ing|ed)?|food\s+service)\b", lower):
+    if re.search(TUTORIAL_OPTIONAL_EVIDENCE['Food and refreshments'], lower):
         if re.search(r"\b(?:no|without)\s+(?:food|refreshments?|snacks?|drinks?|catering)\b|\b(?:food|refreshments?|snacks?|drinks?)\s+(?:not\s+included|excluded)\b", lower):
             food_choice = "No refreshments included"
-        elif re.search(
-            r"\b(?:organizer|we|i|our|my|volunteers?)\b.{0,35}\b(?:bring|provide|supply|handle|food|refreshments?|snacks?|drinks?|cater)\b|"
-            r"\b(?:bring|provide|supply|handle)\b.{0,25}\b(?:our|my|organizer|volunteers?|food|refreshments?|snacks?|drinks?)\b",
-            lower,
-        ) and not re.search(r"\b(?:venue|manager)\s+(?:(?:will|can|shall|staff)\s+){0,2}(?:provide|include|supply|handle)\b", lower):
+        elif _tutorial_owner(lower,'Food and refreshments',role)=='organizer':
             food_choice = "Organizer provides refreshments"
         else:
             # In an organizer's offer, bare "free food" ordinarily asks for
@@ -2498,36 +2634,35 @@ def _evaluate_tutorial_offer(
         ambiguities = [str(item) for item in extraction.get("ambiguities", []) if str(item).strip()]
     else:
         raw_pairs, offer_intent, unsupported, captured_novel_terms, ambiguities = extraction, "offer", [], [], []
-    deterministic = _tutorial_pair_enrichment(text, scenario)
+    deterministic = _tutorial_pair_enrichment(text, scenario, role)
     deterministic_issues = {item["issue"] for item in deterministic}
     combined = _repair_misrouted_discrete_pairs(list(raw_pairs) + deterministic, scenario)
-    optional_evidence = {
-        "Projector": r"\b(?:projector|presentation\s+(?:equipment|screen)|av\s+(?:equipment|screen)|display\s+screen)\b",
-        "Cleanup": r"\b(?:clean\w*|tidy\w*|clear\s+the\s+room|leave\s+the\s+room\s+clean)\b",
-        "Cancellation notice": r"\b(?:cancel|cancellation|refund(?:able)?|non[-\s]?refundable)\b|\bmoney\s+back\b",
-        "Setup access": r"\b(?:setup|set\s+up|early\s+access|load[-\s]?in|access\s+(?:before|early)|arrive\s+early|get\s+in\s+early)\b",
-        "Door staffing": r"\b(?:door|entrance|check[-\s]?in|registration)\s+(?:staff|volunteers?|people|greeters?)\b|\b(?:staff|cover|work|manage)\s+(?:at\s+)?the\s+(?:door|entrance|check[-\s]?in|registration)\b|\b(?:someone|a\s+person|a\s+staff\s+member)\s+(?:on|at)\s+the\s+(?:door|entrance)\b|\b(?:greeters?|event\s+security|security\s+staff)\b",
-        "Food and refreshments": r"\b(?:food|refreshments?|snacks?|drinks?|cater(?:ing|ed)?|food\s+service)\b",
-    }
+    optional_evidence = TUTORIAL_OPTIONAL_EVIDENCE
     required_evidence = {
         "Venue fee": r"\b(?:venue|hall|space|booking)\b|\b(?:fee|cost|price|rent(?:al)?)\b|\$|\busd\b|\bdollars?\b",
         "Event date": r"\b(?:aug(?:ust)?|sep(?:t(?:ember)?)?|july?|jul)\b",
         "Closing time": r"\b(?:close(?:s|d)?|closing|shut(?:s|ting)?|end(?:s|ing)?|finish(?:es|ing)?|wrap(?:s|ping)?\s+up|until)\b",
     }
+    tutorial_text = _tutorial_language_text(text)
     last_by_issue: OrderedDict[str, dict[str, Any]] = OrderedDict()
     for pair in combined:
         if not isinstance(pair, dict):
             continue
         issue, option = canonical_pair(str(pair.get("issue", "")).strip(), str(pair.get("option", "")).strip())
-        if issue in optional_evidence and not re.search(optional_evidence[issue], _focused_text(text), re.I):
+        if issue in optional_evidence and not re.search(optional_evidence[issue], tutorial_text, re.I):
             continue
-        if issue in required_evidence and not re.search(required_evidence[issue], _focused_text(text), re.I):
+        if issue in required_evidence and not re.search(required_evidence[issue], tutorial_text, re.I):
             continue
         if issue and option:
             last_by_issue[issue] = {"issue": issue, "option": option, "confidence": float(pair.get("confidence", 1) or 0)}
 
+    # A model's guessed option must not bypass an unresolved provider/policy.
+    for issue in ('Cleanup','Cancellation notice'):
+        if re.search(optional_evidence[issue],tutorial_text,re.I) and issue not in deterministic_issues:
+            last_by_issue.pop(issue,None)
+
     findings: list[dict[str, Any]] = []
-    lower = _focused_text(text).lower()
+    lower = tutorial_text
     numeric_alternative = r'\$?\s*\d+(?:\.\d+)?\s+or\s+\$?\s*\d+(?:\.\d+)?'
     alternatives = [
         ('Venue fee', numeric_alternative+r'\s*(?:dollars?|bucks?)?\s*(?:for\s+)?(?:the\s+)?(?:venue|fee|hall|booking)\b'),
@@ -2615,12 +2750,29 @@ def _evaluate_tutorial_offer(
             term for term in unsupported
             if not any(
                 len(_normalized_choice(alias)) >= 4
-                and _normalized_choice(alias) in _normalized_choice(term)
+                and _normalized_choice(_tutorial_language_text(alias)) in _normalized_choice(_tutorial_language_text(term))
                 for alias in recognized_names
             )
         ]
         if unsupported:
             findings.append(_finding(REJECTED, "unsupported_terms", f"These terms are not part of this practice: {', '.join(unsupported[:3])}."))
+    questions = {
+        'Venue fee':'What venue fee in US dollars would you like? The practice uses $100–$800.',
+        'Event date':'Which calendar day in August or September would you like?',
+        'Closing time':'What closing time would you like? Choose an hour from 5:00 p.m. through 11:00 p.m.',
+        'Projector':'Should the venue supply the projector, or will the organizer bring one?',
+        'Cleanup':'Will the organizer or venue staff handle cleanup?',
+        'Cancellation notice':'Should cancellation with notice be free, or should the booking be non-refundable?',
+        'Setup access':'Should early setup access be included or excluded?',
+        'Door staffing':'Will the organizer or venue provide the door staff?',
+        'Food and refreshments':'Will the venue or organizer provide refreshments, or should they be excluded?',
+    }
+    for name,pattern in {**required_evidence,**optional_evidence}.items():
+        excluded_projector=(name=='Projector' and re.search(r'\b(?:no|without)\s+(?:a\s+)?projector\b|\bprojector\s+(?:is\s+)?not\s+(?:needed|required|included)\b',lower))
+        if name not in valid_pairs and re.search(pattern,lower,re.I) and not excluded_projector and not any(
+            f.get('issue')==name or name.lower() in f.get('message','').lower() for f in findings):
+            findings.append(_finding(CLARIFICATION_NEEDED,'mentioned_issue_needs_choice',
+                questions[name],issue=name))
     missing = [name for name in required_issues if name not in valid_pairs]
     if missing and not any(item["decision"] == CLARIFICATION_NEEDED for item in findings):
         findings.append(_finding(REJECTED, "missing_required", f"Please add {', '.join(missing)}. I have not scored this offer yet.", missing=missing))
@@ -2641,18 +2793,26 @@ def _evaluate_tutorial_offer(
         term for term in captured_novel_terms
         if not any(
             len(_normalized_choice(alias)) >= 4
-            and _normalized_choice(alias) in _normalized_choice(term)
+            and _normalized_choice(_tutorial_language_text(alias)) in _normalized_choice(_tutorial_language_text(term))
             for alias in known_for_scored
         )
     ] if _open_capture_enabled(scenario) else []
+    unread = _tutorial_unread_wording(text, scenario)
+    if _open_capture_enabled(scenario):
+        captured_novel_terms.extend(term for term in unread if not any(
+            term.casefold() in existing.casefold() for existing in captured_novel_terms))
     result = {
         "decision": decision, "message": "\n".join(messages), "messages": messages,
         "findings": findings, "lines": lines, "total": total, "any_valid": bool(valid_pairs),
         "invalid_present": bool(findings), "required_ok": not missing, "missing_required": missing,
         "valid_pairs": dict(valid_pairs),
         "novel_terms": list(dict.fromkeys(term.strip() for term in captured_novel_terms if term.strip())),
+        "language_review": {"uninterpreted_wording":unread,
+            "note":"Unfamiliar wording is retained without adding points; it is not a priced interpretation."},
     }
     result["display_text"] = format_system_output(result)
+    if decision != SCORABLE and result['novel_terms']:
+        result['display_text'] += '\nRecorded wording (not scored):\n' + '\n'.join('- '+term for term in result['novel_terms'])
     return result
 
 
