@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "d580ed037f61c3fb8b2a905daca69afa84be9af6e8f129492126ad956cb2d712"
+      "sha256": "96ada1849425a74704221246d0b0fb625ce28afb0c9421c4e1552132d457995a"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
