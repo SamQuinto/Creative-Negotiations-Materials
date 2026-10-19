@@ -1,6 +1,7 @@
 **/__pycache__/
 *.pyc
 **/*key*.txt
+!empirica/app/openai_key_example.txt
 **/empirica_key*
 .env
 **/.env

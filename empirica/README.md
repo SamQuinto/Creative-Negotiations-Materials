@@ -15,6 +15,7 @@ empirica/
     backend/
     config/
     check_installation.py
+    openai_key_example.txt
 ```
 
 Use Python 3.11 or later. No extra Python packages are needed. From inside
@@ -25,7 +26,12 @@ python app/check_installation.py
 ```
 
 For natural-language scoring, set your own `OPENAI_API_KEY` environment
-variable on the server. Then run:
+variable on the server. Alternatively, copy
+[`app/openai_key_example.txt`](app/openai_key_example.txt) to
+`app/openai_key.txt` and replace its placeholder with your own key on one line.
+The scorer reads `OPENAI_API_KEY` first, then the local key file. The example
+contains no key and is not loaded automatically. Keep the real key server-side;
+`openai_key.txt` is excluded from Git. Then run:
 
 ```text
 python score_offer.py --role Candidate --issue-space 215 --text "salary 55k budget 9k start January 1" --json
@@ -43,6 +49,13 @@ paths. Do not edit `ROOT`. Update the whole folder together, not just the two
 Python files. Natural-language scoring uses Nano for routine interpretation,
 with Luna review for flagged cases; the payoff calculation is deterministic.
 The installation check uses explicit choices, not live language-model calls.
+
+If you cloned the whole repository, `empirica/` is the deployment folder: the
+two scorer commands already sit at its top level, beside `app/`. The sibling
+`empirica-support/` and `developer/` folders are optional tests and preview
+helpers, not scoring dependencies. Existing Empirica command paths do not need
+to change. For future updates, pull the repository and keep this whole folder
+on the same revision.
 
 The latest language update keeps unpriced personal requests separate from known
 allowances. A relative's holiday does not request the Candidate's vacation days;
@@ -92,4 +105,3 @@ The larger development check covered 4,440 constructed cases, including 4,279
 single-letter changes and 96 order/separator combinations. A separate 12-case
 live check passed. These are documented development tests, not a promise that
 every possible human sentence will be understood.
-are available separately; they are not needed to run these two commands.

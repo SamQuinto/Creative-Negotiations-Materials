@@ -33,7 +33,7 @@ The HTML files are visual, interactive previews only. They do not save or transm
 
 [Open the public Empirica folder](empirica/). **Download everything inside that folder, including `app/`.** It now contains both Python commands, the current 215-issue scenario, and the complete shared scoring engine. No other repository folder is needed to run the scorers. [The short setup guide](empirica/README.md) includes a no-key installation check.
 
-[Detailed instructions, extra tests, the preview, and other scenario exports](empirica-support/) are kept separately. The optional preview also uses `developer/`. The exact engine revision and file hashes are in the [runtime manifest](empirica-support/runtime_manifest.json). This is a folder cleanup; the scoring logic and payoffs are unchanged.
+[Detailed instructions, extra tests, the preview, and other scenario exports](empirica-support/) are kept separately. The optional preview also uses the single helper in `developer/`; neither sibling folder is required to run the scorers. If you clone the whole repository, keep your Empirica commands pointed at `empirica/score_offer.py` and `empirica/score_tutorial_offer.py`. The [key template](empirica/app/openai_key_example.txt) contains a placeholder only; copy it to `empirica/app/openai_key.txt` and add your own key locally, or set `OPENAI_API_KEY` on the server. Never commit a real key. The exact engine revision and file hashes are in the [runtime manifest](empirica-support/runtime_manifest.json).
 
 | Backend scenario | Public raw JSON |
 |---|---|

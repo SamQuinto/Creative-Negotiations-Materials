@@ -1,6 +1,6 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "38b6fe2adb5a0e1d5c7279ae18edb539cfde1d2c",
+  "source_commit": "d4bc970a8d00ddd3563f936f9015b0b7136c2e86",
   "date": "2026-10-19",
   "description": "Self-contained Empirica scoring package with tutorial spelling recovery and visible acknowledgment of unread wording. Tutorial catalogue and payoff rules unchanged.",
   "files": [
@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "19383abeeeb76524e475e6e5c0006bf51be3e6730f12d61bdc0ce466f6e7b3f5"
+      "sha256": "d580ed037f61c3fb8b2a905daca69afa84be9af6e8f129492126ad956cb2d712"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -123,6 +123,10 @@
     {
       "path": "empirica-support/test_tutorial_language.py",
       "sha256": "ecf9ded2171c2a44de4d12789d889f99578dba067ab97aee9d7df2e8a8ab41e4"
+    },
+    {
+      "path": "empirica/app/openai_key_example.txt",
+      "sha256": "c40fd5eeed2701d90e373f9fd496ff800f69f05ecea4bc3eac336007e08f1fbf"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"
