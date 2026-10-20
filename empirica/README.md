@@ -66,6 +66,16 @@ the former fifth tip is omitted, without changing the agreement rule.
 
 Fixed 15 remains a separate, unchanged configuration for earlier designs.
 
+The current Fixed 9 and Flexible 215 share the same mirrored priorities:
+remote work is weighted −2 to +2 for the Candidate, versus +1 to −1 for the
+Recruiter; probation is weighted −2 to +2 for the Recruiter, versus +1 to −1
+for the Candidate. The usual three remote days and three probation months are
+still worth 0. Five remote days plus six months' probation therefore add +1
+to each party. Vacation, contract length, the three core issues and the
+archived 15-issue configurations are unchanged. The scorer reads these weights
+from the selected JSON; no new interpretation model or scoring-engine change
+is needed for this revision.
+
 Both commands can be called from another working directory using their full
 paths. Do not edit `ROOT`. Update the whole folder together, not just the two
 Python files. Natural-language scoring uses Nano for routine interpretation,

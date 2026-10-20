@@ -70,7 +70,10 @@ def private_payoff_rows(scenario, role):
                 shown = f'{points:+.2f}'.rstrip('0').rstrip('.')
                 values.append(f'{label}: {shown}')
             proposal_domain = issue.get('proposal_domain')
-            if isinstance(proposal_domain, dict) and proposal_domain.get('max') is None:
+            if scenario.get('table_negotiation', {}).get('choices_are_exhaustive'):
+                kind_label = f'Listed choices · {unit}'
+                value_label = '; '.join(values)
+            elif isinstance(proposal_domain, dict) and proposal_domain.get('max') is None:
                 kind_label = f'Open amount · {unit}'
                 value_label = 'Scoring anchors — ' + '; '.join(values) + '. Amounts outside these anchors continue at the same rate.'
             else:

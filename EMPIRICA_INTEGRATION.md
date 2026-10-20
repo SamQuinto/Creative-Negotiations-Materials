@@ -4,7 +4,7 @@
 
 After assigning Candidate or Recruiter, load the matching role JSON. Each file keeps the existing `roles` and `tips` structure but contains only one role. Render `roles[0].narrative`; do not load the other party's private material into the participant interface.
 
-The `_200` filenames remain unchanged so existing raw links continue to work. Their contents are the current reviewed role materials.
+The `_200` single-role files preserve the historical feedback pre-test. Current classroom and Prolific setups should use the Fixed-9 or Flexible-215 scenario matching their issue condition, and render only the assigned role. Both current scenarios include the mirrored priority update. Treatment nudges and survey questions are separate and unchanged.
 
 ## Render role formatting safely
 

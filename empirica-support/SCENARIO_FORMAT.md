@@ -30,7 +30,7 @@ The current Fixed 9 and Flexible 215 files both carry these nine table rows:
 8. Professional Training Program
 9. Role in Recruitment Fair
 
-The first seven are continuous in the current study design. Each table row keeps the sample's `[{"option": ..., "score": ...}]` format. For continuous issues these entries are **examples**, not the complete set of allowed values. The two choice-based issues have their complete two-option sets. Table scores are rounded to two decimals; underlying arithmetic keeps full precision.
+The first seven use numerical or date-based payoff rules. Each table row keeps the sample's `[{"option": ..., "score": ...}]` format. In Fixed 9, participants choose from the listed options; `table_negotiation.choices_are_exhaustive` records this. In Flexible 215, these entries are examples rather than limits on natural-language offers. The two choice-based issues have their complete two-option sets. Table scores are rounded to two decimals; underlying arithmetic keeps full precision.
 
 Fixed 9 stores all 215 payoff definitions but lists only nine `active_issues` and nine `required_issues`. The scorer filters to that agenda before interpreting or scoring an offer. Flexible 215 has no active-issue restriction and still requires only the three core features in natural-language mode. Its table view does not limit the flexible issue space. Both conditions keep the same role story. Fixed 9 explains the listed table choices rather than open amounts or proportional intermediate values, then adds the closing table transition. Flexible 215 keeps its open-value wording and has four negotiation tips, with the old fifth item removed. The separate Fixed 15 file is unchanged.
 
@@ -42,11 +42,11 @@ For each continuous issue, `roles[role].continuous_scoring[issue]` supplies:
 - `knots`: values and their scores, used for proportional interpolation.
 - `extrapolation`: whether scoring continues outside the anchors or the value must stay within the physical/calendar range.
 
-Salary and budget accept any non-negative amount. Their scores continue at the same rate beyond the displayed anchors. Other numerical/date issues keep their configured limits. Intermediate values such as 2.25 probation months, 3.4 contract years, or 3.5 remote days are valid under the current design. Display `step` values are not restrictions to whole numbers.
+In Flexible 215, salary and budget accept any non-negative amount. Their scores continue at the same rate beyond the displayed anchors. Other numerical/date issues keep their configured limits. Intermediate values such as 2.25 probation months, 3.4 contract years, or 3.5 remote days are valid there. Display `step` values are not restrictions to whole numbers. Fixed 9 presents only its listed choices; the underlying curves remain available to check their arithmetic.
 
-## The live Empirica reader needs this connection
+## How the scoring connections work
 
-An older reader that uses the table as a finite dropdown lookup will still be restricted to those examples. **Adding the JSON field alone cannot make that reader continuous.** Render number/date inputs for continuous issues and dropdowns for choice-based issues.
+Fixed 9 uses the finite table choices. Flexible 215 uses natural-language offers and the shared scorer; its table metadata does not restrict those offers. A separate numerical-input interface would need to read `continuous_scoring` to support intermediate values; adding metadata alone does not change an interface's behavior.
 
 The included browser helper calculates a fixed-condition preview using only the assigned role's rules:
 
@@ -80,9 +80,15 @@ Keep the full scoring JSON on the server. Return only the assigned narrative, th
 - Budget: $5,000 / $10,000 / $15,000 are the −2 / 0 / +2 Candidate anchors, with the opposite scores for Recruiter.
 - Starting date: January 1 = +1, March 1 = 0, May 1 = −1, July 1 = −2, September 1–30 = −3; October–December = −1000, for both roles. Intermediate dates are proportional. Supplied years are ignored; month/day use the 2026 calendar. `continuous_scoring.assume_year` keeps the browser's calculation consistent with Python.
 
-For example, a $50,000 salary, $10,000 budget and January 1 start give +1 to each party before optional issues. Salary and budget only transfer value; date changes joint value. With only these three issues, a March 1 or later start cannot give both parties strictly positive totals. The four role-private numerical issues offset across roles and do not independently create joint value. Vacation and remote-work anchors remain unchanged, but their proposal domains allow 0–365 annual days and 0–5 weekly days. `usual_value` holds the 30/3 baselines; `default_period` holds the default units. These defaults do not authorize reuse of omitted earlier offers. Use `continuous_scoring.domain` for form limits, not `reference_min` or `reference_max`. Show weekly vacation conversions, relative changes from usual, and the complete interpreted package before sending.
+For example, a $50,000 salary, $10,000 budget and January 1 start give +1 to each party before optional issues. Salary and budget only transfer value; date changes joint value. With only these three core issues, a March 1 or later start cannot give both parties strictly positive totals.
 
-If salary and budget are sampled independently and uniformly between their reference anchors, and dates uniformly across the 365 calendar days, the jointly positive share is **3.7642%**. It is identical in the three current issue spaces when only the three required issues are considered. This is a share under that stated reference distribution; there is no uniform distribution over every unbounded dollar amount. Other sampling assumptions yield other shares. A post-September start has joint value at most −1994 in the 15-issue space and −1859.1 in the 215-issue space, even choosing every other feature to maximize joint value. It cannot give both parties positive scores.
+Fixed 9 and Flexible 215 now have mirrored priorities. The Candidate's remote-work points run from −2 at one day to +2 at five days; the Recruiter's points remain +1 to −1. The Recruiter's probation points run from −2 at no probation to +2 at six months; the Candidate's points remain +1 to −1. Three remote days and three probation months stay worth 0 to both. Giving five remote days in exchange for six months' probation therefore adds +1 to each party, without relying on training or recruitment-fair participation. Vacation and contract-length weights are unchanged. Fixed 15, Flexible 15 and the tutorial retain their previous payoffs.
+
+Vacation allows 0–365 annual days and remote work allows 0–5 weekly days. `usual_value` holds the 30/3 baselines; `default_period` holds the default units. These defaults do not authorize reuse of omitted earlier offers. Use `continuous_scoring.domain` for form limits, not `reference_min` or `reference_max`. Show weekly vacation conversions, relative changes from usual, and the complete interpreted package before sending.
+
+If salary and budget are sampled independently and uniformly between their reference anchors, and dates uniformly across the 365 calendar days, the jointly positive share using only those three core issues is **3.7642%**. Those three payoff functions are unchanged by the new priorities. This is a share under that stated reference distribution, not the Fixed-9 table share; there is no uniform distribution over every unbounded dollar amount.
+
+Counting each complete Fixed-9 table package once gives **47,380 mutually positive packages out of 312,500 (15.1616%)**. Maximum joint payoff is **8**; a balanced best-joint deal gives **4 points each**. Among mutually positive fixed-table deals, either party can receive **0.5–7.5 points**. The complete offer range is **−12 to +12** per party, including offers the counterpart would not accept. The public `test_fixed_nine.py` checks this exact count and the new trade-off. A start after September still cannot be offset by other features; the hard deadline is unchanged.
 
 Zero or negative offers may be proposed, but acceptance requires strictly positive totals for both parties. The expanded task still caps the paid agreement bonus at $15 while retaining the uncapped research score.
 

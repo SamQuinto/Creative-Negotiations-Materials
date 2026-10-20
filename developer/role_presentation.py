@@ -42,7 +42,7 @@ def participant_display_settings(policy='open', issue_count=15):
             'main_offer_placeholder': placeholder}
 
 
-def negotiation_tips(policy='open', issue_count=15, include_agreement=True):
+def negotiation_tips(policy='open', issue_count=15, include_agreement=True, numerical_ranges_note=False):
     """Task instructions, separated from the role narrative and private interests."""
     if policy not in {'fixed', 'bounded', 'open'}:
         raise ValueError('Unknown material policy: ' + policy)
@@ -73,6 +73,8 @@ def negotiation_tips(policy='open', issue_count=15, include_agreement=True):
                     'to you, depending on your interests. The other party may value it differently.',
                     '<strong>Some features may not fit the situation and will be worth 0 points.</strong> '
                     'That doesn’t mean you should hold back on creative and thoughtful ideas!']
+        if numerical_ranges_note:
+            entries[-2] += ' Numerical features can have wider point ranges, as explained in your role information.'
     if include_agreement:
         entries += ['<strong>Both parties must officially accept the same offer,</strong> worth more than '
                     '0 points to each.']

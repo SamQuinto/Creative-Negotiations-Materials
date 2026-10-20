@@ -4,7 +4,7 @@ Current materials for the Candidate–Recruiter negotiation project. This public
 
 ## Current materials
 
-### Feedback pre-test
+### Feedback pre-test (historical)
 
 | Material | Raw file |
 |---|---|
@@ -16,7 +16,7 @@ Current materials for the Candidate–Recruiter negotiation project. This public
 
 Load only the role JSON and survey YAML matching the participant's assigned role.
 
-The `_200` role filenames are retained so existing Empirica raw links continue to work. Their contents are the current reviewed role materials.
+The `_200` role filenames preserve the earlier feedback pre-test wording and payoffs. They are historical materials, not the current classroom or Prolific experiment. Use the current Fixed-9 or Flexible-215 scenario links below for those setups. Historical participant materials are not rewritten when the experiment changes.
 
 For the current fixed/control condition, use the separate Fixed-9 scenario below. It keeps the same role story as Flexible 215, with numerical explanations and tips matched to the choices in its nine-row own-payoff table. Fixed 15 remains available separately for earlier designs. The main prototype is in the [prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
 
@@ -50,6 +50,8 @@ The [Prolific survey preview](https://raw.githack.com/SamQuinto/Creative-Negotia
 | Tutorial | [tutorial.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/tutorial.json) |
 
 Use **Fixed 9 for control** and **Flexible 215 for NOVA** in the treatment's `roleDataURL`. Each file has its own role narratives. Both have a nine-row `determinatescoretable`, at most five choices per issue, and table scores rounded to two decimals. Flexible 215 still scores its full catalogue and requires only salary, budget and starting date in natural-language offers. Fixed 9 retains that catalogue in the file but activates only its nine listed issues. Fixed 15 is separate and unchanged.
+
+Both current conditions use mirrored priorities: remote work matters more to the Candidate (−2 to +2), while probation matters more to the Recruiter (−2 to +2). Counterpart weights stay at ±1. This allows a longer probation period to be traded for more remote work so both parties gain. The role explanations, table values and continuous scoring rules reflect these weights. Earlier 15-issue configurations and the tutorial are unchanged.
 
 These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and show only the assigned role's material. The main prototype repository remains private.
 

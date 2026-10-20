@@ -1,5 +1,6 @@
 """Check the nine-issue agenda separately from the retained 215-issue catalogue."""
 from copy import deepcopy
+from collections import Counter
 import itertools
 import json
 from pathlib import Path
@@ -29,6 +30,87 @@ def choices(s):
 
 
 class FixedNineChecks(unittest.TestCase):
+    def test_exact_fixed_table_zopa_and_payoff_limits(self):
+        s = load('fixed-9')
+        distribution = Counter({(0, 0): 1})
+        for name in NAMES:
+            options = zip(s['roles']['Candidate']['determinatescoretable'][name],
+                          s['roles']['Recruiter']['determinatescoretable'][name])
+            next_counts = Counter()
+            for c_row, r_row in options:
+                self.assertEqual(c_row['option'], r_row['option'])
+                c, r = c_row['score'] * 2, r_row['score'] * 2
+                self.assertEqual(c, int(c)); self.assertEqual(r, int(r))
+                for (old_c, old_r), count in distribution.items():
+                    next_counts[(old_c + int(c), old_r + int(r))] += count
+            distribution = next_counts
+        accepted = {pair: count for pair, count in distribution.items() if min(pair) > 0}
+        self.assertEqual(sum(distribution.values()), 312500)
+        self.assertEqual(sum(accepted.values()), 47380)
+        self.assertEqual(max(sum(pair) for pair in distribution) / 2, 8)
+        for index in (0, 1):
+            self.assertEqual(max(pair[index] for pair in distribution) / 2, 12)
+            self.assertEqual(min(pair[index] for pair in distribution) / 2, -12)
+            self.assertEqual(max(pair[index] for pair in accepted) / 2, 7.5)
+            self.assertEqual(min(pair[index] for pair in accepted) / 2, .5)
+
+    def test_mirrored_priority_endpoints_neutral_values_and_intermediate_values(self):
+        expected = {
+            'Remote Working Days': {1: (-2, 1), 2: (-1, .5), 3: (0, 0), 4: (1, -.5), 5: (2, -1)},
+            'Probation Length': {0: (1, -2), 1.5: (.5, -1), 3: (0, 0), 4.5: (-.5, 1), 6: (-1, 2)},
+        }
+        for name in ('fixed-9', 'flexible-215'):
+            s = load(name)
+            for issue, values in expected.items():
+                for value, pair in values.items():
+                    for role, points in zip(('Candidate', 'Recruiter'), pair):
+                        self.assertEqual(score_pair(issue, str(value), role, {}, s)[1], points)
+            self.assertEqual(score_pair('Remote Working Days', '3.5', 'Candidate', {}, s)[1], .5)
+            self.assertEqual(score_pair('Probation Length', '3.75', 'Recruiter', {}, s)[1], .5)
+            self.assertEqual(score_pair('Remote Working Days', '0', 'Candidate', {}, s)[1], -3)
+            self.assertEqual(score_pair('Remote Working Days', '0', 'Recruiter', {}, s)[1], 1.5)
+            with self.assertRaises(ValueError): score_pair('Remote Working Days', '6', 'Candidate', {}, s)
+            with self.assertRaises(ValueError): score_pair('Probation Length', '7', 'Recruiter', {}, s)
+
+    def test_trade_off_creates_a_positive_agreement_without_compatible_features(self):
+        for name in ('fixed-9', 'flexible-215'):
+            s = load(name)
+            selected = choices(s)
+            selected.update({'Salary': 50000, 'Personal Budget': 10000, 'Starting Date': '2026-03-01',
+                             'Vacation Days': 30, 'Contract Length': 3, 'Remote Working Days': 5,
+                             'Probation Length': 6, 'Professional Training Program': 'No participation',
+                             'Role in Recruitment Fair': 'No commitment'})
+            _, extracted = structured_interpretation(selected, s)
+            for role in s['roles']:
+                result = evaluate_structured_offer(extracted, role, s)
+                self.assertEqual(result['decision'], 'scorable')
+                self.assertEqual(result['total'], 1)
+
+    def test_current_role_clues_match_the_new_weights_and_old_conditions_stay_frozen(self):
+        for name in ('fixed-9', 'flexible-215'):
+            s = load(name)
+            self.assertIn('1 day per week is worth −2 and all 5 working days are worth +2', s['roles']['Candidate']['full_text'])
+            self.assertIn('no probation is worth −2 points to you and 6 months are worth +2', s['roles']['Recruiter']['full_text'])
+            self.assertIn('Remote work is especially important', s['roles']['Candidate']['full_text'])
+            self.assertIn('probation period especially important', s['roles']['Recruiter']['full_text'])
+            for role in s['roles']:
+                self.assertEqual(abs(score_pair('Vacation Days', '50', role, {}, s)[1]), 1)
+                self.assertEqual(abs(score_pair('Contract Length', '4', role, {}, s)[1]), 1)
+        for name in ('fixed-15', 'flexible-15'):
+            s = load(name)
+            self.assertEqual(score_pair('Remote Working Days', '5', 'Candidate', {}, s)[1], 1)
+            self.assertEqual(score_pair('Probation Length', '6', 'Recruiter', {}, s)[1], 1)
+
+    def test_fixed_private_summaries_do_not_promise_unlisted_open_values(self):
+        s = load('fixed-9')
+        self.assertTrue(s['table_negotiation']['choices_are_exhaustive'])
+        for role in s['roles']:
+            rows = private_payoff_rows(s, role)
+            self.assertEqual(len(rows), 9)
+            self.assertNotIn('Open amount', str(rows))
+            self.assertNotIn('not proposal limits', str(rows))
+            self.assertIn('Listed choices', str(rows))
+
     def test_both_conditions_label_each_role_narrative_once_in_bold(self):
         for name in ('fixed-9', 'flexible-215'):
             for role, info in load(name)['roles'].items():
@@ -93,6 +175,7 @@ class FixedNineChecks(unittest.TestCase):
         s = load('flexible-215')
         self.assertEqual(s['tips'].count('<li '), 4)
         self.assertNotIn('Both parties must officially accept', s['tips'])
+        self.assertIn('Numerical features can have wider point ranges', s['tips'])
         self.assertTrue(s['agreement_rules']['require_positive_each_party'])
         for role, info in s['roles'].items():
             self.assertIn('any non-negative amount', info['narrative'])
@@ -159,6 +242,25 @@ class FixedNineChecks(unittest.TestCase):
         self.assertEqual(out['decision'], 'scorable')
         self.assertEqual(len(out['valid_pairs']), 9)
         self.assertEqual(out['scorer_routing']['calls'], 0)
+
+    def test_public_cli_scores_the_new_trade_off_for_both_roles_and_conditions(self):
+        selected = {'Salary': 50000, 'Personal Budget': 10000, 'Starting Date': '2026-03-01',
+                    'Vacation Days': 30, 'Contract Length': 3, 'Remote Working Days': 5,
+                    'Probation Length': 6, 'Professional Training Program': 'No participation',
+                    'Role in Recruitment Fair': 'No commitment'}
+        for name in ('fixed-9', 'flexible-215'):
+            for role in ('Candidate', 'Recruiter'):
+                with self.subTest(scenario=name, role=role):
+                    run = subprocess.run([sys.executable, str(ROOT / 'empirica/score_offer.py'),
+                                          '--scenario-file', str(SCENARIOS / f'{name}.json'),
+                                          '--role', role, '--choices-json', json.dumps(selected), '--json'],
+                                         capture_output=True, encoding='utf-8', timeout=20)
+                    self.assertEqual(run.returncode, 0, run.stderr)
+                    out = json.loads(run.stdout)
+                    self.assertEqual(out['decision'], 'scorable')
+                    self.assertEqual(out['total_for_proposer'], 1)
+                    self.assertEqual(out['total_for_receiver'], 1)
+                    self.assertEqual(out['scorer_routing']['calls'], 0)
 
 
 if __name__ == '__main__': unittest.main(verbosity=2)
