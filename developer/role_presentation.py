@@ -42,7 +42,7 @@ def participant_display_settings(policy='open', issue_count=15):
             'main_offer_placeholder': placeholder}
 
 
-def negotiation_tips(policy='open', issue_count=15):
+def negotiation_tips(policy='open', issue_count=15, include_agreement=True):
     """Task instructions, separated from the role narrative and private interests."""
     if policy not in {'fixed', 'bounded', 'open'}:
         raise ValueError('Unknown material policy: ' + policy)
@@ -53,7 +53,13 @@ def negotiation_tips(policy='open', issue_count=15):
     entries = [first,
         '<strong>Calculate, check, then submit.</strong> The platform calculates points automatically '
         'using rules set by the researchers. Check that it understood your offer before sending it.']
-    if policy == 'fixed':
+    if policy == 'fixed' and issue_count == 9:
+        entries = [
+            '<strong>Choose one option for each of the nine job features.</strong> Include all nine in every offer, including choices you want unchanged.',
+            '<strong>Check your package, then submit.</strong> The table shows what each choice is worth to you, and the platform adds up your points automatically.',
+            '<strong>Use the job features and choices listed in the table.</strong> You can change your selections as you negotiate, but cannot add other features or amounts.'
+        ]
+    elif policy == 'fixed':
         entries += [f'<strong>Stay within the {issue_count} issues in your private payoff table.</strong> '
                     'Do not add other issues. Salary and budget reference points are not proposal limits.']
     elif policy == 'bounded':
@@ -67,8 +73,9 @@ def negotiation_tips(policy='open', issue_count=15):
                     'to you, depending on your interests. The other party may value it differently.',
                     '<strong>Some features may not fit the situation and will be worth 0 points.</strong> '
                     'That doesn’t mean you should hold back on creative and thoughtful ideas!']
-    entries += ['<strong>Both parties must officially accept the same offer,</strong> worth more than '
-                '0 points to each.']
+    if include_agreement:
+        entries += ['<strong>Both parties must officially accept the same offer,</strong> worth more than '
+                    '0 points to each.']
     return '<p>' + TIPS_INTRO + '</p><ol style="padding-left:1.6em;margin:.4em 0;">' + ''.join(
         '<li style="margin:.55em 0;">' + entry + '</li>' for entry in entries) + '</ol>'
 

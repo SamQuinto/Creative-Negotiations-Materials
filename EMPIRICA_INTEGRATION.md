@@ -68,8 +68,10 @@ For NOVA, use the natural-language scoring mode and this `roleDataURL`:
 https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json
 ```
 
-Fixed 9 keeps the same narrative as Flexible 215, with a short closing transition
-to its nine mandatory issues and nine payoff-table rows for each role.
+Fixed 9 keeps the same role story as Flexible 215. Its numerical explanations
+and tips describe the available table choices rather than open amounts or
+intermediate values. A short closing transition leads to its nine mandatory
+issues and nine payoff-table rows for each role.
 Other issue definitions stay stored in `issues`, but
 `active_issues` prevents them from entering a scored fixed offer. The updated
 scorer applies that restriction; keep the whole `empirica/` folder together.
@@ -82,7 +84,9 @@ scoring and is not a list of the only issues that can be negotiated.
 
 Both nine-row tables use at most five representative choices per issue, with
 table scores rounded to two decimal places. The continuous rules remain full
-precision; salary and budget still have no upper proposal bound. Fixed 15 is
+precision; salary and budget in Flexible 215 still have no upper proposal bound.
+The fifth Flexible-215 tip is removed; agreement still requires both parties
+to accept an offer worth more than zero to each. Fixed 15 is
 retained separately and unchanged. No external interface changes are included
 in this update. Start a fresh test game to load the selected scenario.
 

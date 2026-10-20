@@ -12710,7 +12710,7 @@
     "all_issue_definitions_stay_on_server": true
   },
   "readrole_instructions": "<p>Read the materials below. While you do, try to get into character—figure out: what matters to you? And what would you like to get from this negotiation?</p><p><strong>Take notes on the right</strong> to help you prepare. You can use those notes when the negotiation starts.<br><strong>Try the scoring calculator</strong> to see what different offers would be worth to you.</p>",
-  "tips": "<p>Get into character and think about what your first couple of offers would be, based on what matters to you and what you anticipate from your counterpart. When making offers remember the following:</p><ol style=\"padding-left:1.6em;margin:.4em 0;\"><li style=\"margin:.55em 0;\"><strong>Include the three required features:</strong> salary, a personal work-expense budget and a starting date. Write your offer in your own words.</li><li style=\"margin:.55em 0;\"><strong>Calculate, check, then submit.</strong> The platform calculates points automatically using rules set by the researchers. Check that it understood your offer before sending it.</li><li style=\"margin:.55em 0;\"><strong>You may introduce other plausible job or contract features.</strong> Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, depending on your interests. The other party may value it differently.</li><li style=\"margin:.55em 0;\"><strong>Some features may not fit the situation and will be worth 0 points.</strong> That doesn’t mean you should hold back on creative and thoughtful ideas!</li><li style=\"margin:.55em 0;\"><strong>Both parties must officially accept the same offer,</strong> worth more than 0 points to each.</li></ol>",
+  "tips": "<p>Get into character and think about what your first couple of offers would be, based on what matters to you and what you anticipate from your counterpart. When making offers remember the following:</p><ol style=\"padding-left:1.6em;margin:.4em 0;\"><li style=\"margin:.55em 0;\"><strong>Include the three required features:</strong> salary, a personal work-expense budget and a starting date. Write your offer in your own words.</li><li style=\"margin:.55em 0;\"><strong>Calculate, check, then submit.</strong> The platform calculates points automatically using rules set by the researchers. Check that it understood your offer before sending it.</li><li style=\"margin:.55em 0;\"><strong>You may introduce other plausible job or contract features.</strong> Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, depending on your interests. The other party may value it differently.</li><li style=\"margin:.55em 0;\"><strong>Some features may not fit the situation and will be worth 0 points.</strong> That doesn’t mean you should hold back on creative and thoughtful ideas!</li></ol>",
   "table_negotiation": {
     "issue_names": [
       "Salary",
@@ -12782,7 +12782,7 @@
     "version": "empirica-continuous-v1",
     "date": "2026-10-20",
     "source": "app/config/large-215.json",
-    "source_sha256": "a19e32d17464daf34c8813c6b657cd29dd4a666fa5f7ccd335681a80d900422b",
+    "source_sha256": "a41840d1ea51c5fbc8e65144a9be913e3f16950519b9debcda19755a1b7389ed",
     "scoring_contract": "determinatescoretable arrays plus continuous_scoring rules",
     "readrole_instructions_is_placeholder": false,
     "display_settings": {

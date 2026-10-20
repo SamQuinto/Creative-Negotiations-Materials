@@ -53,15 +53,33 @@ class FixedNineChecks(unittest.TestCase):
         for role in s['roles']:
             self.assertEqual(load('fixed-9')['roles'][role]['determinatescoretable'], s['roles'][role]['determinatescoretable'])
 
-    def test_fixed_narratives_match_flexible_with_only_a_table_transition(self):
+    def test_fixed_narratives_match_the_listed_table_choices(self):
         s, flexible = load('fixed-9'), load('flexible-215')
         for role, info in s['roles'].items():
-            self.assertEqual(info['narrative'], flexible['roles'][role]['narrative'] + '\n\n'
-                             + 'The table below shows the most pertinent job features under negotiation, and what each choice is worth to you:')
+            text = info['narrative']
+            self.assertTrue(text.endswith('The table below shows the most pertinent job features under negotiation, and what each choice is worth to you:'))
+            self.assertIn('Annual salary choices range from $35,000 to $65,000', text)
+            self.assertIn('budget choices range from $5,000 to $15,000', text)
+            self.assertIn('a $7,500 budget is worth', text)
+            for wording in ('any non-negative amount', 'beyond these examples', 'proportional points', 'a $7,000 budget', 'outside them continue', 'dates in September'):
+                self.assertNotIn(wording, text)
+            self.assertIn('experienced mentor' if role == 'Candidate' else 'mentor new hires', text)
+            self.assertIn('social media', text)
             self.assertIn('US$15', info['narrative'])
             self.assertEqual(len(private_payoff_rows(s, role)), 9)
-        self.assertIn('all 9', s['tips'])
-        self.assertNotIn('15 issues', s['tips'])
+        self.assertEqual(s['tips'].count('<li '), 4)
+        self.assertIn('one option for each of the nine job features', s['tips'])
+        self.assertIn('cannot add other features or amounts', s['tips'])
+        self.assertNotIn('not proposal limits', s['tips'])
+
+    def test_flexible_tips_omit_fifth_item_but_agreement_rule_is_unchanged(self):
+        s = load('flexible-215')
+        self.assertEqual(s['tips'].count('<li '), 4)
+        self.assertNotIn('Both parties must officially accept', s['tips'])
+        self.assertTrue(s['agreement_rules']['require_positive_each_party'])
+        for role, info in s['roles'].items():
+            self.assertIn('any non-negative amount', info['narrative'])
+            self.assertIn('a $7,000 budget', info['narrative'])
 
     def test_all_four_training_fair_combinations_for_both_roles(self):
         s = load('fixed-9')

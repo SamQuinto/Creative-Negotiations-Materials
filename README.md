@@ -18,7 +18,7 @@ Load only the role JSON and survey YAML matching the participant's assigned role
 
 The `_200` role filenames are retained so existing Empirica raw links continue to work. Their contents are the current reviewed role materials.
 
-For the current fixed/control condition, use the separate Fixed-9 scenario below. It keeps the same role narrative as Flexible 215, then introduces the nine-row own-payoff table. Fixed 15 remains available separately for earlier designs. The main prototype is in the [prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
+For the current fixed/control condition, use the separate Fixed-9 scenario below. It keeps the same role story as Flexible 215, with numerical explanations and tips matched to the choices in its nine-row own-payoff table. Fixed 15 remains available separately for earlier designs. The main prototype is in the [prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
 
 ### Post-negotiation surveys
 

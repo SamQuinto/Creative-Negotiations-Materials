@@ -1,12 +1,12 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "6acef3c6a81453a233782ef2265f00ea15fcaf6e",
+  "source_commit": "ccbb99ac49468d9fcf5552ee05b16adc53a69455",
   "date": "2026-10-20",
-  "description": "Fixed 9 and Flexible 215 share the same role narrative, with a closing table transition added in Fixed 9. Fixed 9 activates nine issues; Flexible 215 activates all 215. Both retain the full catalogue and carry the nine-row table view, at most five choices per issue and two-decimal table scores. Fixed 15 and underlying payoff definitions are unchanged.",
+  "description": "Fixed 9 keeps the role story but explains the listed table choices in its numerical wording and tips. Flexible 215 retains open-value wording and omits its former fifth negotiation tip. Fixed 9 activates nine issues; Flexible 215 activates all 215. Both retain the full catalogue and nine-row table view, at most five choices per issue and two-decimal table scores. Fixed 15, payoff definitions and scoring arithmetic are unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
-      "sha256": "6d014574c63f377c6fdd626fb969138ba3908f1d378d643c4ac2a46a80d81417"
+      "sha256": "37c119c45cc9e0931411e02e08d4c343e5a3aa04c5719b0b9a67c5ad02627570"
     },
     {
       "path": "empirica-support/README.md",
@@ -14,7 +14,7 @@
     },
     {
       "path": "empirica-support/SCENARIO_FORMAT.md",
-      "sha256": "710c6a744cf634cb326499820e4d9ada2fe6a0380315b84032d2ff28743a2cb9"
+      "sha256": "e8b0e6f6c102376c112438d88eaf078b698081efaa256914828dbc06dc5e12fb"
     },
     {
       "path": "empirica-support/deterministic_score.mjs",
@@ -38,7 +38,7 @@
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "63167bfe5f81d1568a973f9624b1c216813ebd85fa39866563e6a87e56aae27d"
+      "sha256": "00931630b1281c469edd4f15b747e4e4f2397806eaea331e0a537945367547fe"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "3972535403d6fe9c81b536555e515facfb2cfec882c420b386ab9b885bc06c27"
+      "sha256": "7f426484b4c6338f8f70db8dd748fb6dbf37902a2812f2fd85dd502e1c3ff80f"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -98,7 +98,7 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "a19e32d17464daf34c8813c6b657cd29dd4a666fa5f7ccd335681a80d900422b"
+      "sha256": "a41840d1ea51c5fbc8e65144a9be913e3f16950519b9debcda19755a1b7389ed"
     },
     {
       "path": "empirica/app/config/small-15.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "63167bfe5f81d1568a973f9624b1c216813ebd85fa39866563e6a87e56aae27d"
+      "sha256": "00931630b1281c469edd4f15b747e4e4f2397806eaea331e0a537945367547fe"
     },
     {
       "path": "empirica/score_offer.py",
@@ -134,19 +134,19 @@
     },
     {
       "path": "empirica/fixed-9.json",
-      "sha256": "158341bf0f509bc0ab5f9a135f176bd75fcf6aa1c648ed3307f44f7d17e4aae4"
+      "sha256": "cb6814417706a07d0404e99cb65318a04107eaa6bed1959320bb61af4e647389"
     },
     {
       "path": "empirica/app/config/fixed-9.json",
-      "sha256": "313c3fcb0ff446671988eb2665a2f31249198e565ce03fbd0bd1943e86f7ef7d"
+      "sha256": "42fa02f91df15e21a337f18b3ad77afc6a6b05aa1499b70e72715b43cecf05dc"
     },
     {
       "path": "empirica-support/scenarios/fixed-9.json",
-      "sha256": "158341bf0f509bc0ab5f9a135f176bd75fcf6aa1c648ed3307f44f7d17e4aae4"
+      "sha256": "cb6814417706a07d0404e99cb65318a04107eaa6bed1959320bb61af4e647389"
     },
     {
       "path": "empirica-support/test_fixed_nine.py",
-      "sha256": "713b9f591e36911a5edade8abcc9ac5bb3db5a9c33253c8f1f207262e6923964"
+      "sha256": "535e450e43660bef805c4796a7952359202b1065944f0c0bcb0db1d9d0c1d8ee"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"

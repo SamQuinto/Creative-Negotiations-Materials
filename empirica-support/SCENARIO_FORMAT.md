@@ -32,7 +32,7 @@ The current Fixed 9 and Flexible 215 files both carry these nine table rows:
 
 The first seven are continuous in the current study design. Each table row keeps the sample's `[{"option": ..., "score": ...}]` format. For continuous issues these entries are **examples**, not the complete set of allowed values. The two choice-based issues have their complete two-option sets. Table scores are rounded to two decimals; underlying arithmetic keeps full precision.
 
-Fixed 9 stores all 215 payoff definitions but lists only nine `active_issues` and nine `required_issues`. The scorer filters to that agenda before interpreting or scoring an offer. Flexible 215 has no active-issue restriction and still requires only the three core features in natural-language mode. Its table view does not limit the flexible issue space. Both conditions use the same role narrative; Fixed 9 adds a closing transition to the table. The separate Fixed 15 file is unchanged.
+Fixed 9 stores all 215 payoff definitions but lists only nine `active_issues` and nine `required_issues`. The scorer filters to that agenda before interpreting or scoring an offer. Flexible 215 has no active-issue restriction and still requires only the three core features in natural-language mode. Its table view does not limit the flexible issue space. Both conditions keep the same role story. Fixed 9 explains the listed table choices rather than open amounts or proportional intermediate values, then adds the closing table transition. Flexible 215 keeps its open-value wording and has four negotiation tips, with the old fifth item removed. The separate Fixed 15 file is unchanged.
 
 For each continuous issue, `roles[role].continuous_scoring[issue]` supplies:
 

@@ -49,8 +49,8 @@ for the expanded task. The tutorial command selects its own venue scenario.
 
 Use [`fixed-9.json`](fixed-9.json) for the fixed/control condition and
 [`flexible-215.json`](flexible-215.json) for NOVA. Set the treatment's
-`roleDataURL` to the matching raw JSON link. Fixed 9 keeps the same role narrative
-as Flexible 215, adds a transition to the table, and requires all nine issues
+`roleDataURL` to the matching raw JSON link. Fixed 9 keeps the same role story
+as Flexible 215, explains the listed table choices, and requires all nine issues
 in that table. Its full 215-entry catalogue stays
 stored in the file, but `active_issues` restricts scoring to the nine listed
 issues. Update this whole folder together so that restriction is applied.
@@ -60,7 +60,9 @@ in free-text offers. It also carries the same nine-row `determinatescoretable`,
 as a separate table view; that view does not restrict its natural-language
 scoring. Both nine-row tables have at most five representative choices per
 issue and scores rounded to two decimal places. Underlying continuous scoring
-keeps full precision and the existing open-amount rules.
+keeps full precision. Flexible 215 retains its open-amount rules; the fixed
+table presents the listed choices. Flexible 215 has four negotiation tips;
+the former fifth tip is omitted, without changing the agreement rule.
 
 Fixed 15 remains a separate, unchanged configuration for earlier designs.
 
