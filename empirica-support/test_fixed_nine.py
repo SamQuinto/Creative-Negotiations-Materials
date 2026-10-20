@@ -66,11 +66,17 @@ class FixedNineChecks(unittest.TestCase):
         for role, info in s['roles'].items():
             text = info['narrative']
             self.assertTrue(text.endswith('The table below shows the most pertinent job features under negotiation, and what each choice is worth to you:'))
-            self.assertIn('Annual salary choices range from $35,000 to $65,000', text)
+            self.assertIn('$35,000', text)
+            self.assertIn('$65,000', text)
             self.assertEqual(text.lower().count('table'), 1)
-            self.assertLess(text.index('You will negotiate nine job features'), text.index('Annual salary choices range'))
-            self.assertIn('budget choices range from $5,000 to $15,000', text)
-            self.assertIn('a $7,500 budget is worth', text)
+            self.assertLess(text.index('You will negotiate nine job features'), text.index('$35,000'))
+            self.assertIn('budget ranges from $5,000 to $15,000', text)
+            self.assertIn('March 1, the default starting date in the contract', text)
+            numerical_intro = text[:text.index('These headline contract terms')]
+            self.assertNotIn('•', numerical_intro)
+            self.assertNotIn('For example', numerical_intro)
+            self.assertNotIn('You do not need to calculate this yourself', numerical_intro)
+            self.assertNotIn('$54,000', numerical_intro)
             for wording in ('any non-negative amount', 'beyond these examples', 'proportional points', 'a $7,000 budget', 'outside them continue', 'dates in September'):
                 self.assertNotIn(wording, text)
             self.assertIn('experienced mentor' if role == 'Candidate' else 'mentor new hires', text)

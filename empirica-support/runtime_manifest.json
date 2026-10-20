@@ -1,6 +1,6 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "7b4a0d7d407f5add8afd656722be84ede70be8ac",
+  "source_commit": "004a77a70d37258f9f2a991fd861091f64c9c573",
   "date": "2026-10-20",
   "description": "Fixed 9 keeps the role story but explains the listed table choices in its numerical wording and tips. Flexible 215 retains open-value wording and omits its former fifth negotiation tip. Fixed 9 activates nine issues; Flexible 215 activates all 215. Both retain the full catalogue and nine-row table view, at most five choices per issue and two-decimal table scores. Fixed 15, payoff definitions and scoring arithmetic are unchanged.",
   "files": [
@@ -134,19 +134,19 @@
     },
     {
       "path": "empirica/fixed-9.json",
-      "sha256": "9e0606a8e283a3a50ab8f82631384845e9e75f6ae086263faa80963b6114b998"
+      "sha256": "a8988c78dae414e15f243639d44ea88e9a299cea1bfc7bd8b70e348620ef6eeb"
     },
     {
       "path": "empirica/app/config/fixed-9.json",
-      "sha256": "e54182b3128b08113132d7784956bdeccd0152e7291c2b872a6b67935cb146ba"
+      "sha256": "13272efd93a705085ad5e98ddf1cb88713ad0d2f03655f667d99397c5a62cd3d"
     },
     {
       "path": "empirica-support/scenarios/fixed-9.json",
-      "sha256": "9e0606a8e283a3a50ab8f82631384845e9e75f6ae086263faa80963b6114b998"
+      "sha256": "a8988c78dae414e15f243639d44ea88e9a299cea1bfc7bd8b70e348620ef6eeb"
     },
     {
       "path": "empirica-support/test_fixed_nine.py",
-      "sha256": "207558c7be58578a8ad3f2bf9dc97ecf252ad6810c43f01589b66a121298b8eb"
+      "sha256": "7a834fa54126cac141610f8c2283f27de8365df17b1b01763cc4c613f53a4287"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"
