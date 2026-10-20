@@ -68,7 +68,7 @@ def negotiation_tips(policy='open'):
                     '<strong>Some features may not fit the situation and will be worth 0 points.</strong> '
                     'That doesn’t mean you should hold back on creative and thoughtful ideas!']
     entries += ['<strong>Both parties must officially accept the same offer,</strong> worth more than '
-                '0 points to each. Without an agreement, both receive 0 points.']
+                '0 points to each.']
     return '<p>' + TIPS_INTRO + '</p><ol style="padding-left:1.6em;margin:.4em 0;">' + ''.join(
         '<li style="margin:.55em 0;">' + entry + '</li>' for entry in entries) + '</ol>'
 
@@ -455,8 +455,7 @@ def role_narrative(blocks, policy='open', *, separated=True):
             if separated:
                 value = ('Your score is private. Each point from your final agreement is worth '
                          '<strong>US$1, up to a maximum negotiation bonus of US$15</strong>. '
-                         'This is separate from your base payment and any survey-effort bonus. '
-                         'Without an agreement, you receive no negotiation bonus.')
+                         'This is separate from your base payment and any survey-effort bonus.')
             value = '<em style="color:' + RED + ';">' + value + '</em>'
         elif kind == 'number_4':
             value = '<span style="color:' + DARK_BLUE + ';">' + value + '</span>'
