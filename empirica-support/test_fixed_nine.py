@@ -59,6 +59,8 @@ class FixedNineChecks(unittest.TestCase):
             text = info['narrative']
             self.assertTrue(text.endswith('The table below shows the most pertinent job features under negotiation, and what each choice is worth to you:'))
             self.assertIn('Annual salary choices range from $35,000 to $65,000', text)
+            self.assertEqual(text.lower().count('table'), 1)
+            self.assertLess(text.index('You will negotiate nine job features'), text.index('Annual salary choices range'))
             self.assertIn('budget choices range from $5,000 to $15,000', text)
             self.assertIn('a $7,500 budget is worth', text)
             for wording in ('any non-negative amount', 'beyond these examples', 'proportional points', 'a $7,000 budget', 'outside them continue', 'dates in September'):
@@ -71,6 +73,7 @@ class FixedNineChecks(unittest.TestCase):
         self.assertIn('one option for each of the nine job features', s['tips'])
         self.assertIn('cannot add other features or amounts', s['tips'])
         self.assertNotIn('not proposal limits', s['tips'])
+        self.assertNotIn('table', s['tips'].lower())
 
     def test_flexible_tips_omit_fifth_item_but_agreement_rule_is_unchanged(self):
         s = load('flexible-215')

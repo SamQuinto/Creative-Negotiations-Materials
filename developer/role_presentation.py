@@ -56,8 +56,8 @@ def negotiation_tips(policy='open', issue_count=15, include_agreement=True):
     if policy == 'fixed' and issue_count == 9:
         entries = [
             '<strong>Choose one option for each of the nine job features.</strong> Include all nine in every offer, including choices you want unchanged.',
-            '<strong>Check your package, then submit.</strong> The table shows what each choice is worth to you, and the platform adds up your points automatically.',
-            '<strong>Use the job features and choices listed in the table.</strong> You can change your selections as you negotiate, but cannot add other features or amounts.'
+            '<strong>Check your package, then submit.</strong> The platform automatically adds up the points for your selected choices.',
+            '<strong>Use only the listed job features and choices.</strong> You can change your selections as you negotiate, but cannot add other features or amounts.'
         ]
     elif policy == 'fixed':
         entries += [f'<strong>Stay within the {issue_count} issues in your private payoff table.</strong> '
