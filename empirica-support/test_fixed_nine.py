@@ -29,6 +29,14 @@ def choices(s):
 
 
 class FixedNineChecks(unittest.TestCase):
+    def test_both_conditions_label_each_role_narrative_once_in_bold(self):
+        for name in ('fixed-9', 'flexible-215'):
+            for role, info in load(name)['roles'].items():
+                with self.subTest(scenario=name, role=role):
+                    self.assertTrue(info['narrative'].startswith('**ROLE NARRATIVE:** You are an '))
+                    self.assertEqual(info['narrative'].count('ROLE NARRATIVE:'), 1)
+                    self.assertTrue(info['full_text'].startswith('ROLE NARRATIVE: You are an '))
+
     def test_counts_and_separate_conditions(self):
         fixed, flex, old = load('fixed-9'), load('flexible-215'), load('fixed-15')
         self.assertEqual(fixed['issues'], flex['issues'])

@@ -1,6 +1,6 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "0e1978f47af21bdcc1e905d645c11674960a8d05",
+  "source_commit": "7b4a0d7d407f5add8afd656722be84ede70be8ac",
   "date": "2026-10-20",
   "description": "Fixed 9 keeps the role story but explains the listed table choices in its numerical wording and tips. Flexible 215 retains open-value wording and omits its former fifth negotiation tip. Fixed 9 activates nine issues; Flexible 215 activates all 215. Both retain the full catalogue and nine-row table view, at most five choices per issue and two-decimal table scores. Fixed 15, payoff definitions and scoring arithmetic are unchanged.",
   "files": [
@@ -38,7 +38,7 @@
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "00931630b1281c469edd4f15b747e4e4f2397806eaea331e0a537945367547fe"
+      "sha256": "993f25851ff10c0130c307cde467b891589afb221f671130f29eebbcbd655cce"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -98,7 +98,7 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "a41840d1ea51c5fbc8e65144a9be913e3f16950519b9debcda19755a1b7389ed"
+      "sha256": "cbe3af400342e57bb3fe972772df4f87b8275d101036656d8e75c4fa22c436ae"
     },
     {
       "path": "empirica/app/config/small-15.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "00931630b1281c469edd4f15b747e4e4f2397806eaea331e0a537945367547fe"
+      "sha256": "993f25851ff10c0130c307cde467b891589afb221f671130f29eebbcbd655cce"
     },
     {
       "path": "empirica/score_offer.py",
@@ -134,19 +134,19 @@
     },
     {
       "path": "empirica/fixed-9.json",
-      "sha256": "be5874ca38182c2f5e3b928b857d400a2562eb57810b16ca9155ba6c4862b020"
+      "sha256": "9e0606a8e283a3a50ab8f82631384845e9e75f6ae086263faa80963b6114b998"
     },
     {
       "path": "empirica/app/config/fixed-9.json",
-      "sha256": "2dcf7f5256204713cc27fba18a3ac5ecc0a68f3b328c1b5ab6a1c0dd72b1b7a9"
+      "sha256": "e54182b3128b08113132d7784956bdeccd0152e7291c2b872a6b67935cb146ba"
     },
     {
       "path": "empirica-support/scenarios/fixed-9.json",
-      "sha256": "be5874ca38182c2f5e3b928b857d400a2562eb57810b16ca9155ba6c4862b020"
+      "sha256": "9e0606a8e283a3a50ab8f82631384845e9e75f6ae086263faa80963b6114b998"
     },
     {
       "path": "empirica-support/test_fixed_nine.py",
-      "sha256": "359c5ed91d199aad2428cf0855f31999d3c014c9a2baf2a6a38b475e3e6c7d23"
+      "sha256": "207558c7be58578a8ad3f2bf9dc97ecf252ad6810c43f01589b66a121298b8eb"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"
