@@ -57,7 +57,7 @@ class FixedNineChecks(unittest.TestCase):
         s, flexible = load('fixed-9'), load('flexible-215')
         for role, info in s['roles'].items():
             self.assertEqual(info['narrative'], flexible['roles'][role]['narrative'] + '\n\n'
-                             + 'The table below shows the nine issues you can negotiate and what each choice is worth to you:')
+                             + 'The table below shows the most pertinent job features under negotiation, and what each choice is worth to you:')
             self.assertIn('US$15', info['narrative'])
             self.assertEqual(len(private_payoff_rows(s, role)), 9)
         self.assertIn('all 9', s['tips'])
