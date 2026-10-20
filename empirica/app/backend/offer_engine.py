@@ -17,6 +17,7 @@ from decimal import Decimal
 from difflib import SequenceMatcher
 from functools import lru_cache
 from typing import Any
+from scenario_rules import active_scoring_scenario, is_fixed
 
 
 SCORABLE = "scorable"
@@ -608,6 +609,7 @@ def _repair_misrouted_discrete_pairs(
 def _scenario_issue_map(scenario: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
     if not isinstance(scenario, dict):
         return {}
+    scenario = active_scoring_scenario(scenario)
     result = {
         str(item.get("name", "")): item
         for item in scenario.get("issues", [])
@@ -901,6 +903,8 @@ def score_pair(
     scenario: dict[str, Any] | None = None,
 ) -> tuple[str, float]:
     """Return canonical display value and points for one validated pair."""
+    if isinstance(scenario, dict) and 'active_issues' in scenario and issue not in scenario['active_issues']:
+        raise ValueError('This issue is not part of the fixed negotiation agenda')
     spec = _scenario_issue_map(scenario).get(issue)
     if spec and spec.get("kind") == "discrete":
         match = next((item for item in spec.get("options", []) if str(item.get("label")) == option), None)
@@ -2826,7 +2830,8 @@ def evaluate_offer(
     previous_offer: str | None = None,
 ) -> dict[str, Any]:
     """Validate and score one extraction, returning an explicit decision."""
-    if (scenario or {}).get('review_design', {}).get('all_15_terms_explicit'):
+    scenario = active_scoring_scenario(scenario)
+    if is_fixed(scenario):
         previous_offer = None
     reference = previous_offer_reference(text, scenario)
     if reference["mode"] == "none":

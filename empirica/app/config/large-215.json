@@ -385,24 +385,16 @@
             "score": -2.0
           },
           {
-            "option": "$40,000",
-            "score": -1.3333333333333335
-          },
-          {
-            "option": "$45,000",
-            "score": -0.6666666666666667
+            "option": "$42,500",
+            "score": -1.0
           },
           {
             "option": "$50,000",
             "score": 0.0
           },
           {
-            "option": "$55,000",
-            "score": 0.6666666666666666
-          },
-          {
-            "option": "$60,000",
-            "score": 1.3333333333333333
+            "option": "$57,500",
+            "score": 1.0
           },
           {
             "option": "$65,000",
@@ -451,18 +443,114 @@
           {
             "option": "1 September",
             "score": -3.0
+          }
+        ],
+        "Probation Length": [
+          {
+            "option": "0 months",
+            "score": 1.0
           },
           {
-            "option": "30 September",
-            "score": -3.0
+            "option": "1.5 months",
+            "score": 0.5
           },
           {
-            "option": "1 October",
-            "score": -1000.0
+            "option": "3 months",
+            "score": 0.0
           },
           {
-            "option": "31 December",
-            "score": -1000.0
+            "option": "4.5 months",
+            "score": -0.5
+          },
+          {
+            "option": "6 months",
+            "score": -1.0
+          }
+        ],
+        "Contract Length": [
+          {
+            "option": "2 years",
+            "score": -1.0
+          },
+          {
+            "option": "2.5 years",
+            "score": -0.5
+          },
+          {
+            "option": "3 years",
+            "score": 0.0
+          },
+          {
+            "option": "3.5 years",
+            "score": 0.5
+          },
+          {
+            "option": "4 years",
+            "score": 1.0
+          }
+        ],
+        "Vacation Days": [
+          {
+            "option": "10 days per year",
+            "score": -1.0
+          },
+          {
+            "option": "20 days per year",
+            "score": -0.5
+          },
+          {
+            "option": "30 days per year",
+            "score": 0.0
+          },
+          {
+            "option": "40 days per year",
+            "score": 0.5
+          },
+          {
+            "option": "50 days per year",
+            "score": 1.0
+          }
+        ],
+        "Remote Working Days": [
+          {
+            "option": "1 days per week",
+            "score": -1.0
+          },
+          {
+            "option": "2 days per week",
+            "score": -0.5
+          },
+          {
+            "option": "3 days per week",
+            "score": 0.0
+          },
+          {
+            "option": "4 days per week",
+            "score": 0.5
+          },
+          {
+            "option": "5 days per week",
+            "score": 1.0
+          }
+        ],
+        "Professional Training Program": [
+          {
+            "option": "Participation",
+            "score": 1
+          },
+          {
+            "option": "No participation",
+            "score": 0
+          }
+        ],
+        "Role in Recruitment Fair": [
+          {
+            "option": "Commit",
+            "score": 1
+          },
+          {
+            "option": "No commitment",
+            "score": 0
           }
         ]
       },
@@ -574,6 +662,106 @@
           "step_is_display_hint": true,
           "input_type": "date",
           "assume_year": 2026
+        },
+        "Probation Length": {
+          "value_type": "number",
+          "unit": "months",
+          "domain": {
+            "min": 0,
+            "max": 6
+          },
+          "reference_min": 0,
+          "reference_max": 6,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": 0,
+              "score": 1
+            },
+            {
+              "value": 6,
+              "score": -1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Contract Length": {
+          "value_type": "number",
+          "unit": "years",
+          "domain": {
+            "min": 2,
+            "max": 4
+          },
+          "reference_min": 2,
+          "reference_max": 4,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": 2,
+              "score": -1
+            },
+            {
+              "value": 4,
+              "score": 1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Vacation Days": {
+          "value_type": "number",
+          "unit": "days per year",
+          "domain": {
+            "min": 0,
+            "max": 365
+          },
+          "reference_min": 10,
+          "reference_max": 50,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 10,
+              "score": -1
+            },
+            {
+              "value": 50,
+              "score": 1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Remote Working Days": {
+          "value_type": "number",
+          "unit": "days per week",
+          "domain": {
+            "min": 0,
+            "max": 5
+          },
+          "reference_min": 1,
+          "reference_max": 5,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 1,
+              "score": -1
+            },
+            {
+              "value": 5,
+              "score": 1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
         }
       }
     },
@@ -990,24 +1178,16 @@
             "score": 2.0
           },
           {
-            "option": "$40,000",
-            "score": 1.3333333333333335
-          },
-          {
-            "option": "$45,000",
-            "score": 0.6666666666666667
+            "option": "$42,500",
+            "score": 1.0
           },
           {
             "option": "$50,000",
             "score": 0.0
           },
           {
-            "option": "$55,000",
-            "score": -0.6666666666666666
-          },
-          {
-            "option": "$60,000",
-            "score": -1.3333333333333333
+            "option": "$57,500",
+            "score": -1.0
           },
           {
             "option": "$65,000",
@@ -1056,18 +1236,114 @@
           {
             "option": "1 September",
             "score": -3.0
+          }
+        ],
+        "Probation Length": [
+          {
+            "option": "0 months",
+            "score": -1.0
           },
           {
-            "option": "30 September",
-            "score": -3.0
+            "option": "1.5 months",
+            "score": -0.5
           },
           {
-            "option": "1 October",
-            "score": -1000.0
+            "option": "3 months",
+            "score": 0.0
           },
           {
-            "option": "31 December",
-            "score": -1000.0
+            "option": "4.5 months",
+            "score": 0.5
+          },
+          {
+            "option": "6 months",
+            "score": 1.0
+          }
+        ],
+        "Contract Length": [
+          {
+            "option": "2 years",
+            "score": 1.0
+          },
+          {
+            "option": "2.5 years",
+            "score": 0.5
+          },
+          {
+            "option": "3 years",
+            "score": 0.0
+          },
+          {
+            "option": "3.5 years",
+            "score": -0.5
+          },
+          {
+            "option": "4 years",
+            "score": -1.0
+          }
+        ],
+        "Vacation Days": [
+          {
+            "option": "10 days per year",
+            "score": 1.0
+          },
+          {
+            "option": "20 days per year",
+            "score": 0.5
+          },
+          {
+            "option": "30 days per year",
+            "score": 0.0
+          },
+          {
+            "option": "40 days per year",
+            "score": -0.5
+          },
+          {
+            "option": "50 days per year",
+            "score": -1.0
+          }
+        ],
+        "Remote Working Days": [
+          {
+            "option": "1 days per week",
+            "score": 1.0
+          },
+          {
+            "option": "2 days per week",
+            "score": 0.5
+          },
+          {
+            "option": "3 days per week",
+            "score": 0.0
+          },
+          {
+            "option": "4 days per week",
+            "score": -0.5
+          },
+          {
+            "option": "5 days per week",
+            "score": -1.0
+          }
+        ],
+        "Professional Training Program": [
+          {
+            "option": "Participation",
+            "score": 1
+          },
+          {
+            "option": "No participation",
+            "score": 0
+          }
+        ],
+        "Role in Recruitment Fair": [
+          {
+            "option": "Commit",
+            "score": 1
+          },
+          {
+            "option": "No commitment",
+            "score": 0
           }
         ]
       },
@@ -1179,6 +1455,106 @@
           "step_is_display_hint": true,
           "input_type": "date",
           "assume_year": 2026
+        },
+        "Probation Length": {
+          "value_type": "number",
+          "unit": "months",
+          "domain": {
+            "min": 0,
+            "max": 6
+          },
+          "reference_min": 0,
+          "reference_max": 6,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": 0,
+              "score": -1
+            },
+            {
+              "value": 6,
+              "score": 1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Contract Length": {
+          "value_type": "number",
+          "unit": "years",
+          "domain": {
+            "min": 2,
+            "max": 4
+          },
+          "reference_min": 2,
+          "reference_max": 4,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "reject",
+          "knots": [
+            {
+              "value": 2,
+              "score": 1
+            },
+            {
+              "value": 4,
+              "score": -1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Vacation Days": {
+          "value_type": "number",
+          "unit": "days per year",
+          "domain": {
+            "min": 0,
+            "max": 365
+          },
+          "reference_min": 10,
+          "reference_max": 50,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 10,
+              "score": 1
+            },
+            {
+              "value": 50,
+              "score": -1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
+        },
+        "Remote Working Days": {
+          "value_type": "number",
+          "unit": "days per week",
+          "domain": {
+            "min": 0,
+            "max": 5
+          },
+          "reference_min": 1,
+          "reference_max": 5,
+          "interpolation": "piecewise_linear",
+          "extrapolation": "linear",
+          "knots": [
+            {
+              "value": 1,
+              "score": 1
+            },
+            {
+              "value": 5,
+              "score": -1
+            }
+          ],
+          "examples_are_not_exhaustive": true,
+          "step_is_display_hint": true,
+          "input_type": "number"
         }
       }
     }
@@ -12568,5 +12944,72 @@
     "all_issue_definitions_stay_on_server": true
   },
   "readrole_instructions": "<p>Read the materials below. While you do, try to get into character—figure out: what matters to you? And what would you like to get from this negotiation?</p><p><strong>Take notes on the right</strong> to help you prepare. You can use those notes when the negotiation starts.<br><strong>Try the scoring calculator</strong> to see what different offers would be worth to you.</p>",
-  "tips": "<p>Get into character and think about what your first couple of offers would be, based on what matters to you and what you anticipate from your counterpart. When making offers remember the following:</p><ol style=\"padding-left:1.6em;margin:.4em 0;\"><li style=\"margin:.55em 0;\"><strong>Include the three required features:</strong> salary, a personal work-expense budget and a starting date. Write your offer in your own words.</li><li style=\"margin:.55em 0;\"><strong>Calculate, check, then submit.</strong> The platform calculates points automatically using rules set by the researchers. Check that it understood your offer before sending it.</li><li style=\"margin:.55em 0;\"><strong>You may introduce other plausible job or contract features.</strong> Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, depending on your interests. The other party may value it differently.</li><li style=\"margin:.55em 0;\"><strong>Some features may not fit the situation and will be worth 0 points.</strong> That doesn’t mean you should hold back on creative and thoughtful ideas!</li><li style=\"margin:.55em 0;\"><strong>Both parties must officially accept the same offer,</strong> worth more than 0 points to each.</li></ol>"
+  "tips": "<p>Get into character and think about what your first couple of offers would be, based on what matters to you and what you anticipate from your counterpart. When making offers remember the following:</p><ol style=\"padding-left:1.6em;margin:.4em 0;\"><li style=\"margin:.55em 0;\"><strong>Include the three required features:</strong> salary, a personal work-expense budget and a starting date. Write your offer in your own words.</li><li style=\"margin:.55em 0;\"><strong>Calculate, check, then submit.</strong> The platform calculates points automatically using rules set by the researchers. Check that it understood your offer before sending it.</li><li style=\"margin:.55em 0;\"><strong>You may introduce other plausible job or contract features.</strong> Each additional feature is normally worth <strong>between −1 and +1 points</strong> to you, depending on your interests. The other party may value it differently.</li><li style=\"margin:.55em 0;\"><strong>Some features may not fit the situation and will be worth 0 points.</strong> That doesn’t mean you should hold back on creative and thoughtful ideas!</li><li style=\"margin:.55em 0;\"><strong>Both parties must officially accept the same offer,</strong> worth more than 0 points to each.</li></ol>",
+  "table_negotiation": {
+    "issue_names": [
+      "Salary",
+      "Personal Budget",
+      "Starting Date",
+      "Probation Length",
+      "Contract Length",
+      "Vacation Days",
+      "Remote Working Days",
+      "Professional Training Program",
+      "Role in Recruitment Fair"
+    ],
+    "samples": {
+      "Salary": [
+        35000,
+        42500,
+        50000,
+        57500,
+        65000
+      ],
+      "Personal Budget": [
+        5000,
+        7500,
+        10000,
+        12500,
+        15000
+      ],
+      "Starting Date": [
+        "2026-01-01",
+        "2026-03-01",
+        "2026-05-01",
+        "2026-07-01",
+        "2026-09-01"
+      ],
+      "Probation Length": [
+        0,
+        1.5,
+        3,
+        4.5,
+        6
+      ],
+      "Contract Length": [
+        2,
+        2.5,
+        3,
+        3.5,
+        4
+      ],
+      "Vacation Days": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "Remote Working Days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "score_decimal_places": 2,
+    "max_choices_per_issue": 5,
+    "note": "A nine-issue table view. It does not limit the 215-issue natural-language task."
+  }
 }

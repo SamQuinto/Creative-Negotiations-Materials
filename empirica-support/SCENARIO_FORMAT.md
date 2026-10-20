@@ -1,6 +1,6 @@
 # Using the current scenarios in Empirica
 
-The generated JSONs follow the supplied 200-issue sample's structure. Each has `roles.Candidate` and `roles.Recruiter`, with `narrative`, `full_text`, `full_blocks`, `BATNA`, `RP`, and `determinatescoretable`. The narratives carry the approved headings, bullets, indentation, emphasis, and payoff colors. Dates in scored offers show the day as well as the month.
+The generated JSONs follow the supplied sample's structure. Each has `roles.Candidate` and `roles.Recruiter`, with `narrative`, `full_text`, `BATNA`, `RP`, and `determinatescoretable`. Older scenarios also retain their source `full_blocks`. The narratives carry the approved headings, bullets, indentation, emphasis, and payoff colors. Dates in scored offers show the day as well as the month.
 
 `readrole_instructions` contains the short preparation message. The role narrative explains the participant's interests; `tips` holds the offer and scoring instructions under **Tips on Negotiation**. Keep **Your role** as the interface's role heading, without repeating a Candidate/Recruiter role-information heading inside the narrative. These fields use trusted, researcher-authored HTML. The old office-sharing introduction, pounds, and three-party agreement wording are not copied into these files. The general `tips` do not promise an outdated feedback-survey bonus.
 
@@ -8,16 +8,17 @@ The generated JSONs follow the supplied 200-issue sample's structure. Each has `
 
 | File under `empirica-support/scenarios/` | Required issues | Own-payoff display |
 |---|---|---|
+| `fixed-9.json` | All nine listed issues | Nine rows, at most five choices each |
 | `fixed-15.json` | All 15 original issues | All 15 rows |
 | `flexible-15.json` | Salary, budget, starting date | Three required rows |
-| `flexible-215.json` | Salary, budget, starting date | Three required rows |
+| `flexible-215.json` | Salary, budget, starting date | Nine-row table-mode view; all 215 issues remain available in natural-language mode |
 | `tutorial.json` | Venue fee, event date, closing time | Three practice rows |
 
 A byte-identical copy of `flexible-215.json` is also available directly in `empirica/` for easy sharing. The public engine and default definitions are now inside `empirica/app/`; downloading that entire `empirica/` folder is sufficient for scoring. The 200-issue scenario in `empirica/app/config/large-200.json` is archived, not the current expanded task. Historical experiments in `replication/` retain their original files and values.
 
 ## What is in the fixed table?
 
-Both roles' `determinatescoretable` contain these 15 issues:
+The current Fixed 9 and Flexible 215 files both carry these nine table rows:
 
 1. Salary
 2. Personal Budget
@@ -27,15 +28,11 @@ Both roles' `determinatescoretable` contain these 15 issues:
 6. Vacation Days
 7. Remote Working Days
 8. Professional Training Program
-9. Mentorship Program
-10. Role in Recruitment Fair
-11. Mandatory Conference Presentations
-12. Non-compete Clause
-13. Professional Associations Membership
-14. Role in Organizing Social Events
-15. Regular Social Media Posts for Company
+9. Role in Recruitment Fair
 
-The first seven are continuous in the current study design. Each table row keeps the sample's `[{"option": ..., "score": ...}]` format. For continuous issues these entries are **examples**, not the complete set of allowed values. For the eight choice-based issues they are the complete allowed options.
+The first seven are continuous in the current study design. Each table row keeps the sample's `[{"option": ..., "score": ...}]` format. For continuous issues these entries are **examples**, not the complete set of allowed values. The two choice-based issues have their complete two-option sets. Table scores are rounded to two decimals; underlying arithmetic keeps full precision.
+
+Fixed 9 stores all 215 payoff definitions but lists only nine `active_issues` and nine `required_issues`. The scorer filters to that agenda before interpreting or scoring an offer. Flexible 215 has no active-issue restriction and still requires only the three core features in natural-language mode. Its table view does not limit the flexible issue space. Both conditions use the same role narrative; Fixed 9 adds a closing transition to the table. The separate Fixed 15 file is unchanged.
 
 For each continuous issue, `roles[role].continuous_scoring[issue]` supplies:
 
@@ -66,12 +63,12 @@ For authoritative server scoring, pass explicit choices to the Python adapter. T
 import json, subprocess, sys
 result = subprocess.run([
     sys.executable, 'empirica/score_offer.py',
-    '--scenario-file', 'empirica-support/scenarios/fixed-15.json',
+    '--scenario-file', 'empirica/fixed-9.json',
     '--role', 'Candidate', '--choices-json', json.dumps(choices), '--json'
 ], capture_output=True, text=True)
 ```
 
-`choices` is an object mapping the 15 issue names to their selected number, ISO date, or exact discrete option. Do not omit unchanged rows. The response keeps the existing `decision`, `valid_pairs`, `total_for_proposer`, `total_for_receiver`, and `proposal_allowed` fields. Its model is `deterministic` and its routing reports zero calls. Capture standard error when the process exits unsuccessfully.
+`choices` is an object mapping the nine active issue names to their selected number, ISO date, or exact discrete option. Do not omit unchanged rows. The response keeps the existing `decision`, `valid_pairs`, `total_for_proposer`, `total_for_receiver`, and `proposal_allowed` fields. Its model is `deterministic` and its routing reports zero calls. Capture standard error when the process exits unsuccessfully.
 
 For natural-language offers, continue using `--text`; Nano interprets routine offers and Luna independently checks flagged cases. Both routes use the same payoff definitions. The form route validates explicit choices directly rather than asking an LLM to reinterpret them.
 

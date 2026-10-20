@@ -15,10 +15,11 @@ from offer_engine import score_pair
 
 
 def main():
-    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'flexible-215.json', 'app', 'README.md'}
+    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json', 'app', 'README.md'}
     published_files = {p.name for p in (ROOT / 'empirica').iterdir() if p.name != '__pycache__'}
     assert published_files == expected_files, published_files
     assert (ROOT / 'empirica/flexible-215.json').read_bytes() == (ROOT / 'empirica-support/scenarios/flexible-215.json').read_bytes(), '215 scenario copies differ'
+    assert (ROOT / 'empirica/fixed-9.json').read_bytes() == (ROOT / 'empirica-support/scenarios/fixed-9.json').read_bytes(), 'Fixed 9 scenario copies differ'
     defaults = {'Salary': 31213, 'Personal Budget': 7000, 'Starting Date': '2026-05-01',
         'Probation Length': 3, 'Contract Length': 3, 'Vacation Days': 30, 'Remote Working Days': 3,
         'Venue fee': 300, 'Event date': '2027-09-15'}

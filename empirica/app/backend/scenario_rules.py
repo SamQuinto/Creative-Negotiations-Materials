@@ -8,14 +8,32 @@ from datetime import date
 
 
 def is_fixed(scenario):
-    return bool(scenario.get('review_design', {}).get('all_15_terms_explicit'))
+    design = (scenario or {}).get('review_design', {})
+    return bool(design.get('all_terms_explicit') or design.get('all_15_terms_explicit'))
+
+
+def active_scoring_scenario(scenario):
+    """Keep stored catalogue entries out of scoring when a task restricts its agenda."""
+    if not isinstance(scenario, dict) or 'active_issues' not in scenario:
+        return scenario
+    names = scenario['active_issues']
+    if not isinstance(names, list) or not names or len(names) != len(set(names)):
+        raise ValueError('active_issues must list distinct issue names.')
+    known = {issue['name']: issue for issue in scenario.get('issues', [])}
+    if any(name not in known for name in names):
+        raise ValueError('An active issue is missing from the stored catalogue.')
+    if not set(scenario.get('required_issues', [])).issubset(names):
+        raise ValueError('Required issues must be active.')
+    if set(known) == set(names):
+        return scenario
+    return {**scenario, 'issues': [known[name] for name in names]}
 
 
 def required_instruction(scenario):
     names = scenario.get('required_issues', [])
     instruction = 'Every offer must explicitly state: ' + ', '.join(names) + '.'
     if is_fixed(scenario):
-        instruction += (' Include all 15 terms, including unchanged terms. A listed No commitment or No participation is a choice, not an omission. Do not add issues outside this table.')
+        instruction += (f' Include all {len(names)} issues, including unchanged choices. A listed No commitment or No participation is a choice, not an omission. Do not add issues outside this table.')
     else:
         instruction += ' You may include any number of additional terms supported by your role materials.'
     return instruction
@@ -33,12 +51,13 @@ def participant_text(scenario, role):
 def private_payoff_rows(scenario, role):
     """Derive the private table from current issue definitions, never a stale copy."""
     from offer_engine import score_pair
+    scenario = active_scoring_scenario(scenario)
     rows = []
     for issue in scenario['issues']:
         name = issue['name']
         unit = scenario.get('display_units', {}).get(name, issue.get('unit', ''))
         if issue['kind'] == 'continuous':
-            samples = issue.get('samples') or [issue['min'], issue['max']]
+            samples = scenario.get('table_negotiation', {}).get('samples', {}).get(name) or issue.get('samples') or [issue['min'], issue['max']]
             values = []
             for value in samples:
                 if issue.get('value_type') == 'date':

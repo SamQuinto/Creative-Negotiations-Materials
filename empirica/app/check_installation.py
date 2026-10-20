@@ -16,7 +16,7 @@ PACKAGE = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    for name in ('score_offer.py', 'score_tutorial_offer.py', 'flexible-215.json'):
+    for name in ('score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json'):
         assert (PACKAGE / name).is_file(), f'Missing package file: {name}'
     for source in (PACKAGE / 'app/backend').glob('*.py'):
         ast.parse(source.read_text(encoding='utf-8'), filename=str(source))
@@ -32,6 +32,7 @@ def main() -> None:
                 'Probation Length': 3, 'Contract Length': 3, 'Vacation Days': 30,
                 'Remote Working Days': 3, 'Venue fee': 300, 'Event date': '2027-09-15'}
     spaces = {'15': ('small-15.json', 15), '215': ('large-215.json', 215),
+              'fixed-9': ('fixed-9.json', 9),
               'fixed-15': ('fixed-15.json', 15), 'tutorial': ('tutorial.json', 9),
               '200': ('large-200.json', 200)}
     count = 0
@@ -86,7 +87,7 @@ def main() -> None:
             assert response['decision'] == 'scorable' and response['total_for_proposer'] < -999, response
 
     print(f'PASS: {count} offline command-line checks. Main and tutorial scorers, both roles, '
-          'all five bundled issue spaces, external 215 JSON, invalid dates, and September deadline. '
+          'all six bundled issue spaces, external 215 JSON, invalid dates, and September deadline. '
           'No sibling repository files, API keys, or model calls required.')
 
 

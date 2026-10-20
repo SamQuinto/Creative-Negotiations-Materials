@@ -13,10 +13,11 @@ import urllib.request
 from pathlib import Path
 
 from offer_engine import SCORABLE, evaluate_offer, score_pair, source_quote_is_grounded, _affirmative_numeric_text, _focused_text, previous_offer_reference, _explicit_cash_pairs, incidental_numeric_issue_reference, unpriced_personal_travel_requests
+from scenario_rules import active_scoring_scenario, is_fixed
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCORER_VERSION = '2026-10-19-tutorial-language-v15'
+SCORER_VERSION = '2026-10-20-fixed-nine-v16'
 SHARED_KEYS_DIR = Path(os.environ["CREATIVE_NEGOTIATIONS_KEYS_DIR"]) if os.environ.get("CREATIVE_NEGOTIATIONS_KEYS_DIR") else None
 
 
@@ -51,7 +52,7 @@ def _load_json(path: Path) -> dict:
 PAYOFF = {}
 SCENARIO_OVERRIDE = os.environ.get("NEGOTIATOR_SCENARIO_FILE", "").strip()
 SCENARIO_PATH = Path(SCENARIO_OVERRIDE) if SCENARIO_OVERRIDE else ROOT / "config" / "small-15.json"
-SCENARIO = _load_json(SCENARIO_PATH)
+SCENARIO = active_scoring_scenario(_load_json(SCENARIO_PATH))
 REQUIRED_ISSUES = SCENARIO.get("required_issues", [])
 PHRASE_REGISTRY_PATH = ROOT / "config" / "issue-phrase-registry.json"
 PHRASE_REGISTRY = _load_json(PHRASE_REGISTRY_PATH) if PHRASE_REGISTRY_PATH.exists() else {"issues": []}
@@ -736,7 +737,7 @@ def _restore_recognized_human_phrases(text: str, parsed: dict) -> None:
 
 
 def llm_extract(text: str, previous_offer: str = "") -> dict:
-    if SCENARIO.get('review_design', {}).get('all_15_terms_explicit'):
+    if is_fixed(SCENARIO):
         previous_offer = ''
     elif previous_offer_reference(text, SCENARIO)["mode"] == "none":
         previous_offer = ''
@@ -830,7 +831,7 @@ def lines_for_role(pairs: dict[str, str], role: str) -> list[str]:
 
 
 def score(text: str, role: str, extraction: dict | None = None, previous_offer: str = "") -> dict:
-    if SCENARIO.get('review_design', {}).get('all_15_terms_explicit'):
+    if is_fixed(SCENARIO):
         previous_offer = ''
     reference = previous_offer_reference(text, SCENARIO)
     if reference["mode"] == "none":

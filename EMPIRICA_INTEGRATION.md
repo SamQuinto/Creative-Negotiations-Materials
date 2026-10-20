@@ -30,8 +30,8 @@ The HTML previews implement both rules. The Empirica reader must do the same bef
 
 ## Prolific payments (20 October 2026)
 
-The current Fixed-15, Flexible-15 and Flexible-215 scoring files store
-`payment.agreement_bonus_cap_usd = 15`. For the Prolific comparison, use Fixed 15
+The current Fixed-9, Fixed-15, Flexible-15 and Flexible-215 scoring files store
+`payment.agreement_bonus_cap_usd = 15`. For the Prolific comparison, use Fixed 9
 and Flexible/Latent 215. Keep the raw payoff score unchanged in the scorer and
 research logs. For an accepted agreement, the negotiation payment is
 `min(15, own_points * 1 USD)`, with no negotiation bonus for an impasse.
@@ -53,44 +53,38 @@ checks. The four group shares are 10%, 20%, 20% and 50%; their bonus rates are
 ratings are positive or match the study predictions. Complete the assessment
 after collection; these percentages are not a live score for each survey item.
 
-## Empirica client display fixes (20 October 2026)
+## Choose the condition's scenario (20 October 2026)
 
-The [small client patch](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/empirica-support/empirica-ui-fixes.patch) targets Joshua's
-published client revision `1825e959c6b2177df20498987c3762b2ecd53aa0`. It changes:
-
-- `Survey.jsx`: no literal zero for unnumbered notices; normal-weight hint text,
-  preserved line breaks and a compact bonus-information card.
-- `tableScoring.jsx`: at most two decimal places in displayed scores, no floating
-  tails or negative zero, and enough column width for the score. Stored values,
-  table totals and server scoring keep their existing full precision.
-- `.empirica/treatments.yaml`: the `test-table` treatment uses the Fixed-15 file,
-  not Flexible 215. The free-text treatment keeps Flexible 215.
-
-Apply the patch in **Joshua's creative-negotiation checkout**, not this materials
-repository. Check first and do not force it if his local files have since changed:
-
-```text
-git apply --check /path/to/Creative-Negotiations-Materials/empirica-support/empirica-ui-fixes.patch
-git apply /path/to/Creative-Negotiations-Materials/empirica-support/empirica-ui-fixes.patch
-```
-
-For admin-created treatments, set these factors explicitly:
+Use the existing treatment factors to select the file. Fixed/control:
 
 ```yaml
 scoringMode: table
-roleDataURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json
+roleDataURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/fixed-9.json
 ```
 
-Both roles in that file have all **15 main issues** in `determinatescoretable`.
-Flexible 215 intentionally exposes only three required-issue rows; switching the
-interface to table mode does not turn that file into Fixed 15. Do not add all 15
-rows to the flexible file, because that would disclose issues in the open task.
+For NOVA, use the natural-language scoring mode and this `roleDataURL`:
 
-Rebuild/redeploy the client as usual and start a **fresh test game** after changing
-settings. Existing games keep their already loaded survey and role scoresheets.
-The Python scoring package alone cannot update these frontend components or
-the factors stored on an already running Empirica game. No changes have been
-made directly to Joshua's GitHub repository or deployed server.
+```text
+https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json
+```
+
+Fixed 9 keeps the same narrative as Flexible 215, with a short closing transition
+to its nine mandatory issues and nine payoff-table rows for each role.
+Other issue definitions stay stored in `issues`, but
+`active_issues` prevents them from entering a scored fixed offer. The updated
+scorer applies that restriction; keep the whole `empirica/` folder together.
+
+Flexible 215 keeps the full catalogue and flexible narratives. Only salary,
+personal budget and starting date are required for natural-language offers.
+Its separate `determinatescoretable` also contains nine rows, as requested for
+table-mode compatibility. This display table does not restrict flexible
+scoring and is not a list of the only issues that can be negotiated.
+
+Both nine-row tables use at most five representative choices per issue, with
+table scores rounded to two decimal places. The continuous rules remain full
+precision; salary and budget still have no upper proposal bound. Fixed 15 is
+retained separately and unchanged. No external interface changes are included
+in this update. Start a fresh test game to load the selected scenario.
 
 ## Freeze live-study links
 

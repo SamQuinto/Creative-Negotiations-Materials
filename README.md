@@ -18,20 +18,20 @@ Load only the role JSON and survey YAML matching the participant's assigned role
 
 The `_200` role filenames are retained so existing Empirica raw links continue to work. Their contents are the current reviewed role materials.
 
-These are the expanded-task narratives. For the Fixed-15 condition, the experiment must instead use the fixed version and show that participant's own full payoff table; do not reuse an open-ended narrative and call it Fixed 15. The scorer, current scenario files, developer guide, and minimal offline replication are in the [main prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
+For the current fixed/control condition, use the separate Fixed-9 scenario below. It keeps the same role narrative as Flexible 215, then introduces the nine-row own-payoff table. Fixed 15 remains available separately for earlier designs. The main prototype is in the [prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
 
 ### Post-negotiation surveys
 
 | Use | Empirica YAML | Interactive preview |
 |---|---|---|
 | Classroom exercise | [class_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/class_post_negotiation_survey.yaml) | [Open preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/class_post_negotiation_survey_preview.html) |
-| Prolific Fixed-15 versus Latent-215 study | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) | [Open preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_post_negotiation_survey_preview.html) |
+| Prolific Fixed-9 versus Latent-215 study | [prolific_post_negotiation_survey.yaml](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml) | [Open preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_post_negotiation_survey_preview.html) |
 
 The HTML files are visual, interactive previews only. They do not save or transmit responses.
 
 ### Current Prolific payment information
 
-[Review both roles for Fixed 15 and Latent 215](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_role_materials_preview.html). The payment paragraph near the end of each role explains **US$1 per point, capped at US$15 for the negotiation bonus**. The base payment and survey-effort bonus are separate. [Copy the Prolific study description](PROLIFIC_STUDY_DESCRIPTION.md).
+[Review both roles for Fixed 9, Fixed 15 and Latent 215](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_role_materials_preview.html). The payment paragraph near the end of each role explains **US$1 per point, capped at US$15 for the negotiation bonus**. The base payment and survey-effort bonus are separate. [Copy the Prolific study description](PROLIFIC_STUDY_DESCRIPTION.md).
 
 The [Prolific survey preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_post_negotiation_survey_preview.html) starts with a bonus notice above Q1. Among participants passing the survey-effort checks, the top 10% receive 50% of base payment, the next 20% receive 25%, the next 20% receive 15%, and the remaining 50% receive 10%. Existing Q1–Q33 and their IDs are unchanged; the separate acknowledgment is informational, not an effort check. The classroom survey and completed feedback pre-test are unchanged.
 
@@ -43,17 +43,20 @@ The [Prolific survey preview](https://raw.githack.com/SamQuinto/Creative-Negotia
 
 | Backend scenario | Public raw JSON |
 |---|---|
+| Fixed 9 — current control | [fixed-9.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/fixed-9.json) |
 | Fixed 15 | [fixed-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json) |
 | Flexible 15 | [flexible-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/flexible-15.json) |
 | Flexible 215 | [flexible-215.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json) |
 | Tutorial | [tutorial.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/tutorial.json) |
 
-These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and do not send the complete files to participants' browsers. The visible `readrole_instructions` test placeholder still needs replacing before participant collection. The main prototype repository remains private.
+Use **Fixed 9 for control** and **Flexible 215 for NOVA** in the treatment's `roleDataURL`. Each file has its own role narratives. Both have a nine-row `determinatescoretable`, at most five choices per issue, and table scores rounded to two decimals. Flexible 215 still scores its full catalogue and requires only salary, budget and starting date in natural-language offers. Fixed 9 retains that catalogue in the file but activates only its nine listed issues. Fixed 15 is separate and unchanged.
+
+These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and show only the assigned role's material. The main prototype repository remains private.
 
 ## Which survey to use
 
 - **Classroom:** a short teaching and reflection survey for the Control versus Perspective Taking exercise. It compares an open-ended negotiation with a predefined-issue exercise such as New Recruit and supports discussion of strategy, learning, and how negotiations became stuck or resumed progress.
-- **Prolific:** the research survey for Fixed-15 versus Latent-215. It includes the full Subjective Value Inventory, perceived realism and role engagement, Creative Process Engagement, Creative Self-Efficacy, offer-strategy reflection, and the plain-language “felt stuck” module.
+- **Prolific:** the research survey for Fixed-9 versus Latent-215. It includes the full Subjective Value Inventory, perceived realism and role engagement, Creative Process Engagement, Creative Self-Efficacy, offer-strategy reflection, and the plain-language “felt stuck” module.
 
 Issue generation, issue redefinition, issue diversity, agreement, time, offers, payoffs, joint gains, and Pareto efficiency come from behavioral experiment logs rather than survey self-reports.
 

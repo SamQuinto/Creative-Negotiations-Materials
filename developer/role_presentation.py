@@ -29,9 +29,9 @@ READROLE_INSTRUCTIONS = (
 )
 
 
-def participant_display_settings(policy='open'):
+def participant_display_settings(policy='open', issue_count=15):
     if policy == 'fixed':
-        placeholder = ('Write an offer covering all 15 issues in your private payoff table.\n'
+        placeholder = (f'Write an offer covering all {issue_count} issues in your private payoff table.\n'
                        'Include a value or choice for every issue.')
     else:
         last = 'Other job or contract features: [your choices]' if policy == 'open' else 'Other features from your role materials: [your choices]'
@@ -42,11 +42,11 @@ def participant_display_settings(policy='open'):
             'main_offer_placeholder': placeholder}
 
 
-def negotiation_tips(policy='open'):
+def negotiation_tips(policy='open', issue_count=15):
     """Task instructions, separated from the role narrative and private interests."""
     if policy not in {'fixed', 'bounded', 'open'}:
         raise ValueError('Unknown material policy: ' + policy)
-    first = ('<strong>Include all 15 issues in every offer.</strong> Use your private payoff table '
+    first = (f'<strong>Include all {issue_count} issues in every offer.</strong> Use your private payoff table '
              'and state a value or choice for each issue, including those you want unchanged.' if policy == 'fixed' else
              '<strong>Include the three required features:</strong> salary, a personal work-expense '
              'budget and a starting date. Write your offer in your own words.')
@@ -54,7 +54,7 @@ def negotiation_tips(policy='open'):
         '<strong>Calculate, check, then submit.</strong> The platform calculates points automatically '
         'using rules set by the researchers. Check that it understood your offer before sending it.']
     if policy == 'fixed':
-        entries += ['<strong>Stay within the 15 issues in your private payoff table.</strong> '
+        entries += [f'<strong>Stay within the {issue_count} issues in your private payoff table.</strong> '
                     'Do not add other issues. Salary and budget reference points are not proposal limits.']
     elif policy == 'bounded':
         entries += ['<strong>You may negotiate the job or contract features described or suggested in your role materials.</strong> '

@@ -10,6 +10,7 @@ Keep this layout:
 empirica/
   score_offer.py
   score_tutorial_offer.py
+  fixed-9.json
   flexible-215.json
   app/
     backend/
@@ -44,6 +45,25 @@ are resolved from the directory where you run the command. The main command
 still defaults to Flexible 15: specify `--issue-space 215` or `--scenario-file`
 for the expanded task. The tutorial command selects its own venue scenario.
 
+### Which scenario to use
+
+Use [`fixed-9.json`](fixed-9.json) for the fixed/control condition and
+[`flexible-215.json`](flexible-215.json) for NOVA. Set the treatment's
+`roleDataURL` to the matching raw JSON link. Fixed 9 keeps the same role narrative
+as Flexible 215, adds a transition to the table, and requires all nine issues
+in that table. Its full 215-entry catalogue stays
+stored in the file, but `active_issues` restricts scoring to the nine listed
+issues. Update this whole folder together so that restriction is applied.
+
+Flexible 215 keeps all 215 issues active and only the three core issues required
+in free-text offers. It also carries the same nine-row `determinatescoretable`,
+as a separate table view; that view does not restrict its natural-language
+scoring. Both nine-row tables have at most five representative choices per
+issue and scores rounded to two decimal places. Underlying continuous scoring
+keeps full precision and the existing open-amount rules.
+
+Fixed 15 remains a separate, unchanged configuration for earlier designs.
+
 Both commands can be called from another working directory using their full
 paths. Do not edit `ROOT`. Update the whole folder together, not just the two
 Python files. Natural-language scoring uses Nano for routine interpretation,
@@ -65,7 +85,7 @@ Separate real vacation or cash-support requests still count.
 Keep API keys and both roles' full payoff definitions server-side. Show each
 participant only the information they are allowed to see.
 
-For the Prolific study, the current Fixed-15 and Flexible-215 JSONs both specify
+For the Prolific study, the current Fixed-9 and Flexible-215 JSONs both specify
 a US$15 negotiation-bonus cap. Flexible 15 carries the same payment setting.
 This caps the money paid for an agreement, not the payoff returned by the scorer.
 Base payment and survey-effort bonuses are separate. The payment backend must
@@ -85,7 +105,8 @@ for the experiment's placeholder factor, not an automatic change to a hard-coded
 Empirica interface. The user will set that factor. Use actual line breaks in the
 textarea placeholder, not HTML `<br>` tags. In JSON, those line breaks are written
 as `\n`. If the admin editor keeps them as literal backslash-n, the interface
-must translate them into newlines. Fixed 15 has a separate all-15-issues prompt.
+must translate them into newlines. Fixed 9 has its own all-nine-issues prompt;
+the separate Fixed 15 configuration keeps its all-15-issues prompt.
 The offer box should let Enter add a line break, rather than submit or calculate
 an offer. Check the live interface's keyboard handler before using that wording.
 

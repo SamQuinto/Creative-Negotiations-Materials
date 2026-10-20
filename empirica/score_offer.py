@@ -36,7 +36,7 @@ def clean_unicode(value: object) -> str:
 def main(default_space: str | None = None) -> int:
     parser = argparse.ArgumentParser(description="Score one Candidate-Recruiter offer.")
     parser.add_argument("--role", choices=("Candidate", "Recruiter"), default="Candidate")
-    parser.add_argument("--issue-space", choices=("tutorial", "15", "200", "215", "fixed-15"), default=default_space or os.environ.get("SCORER_DEFAULT_SPACE", "15"), help="15/200/215 use flexible materials; fixed-15 requires all 15 terms.")
+    parser.add_argument("--issue-space", choices=("tutorial", "15", "200", "215", "fixed-9", "fixed-15"), default=default_space or os.environ.get("SCORER_DEFAULT_SPACE", "15"), help="15/200/215 use flexible materials; fixed-9 and fixed-15 require every listed issue.")
     inputs = parser.add_mutually_exclusive_group()
     inputs.add_argument("--text", help="Offer text. If omitted, the program asks for it.")
     inputs.add_argument("--choices-json", help="JSON object of explicit issue choices; scores without an LLM call.")
@@ -46,14 +46,15 @@ def main(default_space: str | None = None) -> int:
     parser.add_argument('--version', action='store_true', help='Print runtime/scenario fingerprints without making an AI call.')
     args = parser.parse_args()
 
-    scenario_files = {"tutorial": "tutorial.json", "15": "small-15.json", "200": "large-200.json", "215": "large-215.json", "fixed-15": "fixed-15.json"}
+    scenario_files = {"tutorial": "tutorial.json", "15": "small-15.json", "200": "large-200.json", "215": "large-215.json", "fixed-9": "fixed-9.json", "fixed-15": "fixed-15.json"}
     scenario = Path(args.scenario_file).resolve() if args.scenario_file else CONFIG / scenario_files[args.issue_space]
     if not SCORER.is_file() or not scenario.is_file():
         print("Scorer or scenario file not found. Keep app/ beside the script or beside its parent folder, and check --scenario-file.", file=sys.stderr)
         return 2
     if args.version:
         data = json.loads(scenario.read_text(encoding='utf-8'))
-        print(json.dumps({'scenario_id': data.get('scenario_id'), 'issue_count': len(data.get('issues', [])),
+        print(json.dumps({'scenario_id': data.get('scenario_id'), 'issue_count': len(data.get('active_issues', data.get('issues', []))),
+            'catalogue_issue_count': len(data.get('issues', [])),
             'scenario_sha256': hashlib.sha256(scenario.read_bytes()).hexdigest(),
             'stream_sha256': hashlib.sha256(SCORER.read_bytes()).hexdigest(),
             'engine_sha256': hashlib.sha256((APP/'backend/offer_engine.py').read_bytes()).hexdigest()}, indent=2))

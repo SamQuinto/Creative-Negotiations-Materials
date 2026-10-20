@@ -1,6 +1,6 @@
 # Empirica setup, tests, and other scenarios
 
-The [Empirica folder](../empirica/) contains both scorer commands, the current 215-issue scenario, and the complete engine in `empirica/app/`. That folder alone is sufficient for scoring. This support folder holds further instructions, tests, the optional local preview, and all four current scenario exports. The `empirica/flexible-215.json` copy must match `scenarios/flexible-215.json`; the smoke test checks this. [runtime_manifest.json](runtime_manifest.json) records the engine source revision, this package layout, and file hashes. The latest October 17 scoring update adds the September job-start deadline, default vacation/remote units, and changes from the usual allowances. Update the whole `empirica/` folder together, not just the two Python entry points. Archived experimental versions keep their earlier payoffs.
+The [Empirica folder](../empirica/) contains both scorer commands, the Fixed-9 and Flexible-215 scenarios, and the complete engine in `empirica/app/`. That folder alone is sufficient for scoring. This support folder holds further instructions, tests, the optional local preview, and five scenario exports. The direct Fixed-9 and Flexible-215 files match their copies in `scenarios/`; the smoke test checks this. [runtime_manifest.json](runtime_manifest.json) records the engine source revision, package layout, and file hashes. Update the whole `empirica/` folder together, not just the two Python entry points. Archived experimental versions keep their earlier payoffs.
 
 ## Download and run
 
@@ -19,6 +19,7 @@ Use Python 3.11 or later. No extra Python packages are required. From the extrac
 ```text
 python empirica-support/smoke_test.py
 python empirica-support/test_language_rules.py
+python empirica-support/test_fixed_nine.py
 ```
 
 This tests the actual command-line scripts, all four current scenarios, both roles, invalid calendar dates, both supported folder layouts, and the local preview imports. It makes no AI calls and does not need a key. It is a packaging and rule check, not a live language-model test.
@@ -32,7 +33,7 @@ python empirica/score_offer.py --issue-space 215 --version
 python empirica/score_offer.py --scenario-file empirica/flexible-215.json --role Candidate --text "salary 55k budget 9k start January 1" --json
 ```
 
-The main command defaults to Flexible 15. Use `--issue-space fixed-15`, `15`, or `215` explicitly for the intended study; `200` selects the archived scenario. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all 15 rows for Fixed 15.
+The main command defaults to Flexible 15. Use `--issue-space fixed-9` for the current control or `215` for NOVA. `fixed-15` and `15` remain available; `200` selects the archived scenario. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all nine rows for Fixed 9, or all 15 for the retained Fixed 15 condition.
 
 Natural-language offers use Nano for routine interpretation and independent Luna review when flagged. Payoffs are calculated by the shared deterministic engine. A month-only start such as May is shown as May 1 for confirmation; a supplied day is preserved. Salary and budget accept any non-negative amount, with proportional scoring beyond the displayed reference anchors.
 
@@ -52,15 +53,16 @@ For natural-language feedback, `unstated_required` lists required issues the par
 
 ## Files and integration
 
-For the October 20 survey notice and fixed-table display problems, use the
-[small Empirica client patch](empirica-ui-fixes.patch) and the
-[deployment instructions](../EMPIRICA_INTEGRATION.md#empirica-client-display-fixes-20-october-2026).
-The fixed condition needs `scenarios/fixed-15.json`, not the Flexible-215 JSON.
-All 15 main issues are already in that file. Score rounding is display-only.
+For the current study, use [`fixed-9.json`](../empirica/fixed-9.json) for control
+and [`flexible-215.json`](../empirica/flexible-215.json) for NOVA. Each has its own
+narratives and a nine-row table with at most five choices per issue and clean
+two-decimal scores. Only the fixed file restricts scoring to those nine issues.
+The [integration guide](../EMPIRICA_INTEGRATION.md#choose-the-conditions-scenario-20-october-2026)
+lists the treatment links. No external interface changes are part of this update.
 
 - [Main scorer](../empirica/score_offer.py) and [tutorial scorer](../empirica/score_tutorial_offer.py).
 - [Convenient 215-issue scenario copy](../empirica/flexible-215.json).
-- [Current scenario JSONs](scenarios/): Fixed 15, Flexible 15, Flexible 215, and the venue tutorial.
+- [Current scenario JSONs](scenarios/): Fixed 9, Fixed 15, Flexible 15, Flexible 215, and the venue tutorial.
 - [Continuous-scoring browser helper](deterministic_score.mjs).
 - [Scenario format and integration guide](SCENARIO_FORMAT.md). Its development/rebuild commands refer to the full prototype checkout; this public download includes only the runtime and the smoke check above.
 - `python empirica-support/preview_server.py` starts a local researcher integration game at `http://127.0.0.1:3136/`. It uses explicit form choices, needs no key, and is not the live Empirica study.

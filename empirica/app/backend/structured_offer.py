@@ -3,9 +3,11 @@ import math
 import re
 from decimal import Decimal
 from offer_engine import score_pair, format_system_output, SCORABLE, REJECTED, CLARIFICATION_NEEDED
+from scenario_rules import active_scoring_scenario
 
 
 def structured_interpretation(choices, scenario):
+    scenario = active_scoring_scenario(scenario)
     if not isinstance(choices, dict) or not choices:
         raise ValueError('choices must be a non-empty object mapping issue names to values.')
     known = {issue['name']: issue for issue in scenario['issues']}
@@ -48,6 +50,7 @@ def structured_interpretation(choices, scenario):
 
 def evaluate_structured_offer(extraction, role, scenario):
     """Explicit form values need arithmetic validation, not language inference."""
+    scenario = active_scoring_scenario(scenario)
     pairs, lines, findings, total = {}, [], [], 0.0
     for pair in extraction['pairs']:
         issue, option = pair['issue'], pair['option']
