@@ -1,0 +1,80 @@
+--- a/client/src/intro-exit/Survey.jsx
++++ b/client/src/intro-exit/Survey.jsx
+@@ -133,7 +133,7 @@
+               <React.Fragment key={q.id}>
+                 {heading && <h3 className="section-title">{heading}</h3>}
+-                <section id={`survey-${q.id}`} className={`question ${unanswered ? "unanswered" : ""}`}>
++                <section id={`survey-${q.id}`} className={`question ${q.id === "survey_bonus_information" ? "question-notice" : ""} ${unanswered ? "unanswered" : ""}`}>
+                   <p className="question-label">
+-                    {q.n && <span className="number">{q.n}.</span>}
++                    {Boolean(q.n) && <span className="number">{q.n}.</span>}
+                     <span>
+                       {q.label}
+@@ -313,5 +313,9 @@
+ .cn-survey .number { flex:0 0 auto; min-width:31px; color:var(--blue-dark); }
+ .cn-survey .required { margin-left:3px; color:var(--error); }
+-.cn-survey .hint { margin:-7px 0 15px 41px; padding:9px 12px; color:var(--muted); background:#f7f8fa; border-left:3px solid #9bb7ee; }
++.cn-survey .hint { margin:-7px 0 15px 41px; padding:9px 12px; color:var(--muted); background:#f7f8fa; border-left:3px solid #9bb7ee; white-space:pre-line; font-weight:400; }
++.cn-survey .question-notice { padding:18px 20px; margin:0 0 24px; border:1px solid #c8d7ef; border-radius:7px; background:#f5f8ff; }
++.cn-survey .question-notice .question-label { color:var(--blue-dark); margin-bottom:14px; }
++.cn-survey .question-notice .hint { margin:0 0 16px; padding:0; border:0; background:transparent; color:var(--ink); line-height:1.55; }
++.cn-survey .question-notice .choices { margin-left:0; grid-template-columns:1fr; }
+ .cn-survey .slider-box { margin-left:41px; padding:14px 16px 13px; border:1px solid #ccd4e0; border-radius:7px; background:#fbfcfe; }
+ .cn-survey .slider-top { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+--- a/client/src/components/tableScoring.jsx
++++ b/client/src/components/tableScoring.jsx
+@@ -54,5 +54,10 @@
+ }
+
+-const fmtScore = (score) => `${score >= 0 ? "+" : ""}${score}`;
++const fmtScore = (score) => {
++  const value = Number(score);
++  if (!Number.isFinite(value)) return "—";
++  const rounded = Number(value.toFixed(2));
++  return `${rounded > 0 ? "+" : ""}${rounded}`;
++};
+
+ function ChoiceTableHeader() {
+@@ -61,5 +66,5 @@
+       <span className="text-xs font-bold text-gray-700 uppercase flex-shrink-0 w-[120px]">Issue</span>
+       <span className="text-xs font-bold text-gray-700 uppercase flex-1">Option</span>
+-      <span className="text-xs font-bold text-gray-700 uppercase flex-shrink-0 w-[80px] text-right">Value</span>
++      <span className="text-xs font-bold text-gray-700 uppercase flex-shrink-0 w-[104px] text-right">Value</span>
+     </div>
+   );
+@@ -77,5 +82,5 @@
+               {issue}
+             </div>
+-            <div className="flex-1 divide-y divide-gray-100">
++            <div className="flex-1 min-w-0 divide-y divide-gray-100">
+               {options.map((opt, i) => {
+                 const isChecked = idx === i;
+@@ -88,5 +93,5 @@
+                       {opt.option}
+                     </span>
+-                    <span className="flex items-center justify-end flex-shrink-0 w-[80px]">
++                    <span className="flex items-center justify-end flex-shrink-0 w-[104px]">
+                       <input
+                         type="radio"
+@@ -96,5 +101,5 @@
+                         className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer mr-2"
+                       />
+-                      <span className={`text-sm font-bold w-[32px] text-center ${isChecked ? "text-blue-600" : "text-gray-400"}`}>
++                      <span className={`text-sm font-bold w-[60px] text-right tabular-nums ${isChecked ? "text-blue-600" : "text-gray-400"}`}>
+                         {fmtScore(opt.score)}
+                       </span>
+--- a/.empirica/treatments.yaml
++++ b/.empirica/treatments.yaml
+@@ -65,4 +65,5 @@
+     - name: roleDataURL
+       values:
++        - value: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json
+         - value: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json
+     - name: mainPlaceholderText
+@@ -82,5 +83,5 @@
+         playerCount: 2
+         readRoleTime: 300
+-        roleDataURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json
++        roleDataURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json
+         scoringMode: table
+         surveyURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/refs/heads/main/prolific_post_negotiation_survey.yaml

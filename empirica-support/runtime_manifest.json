@@ -1,6 +1,6 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "6d3956bb67c1031fc44afdc9ddafdf5d7cbf0415",
+  "source_commit": "730fecd3b3890f6d5f320429b62a5d28b5f746c3",
   "date": "2026-10-20",
   "description": "Current Prolific payment settings: US$15 agreement-bonus cap for Fixed 15, Flexible 15 and Flexible 215, plus separate survey-effort tiers. Payoff tables and scoring-engine code unchanged.",
   "files": [
@@ -10,7 +10,7 @@
     },
     {
       "path": "empirica-support/README.md",
-      "sha256": "cd06f0f21983893c7cd67df300e4952c14cf9bc6be7609c1cea391000747790e"
+      "sha256": "1b46e625d91cb6606f1c46b76d8f8dd31b70353780f8a1121788aba16e780fae"
     },
     {
       "path": "empirica-support/SCENARIO_FORMAT.md",
@@ -127,6 +127,10 @@
     {
       "path": "empirica/app/openai_key_example.txt",
       "sha256": "c40fd5eeed2701d90e373f9fd496ff800f69f05ecea4bc3eac336007e08f1fbf"
+    },
+    {
+      "path": "empirica-support/empirica-ui-fixes.patch",
+      "sha256": "7168595e756fe947f2e5fc7cfe8fdf29bca538b2c43718b5efc192e69e22369e"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"

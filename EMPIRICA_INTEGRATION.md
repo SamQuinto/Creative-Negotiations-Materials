@@ -42,7 +42,9 @@ send a bonus payment or update an unrelated hard-coded payment function.
 Load the updated scenario JSON and the updated Prolific survey YAML together.
 The survey begins with `survey_bonus_information`, a single-select informational
 item with one optional acknowledgment. Preserve Q1–Q33 and their branching IDs.
-Display the label's line breaks (for example, `white-space: pre-line`). Do not
+The label is a short heading; the `hint` contains the normal-weight body. The
+notice omits `n` rather than using 0, so it is not numbered. Display the hint's
+line breaks (for example, `white-space: pre-line`). Do not
 count this acknowledgment as an attention/effort check or as part of any scale.
 
 Rank response effort and quality only among participants passing the effort
@@ -50,6 +52,45 @@ checks. The four group shares are 10%, 20%, 20% and 50%; their bonus rates are
 50%, 25%, 15% and 10% of base payment. Do not rank participants by whether their
 ratings are positive or match the study predictions. Complete the assessment
 after collection; these percentages are not a live score for each survey item.
+
+## Empirica client display fixes (20 October 2026)
+
+The [small client patch](https://github.com/SamQuinto/Creative-Negotiations-Materials/blob/main/empirica-support/empirica-ui-fixes.patch) targets Joshua's
+published client revision `1825e959c6b2177df20498987c3762b2ecd53aa0`. It changes:
+
+- `Survey.jsx`: no literal zero for unnumbered notices; normal-weight hint text,
+  preserved line breaks and a compact bonus-information card.
+- `tableScoring.jsx`: at most two decimal places in displayed scores, no floating
+  tails or negative zero, and enough column width for the score. Stored values,
+  table totals and server scoring keep their existing full precision.
+- `.empirica/treatments.yaml`: the `test-table` treatment uses the Fixed-15 file,
+  not Flexible 215. The free-text treatment keeps Flexible 215.
+
+Apply the patch in **Joshua's creative-negotiation checkout**, not this materials
+repository. Check first and do not force it if his local files have since changed:
+
+```text
+git apply --check /path/to/Creative-Negotiations-Materials/empirica-support/empirica-ui-fixes.patch
+git apply /path/to/Creative-Negotiations-Materials/empirica-support/empirica-ui-fixes.patch
+```
+
+For admin-created treatments, set these factors explicitly:
+
+```yaml
+scoringMode: table
+roleDataURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json
+```
+
+Both roles in that file have all **15 main issues** in `determinatescoretable`.
+Flexible 215 intentionally exposes only three required-issue rows; switching the
+interface to table mode does not turn that file into Fixed 15. Do not add all 15
+rows to the flexible file, because that would disclose issues in the open task.
+
+Rebuild/redeploy the client as usual and start a **fresh test game** after changing
+settings. Existing games keep their already loaded survey and role scoresheets.
+The Python scoring package alone cannot update these frontend components or
+the factors stored on an already running Empirica game. No changes have been
+made directly to Joshua's GitHub repository or deployed server.
 
 ## Freeze live-study links
 

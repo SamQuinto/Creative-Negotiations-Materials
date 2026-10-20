@@ -52,6 +52,12 @@ For natural-language feedback, `unstated_required` lists required issues the par
 
 ## Files and integration
 
+For the October 20 survey notice and fixed-table display problems, use the
+[small Empirica client patch](empirica-ui-fixes.patch) and the
+[deployment instructions](../EMPIRICA_INTEGRATION.md#empirica-client-display-fixes-20-october-2026).
+The fixed condition needs `scenarios/fixed-15.json`, not the Flexible-215 JSON.
+All 15 main issues are already in that file. Score rounding is display-only.
+
 - [Main scorer](../empirica/score_offer.py) and [tutorial scorer](../empirica/score_tutorial_offer.py).
 - [Convenient 215-issue scenario copy](../empirica/flexible-215.json).
 - [Current scenario JSONs](scenarios/): Fixed 15, Flexible 15, Flexible 215, and the venue tutorial.
