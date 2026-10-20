@@ -12,7 +12,7 @@
     "Vacation Days",
     "Remote Working Days",
     "Professional Training Program",
-    "Role in Recruitment Fair"
+    "Non-compete Clause"
   ],
   "invented_issues_enabled": false,
   "zopa": {
@@ -33,7 +33,7 @@
       "Vacation Days",
       "Remote Working Days",
       "Professional Training Program",
-      "Role in Recruitment Fair"
+      "Non-compete Clause"
     ],
     "analysis_issue_source": "active_issues, not the full stored catalogue"
   },
@@ -212,13 +212,13 @@
             "score": 0
           }
         ],
-        "Role in Recruitment Fair": [
+        "Non-compete Clause": [
           {
-            "option": "Commit",
+            "option": "Waive",
             "score": 1
           },
           {
-            "option": "No commitment",
+            "option": "Keep",
             "score": 0
           }
         ]
@@ -609,13 +609,13 @@
             "score": 0
           }
         ],
-        "Role in Recruitment Fair": [
+        "Non-compete Clause": [
           {
-            "option": "Commit",
-            "score": 1
+            "option": "Waive",
+            "score": -1
           },
           {
-            "option": "No commitment",
+            "option": "Keep",
             "score": 0
           }
         ]
@@ -12152,7 +12152,7 @@
     "description": "Only active_issues may enter a scored offer. Other catalogue entries remain stored but inactive."
   },
   "material_source": {
-    "revision": "2026-10-20-fixed-nine",
+    "revision": "2026-10-20-fixed-nine-noncompete",
     "derived_from": "large-215 role story, with fixed-table numerical wording and a closing transition"
   },
   "agreement_rules": {
@@ -12167,9 +12167,9 @@
     "label": "Fixed 9 · all nine issues required",
     "frozen": true
   },
-  "material_revision": "2026-10-20-fixed-nine-integrative-v1",
+  "material_revision": "2026-10-20-fixed-nine-noncompete-v1",
   "material_revision_date": "2026-10-20",
-  "material_revision_note": "Fixed-table wording with stronger Candidate remote-work and Recruiter probation priorities; counterpart weights stay unchanged.",
+  "material_revision_note": "Non-compete replaces recruitment-fair participation in the nine-issue agenda. Role interests already explain the disagreement. Mirrored remote-work/probation weights are unchanged.",
   "display_units": {
     "Salary": "USD per year",
     "Personal Budget": "USD per year",
@@ -12229,7 +12229,7 @@
       "Vacation Days",
       "Remote Working Days",
       "Professional Training Program",
-      "Role in Recruitment Fair"
+      "Non-compete Clause"
     ],
     "samples": {
       "Salary": [
@@ -12282,6 +12282,7 @@
         5
       ]
     },
+    "revision": "2026-10-20-noncompete-v1",
     "score_decimal_places": 2,
     "max_choices_per_issue": 5,
     "note": "All nine active issues; no more than five representative choices per issue.",
@@ -12296,7 +12297,7 @@
     "Vacation Days",
     "Remote Working Days",
     "Professional Training Program",
-    "Role in Recruitment Fair"
+    "Non-compete Clause"
   ],
   "review_design": {
     "private_matrix_disclosed": true,
@@ -12348,9 +12349,9 @@
         "Participation: +1; No participation: +0"
       ],
       [
-        "Role in Recruitment Fair",
+        "Non-compete Clause",
         "Choice-based",
-        "Commit: +1; No commitment: +0"
+        "Waive: +1; Keep: +0"
       ]
     ],
     "Recruiter": [
@@ -12395,9 +12396,9 @@
         "Participation: +1; No participation: +0"
       ],
       [
-        "Role in Recruitment Fair",
+        "Non-compete Clause",
         "Choice-based",
-        "Commit: +1; No commitment: +0"
+        "Waive: -1; Keep: +0"
       ]
     ]
   }

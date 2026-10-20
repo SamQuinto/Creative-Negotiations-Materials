@@ -1,8 +1,8 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "2a79a6b345921218b4835c7177ad2aef22283fc9",
+  "source_commit": "a815c1e1125e58535341f0470224696875650014",
   "date": "2026-10-20",
-  "description": "Fixed 9 and Flexible 215 now use mirrored priorities: Candidate remote work -2 to +2 and Recruiter probation -2 to +2, with counterpart weights unchanged at +/-1. Role explanations, table values and continuous rules match. Fixed-9 exact ZOPA: 47,380 of 312,500 packages (15.1616%); maximum joint payoff 8. Existing 15-issue configurations, tutorial, core payoffs, offer interpretation and payoff arithmetic are unchanged. Fixed-9 payoff summaries now describe its listed choices rather than open amounts.",
+  "description": "Fixed 9 replaces recruitment-fair participation with the non-compete clause; the same nine-row table view is included in Flexible 215, whose full issue catalogue is unchanged. All underlying payoffs and the mirrored remote-work/probation priorities are preserved. Fixed-9 exact ZOPA: 28,845 of 312,500 packages (9.2304%); maximum joint payoff 6. Both role narratives already explain the non-compete interests and need no extra text. Existing 15-issue configurations, tutorial, offer interpretation and payoff arithmetic are unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
@@ -14,7 +14,7 @@
     },
     {
       "path": "empirica-support/SCENARIO_FORMAT.md",
-      "sha256": "537b04811e201fe2f0da975d862262509bd1a0e3393d110f5a69941b4533f2c4"
+      "sha256": "ac5d7cf656cbe3b749b0843badfbe25a8d7db0e6b23fb612a298e70f70bd6fdb"
     },
     {
       "path": "empirica-support/deterministic_score.mjs",
@@ -38,7 +38,7 @@
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "b4243ce1a15e251bc8ffd7862aeb36492b67a7c9ef9f2c8edd408aaeb2a66486"
+      "sha256": "fade56aeedea3ffb3301250bff619ea36d8882701ce9fc9ee65ce30a6e533c98"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "3b34470f64980016e8c752ea035b1f9de37aa14c410e4ad44714a1ca7fc6e45f"
+      "sha256": "3653bce6e1facd671fecbf34acda0c9e1ec44968f0730088ea89c482de552f84"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -98,7 +98,7 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "ca714b5309615143e603a7db1a71eb66e6fb06a85e497b7f620d026612b2ee90"
+      "sha256": "f5cfcf7c0fe8edce10197c368aad9ca905a46d02a9bc3c254b9e47205fcbf5f4"
     },
     {
       "path": "empirica/app/config/small-15.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "b4243ce1a15e251bc8ffd7862aeb36492b67a7c9ef9f2c8edd408aaeb2a66486"
+      "sha256": "fade56aeedea3ffb3301250bff619ea36d8882701ce9fc9ee65ce30a6e533c98"
     },
     {
       "path": "empirica/score_offer.py",
@@ -134,19 +134,19 @@
     },
     {
       "path": "empirica/fixed-9.json",
-      "sha256": "7de294e1ab3071940b30b9aa3ee900378e179e9e155adeee613243675beb555c"
+      "sha256": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b"
     },
     {
       "path": "empirica/app/config/fixed-9.json",
-      "sha256": "2d61f5b343411d4192c5787df80503d04a11e3f40bff4dd7916023795a1a18f8"
+      "sha256": "431880d306a495d26d1e153b2728ce36c8b4ae9955fee11187ca9c175f0cca83"
     },
     {
       "path": "empirica-support/scenarios/fixed-9.json",
-      "sha256": "7de294e1ab3071940b30b9aa3ee900378e179e9e155adeee613243675beb555c"
+      "sha256": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b"
     },
     {
       "path": "empirica-support/test_fixed_nine.py",
-      "sha256": "28b7b60a78777540ca2ea53d4ac260b3bb484e6dd533a911956662fcaa475bf5"
+      "sha256": "22175dcc6be3fd0ab090f59e37e63d2bba3b7111b48e317afd76a9bf39639f78"
     }
   ],
   "layout_revision": "2026-10-17-self-contained-empirica"

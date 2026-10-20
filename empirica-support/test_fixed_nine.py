@@ -17,7 +17,7 @@ from scenario_rules import active_scoring_scenario, is_fixed, private_payoff_row
 from offer_engine import score_pair, evaluate_offer
 from structured_offer import structured_interpretation, evaluate_structured_offer
 NAMES = ['Salary', 'Personal Budget', 'Starting Date', 'Probation Length', 'Contract Length',
-         'Vacation Days', 'Remote Working Days', 'Professional Training Program', 'Role in Recruitment Fair']
+         'Vacation Days', 'Remote Working Days', 'Professional Training Program', 'Non-compete Clause']
 
 
 def load(name):
@@ -46,12 +46,12 @@ class FixedNineChecks(unittest.TestCase):
             distribution = next_counts
         accepted = {pair: count for pair, count in distribution.items() if min(pair) > 0}
         self.assertEqual(sum(distribution.values()), 312500)
-        self.assertEqual(sum(accepted.values()), 47380)
-        self.assertEqual(max(sum(pair) for pair in distribution) / 2, 8)
+        self.assertEqual(sum(accepted.values()), 28845)
+        self.assertEqual(max(sum(pair) for pair in distribution) / 2, 6)
         for index in (0, 1):
-            self.assertEqual(max(pair[index] for pair in distribution) / 2, 12)
-            self.assertEqual(min(pair[index] for pair in distribution) / 2, -12)
-            self.assertEqual(max(pair[index] for pair in accepted) / 2, 7.5)
+            self.assertEqual(max(pair[index] for pair in distribution) / 2, (12, 11)[index])
+            self.assertEqual(min(pair[index] for pair in distribution) / 2, (-12, -13)[index])
+            self.assertEqual(max(pair[index] for pair in accepted) / 2, 5.5)
             self.assertEqual(min(pair[index] for pair in accepted) / 2, .5)
 
     def test_mirrored_priority_endpoints_neutral_values_and_intermediate_values(self):
@@ -79,7 +79,7 @@ class FixedNineChecks(unittest.TestCase):
             selected.update({'Salary': 50000, 'Personal Budget': 10000, 'Starting Date': '2026-03-01',
                              'Vacation Days': 30, 'Contract Length': 3, 'Remote Working Days': 5,
                              'Probation Length': 6, 'Professional Training Program': 'No participation',
-                             'Role in Recruitment Fair': 'No commitment'})
+                             'Non-compete Clause': 'Keep'})
             _, extracted = structured_interpretation(selected, s)
             for role in s['roles']:
                 result = evaluate_structured_offer(extracted, role, s)
@@ -129,6 +129,21 @@ class FixedNineChecks(unittest.TestCase):
         self.assertEqual(len(flex['required_issues']), 3)
         self.assertTrue(is_fixed(fixed)); self.assertFalse(is_fixed(flex))
         self.assertEqual(len(old['required_issues']), 15)
+
+    def test_noncompete_replaces_fair_only_in_the_fixed_agenda_and_table_views(self):
+        fixed, flex = load('fixed-9'), load('flexible-215')
+        self.assertIn('Non-compete Clause', fixed['active_issues'])
+        self.assertNotIn('Role in Recruitment Fair', fixed['active_issues'])
+        for s in (fixed, flex):
+            for role, waive_points in [('Candidate', 1), ('Recruiter', -1)]:
+                self.assertEqual(s['roles'][role]['determinatescoretable']['Non-compete Clause'],
+                                 [{'option': 'Waive', 'score': waive_points}, {'option': 'Keep', 'score': 0}])
+                self.assertNotIn('Role in Recruitment Fair', s['roles'][role]['determinatescoretable'])
+                self.assertIn('non-compete', s['roles'][role]['full_text'])
+                self.assertEqual(score_pair('Non-compete Clause', 'Waive', role, {}, s)[1], waive_points)
+                self.assertEqual(score_pair('Non-compete Clause', 'Keep', role, {}, s)[1], 0)
+                with self.assertRaises(ValueError): score_pair('Role in Recruitment Fair', 'Commit', role, {}, fixed)
+                self.assertEqual(score_pair('Role in Recruitment Fair', 'Commit', role, {}, flex)[1], 1)
 
     def test_both_nine_row_views_have_at_most_five_choices_and_clean_scores(self):
         for filename in ('fixed-9', 'flexible-215'):
@@ -181,11 +196,11 @@ class FixedNineChecks(unittest.TestCase):
             self.assertIn('any non-negative amount', info['narrative'])
             self.assertIn('a $7,000 budget', info['narrative'])
 
-    def test_all_four_training_fair_combinations_for_both_roles(self):
+    def test_all_four_training_noncompete_combinations_for_both_roles(self):
         s = load('fixed-9')
         for a, b in itertools.product(range(2), repeat=2):
             selected = choices(s)
-            for name, index in [('Professional Training Program', a), ('Role in Recruitment Fair', b)]:
+            for name, index in [('Professional Training Program', a), ('Non-compete Clause', b)]:
                 selected[name] = s['roles']['Candidate']['determinatescoretable'][name][index]['option']
             _, extracted = structured_interpretation(selected, s)
             for role in s['roles']:
@@ -247,7 +262,7 @@ class FixedNineChecks(unittest.TestCase):
         selected = {'Salary': 50000, 'Personal Budget': 10000, 'Starting Date': '2026-03-01',
                     'Vacation Days': 30, 'Contract Length': 3, 'Remote Working Days': 5,
                     'Probation Length': 6, 'Professional Training Program': 'No participation',
-                    'Role in Recruitment Fair': 'No commitment'}
+                    'Non-compete Clause': 'Keep'}
         for name in ('fixed-9', 'flexible-215'):
             for role in ('Candidate', 'Recruiter'):
                 with self.subTest(scenario=name, role=role):

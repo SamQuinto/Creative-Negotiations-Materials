@@ -66,6 +66,12 @@ the former fifth tip is omitted, without changing the agreement rule.
 
 Fixed 15 remains a separate, unchanged configuration for earlier designs.
 
+The ninth issue is now the non-compete clause, replacing recruitment-fair
+participation in Fixed 9 and in both nine-row table views. Waiving it gives
+Candidate +1 and Recruiter −1; keeping it gives both 0. Training stays in
+Fixed 9. Both the non-compete and recruitment-fair issues remain available
+in Flexible 215. No underlying issue payoffs changed in this agenda swap.
+
 The current Fixed 9 and Flexible 215 share the same mirrored priorities:
 remote work is weighted −2 to +2 for the Candidate, versus +1 to −1 for the
 Recruiter; probation is weighted −2 to +2 for the Recruiter, versus +1 to −1

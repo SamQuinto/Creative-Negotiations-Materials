@@ -28,7 +28,9 @@ The current Fixed 9 and Flexible 215 files both carry these nine table rows:
 6. Vacation Days
 7. Remote Working Days
 8. Professional Training Program
-9. Role in Recruitment Fair
+9. Non-compete Clause
+
+The non-compete replaces recruitment-fair participation in this nine-issue agenda. Waiving it gives Candidate +1 and Recruiter −1; keeping it gives both 0. Recruitment-fair participation remains stored but inactive in Fixed 9, and remains available in Flexible 215. Both role narratives already explain their interests in the non-compete, so this change needs no extra narrative text.
 
 The first seven use numerical or date-based payoff rules. Each table row keeps the sample's `[{"option": ..., "score": ...}]` format. In Fixed 9, participants choose from the listed options; `table_negotiation.choices_are_exhaustive` records this. In Flexible 215, these entries are examples rather than limits on natural-language offers. The two choice-based issues have their complete two-option sets. Table scores are rounded to two decimals; underlying arithmetic keeps full precision.
 
@@ -88,7 +90,7 @@ Vacation allows 0–365 annual days and remote work allows 0–5 weekly days. `u
 
 If salary and budget are sampled independently and uniformly between their reference anchors, and dates uniformly across the 365 calendar days, the jointly positive share using only those three core issues is **3.7642%**. Those three payoff functions are unchanged by the new priorities. This is a share under that stated reference distribution, not the Fixed-9 table share; there is no uniform distribution over every unbounded dollar amount.
 
-Counting each complete Fixed-9 table package once gives **47,380 mutually positive packages out of 312,500 (15.1616%)**. Maximum joint payoff is **8**; a balanced best-joint deal gives **4 points each**. Among mutually positive fixed-table deals, either party can receive **0.5–7.5 points**. The complete offer range is **−12 to +12** per party, including offers the counterpart would not accept. The public `test_fixed_nine.py` checks this exact count and the new trade-off. A start after September still cannot be offset by other features; the hard deadline is unchanged.
+Counting each complete Fixed-9 table package once gives **28,845 mutually positive packages out of 312,500 (9.2304%)**, down from 15.1616% before replacing recruitment-fair participation. Maximum joint payoff is **6**; a balanced best-joint deal gives **3 points each**. Among mutually positive fixed-table deals, either party can receive **0.5–5.5 points**. The complete offer range is **−12 to +12 for Candidate and −13 to +11 for Recruiter**, including offers the counterpart would not accept. These raw ranges differ because waiving the non-compete transfers one point from Recruiter to Candidate, while keeping it is worth 0 to both; the underlying payoffs were not rebalanced. The public `test_fixed_nine.py` checks the exact count, both non-compete choices and the remote-work/probation trade-off. A start after September still cannot be offset by other features; the hard deadline is unchanged.
 
 Zero or negative offers may be proposed, but acceptance requires strictly positive totals for both parties. The expanded task still caps the paid agreement bonus at $15 while retaining the uncapped research score.
 

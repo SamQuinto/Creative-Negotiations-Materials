@@ -549,13 +549,13 @@
             "score": 0
           }
         ],
-        "Role in Recruitment Fair": [
+        "Non-compete Clause": [
           {
-            "option": "Commit",
+            "option": "Waive",
             "score": 1
           },
           {
-            "option": "No commitment",
+            "option": "Keep",
             "score": 0
           }
         ]
@@ -1348,13 +1348,13 @@
             "score": 0
           }
         ],
-        "Role in Recruitment Fair": [
+        "Non-compete Clause": [
           {
-            "option": "Commit",
-            "score": 1
+            "option": "Waive",
+            "score": -1
           },
           {
-            "option": "No commitment",
+            "option": "Keep",
             "score": 0
           }
         ]
@@ -12967,7 +12967,7 @@
       "Vacation Days",
       "Remote Working Days",
       "Professional Training Program",
-      "Role in Recruitment Fair"
+      "Non-compete Clause"
     ],
     "samples": {
       "Salary": [
@@ -13020,8 +13020,9 @@
         5
       ]
     },
+    "revision": "2026-10-20-noncompete-v1",
     "score_decimal_places": 2,
     "max_choices_per_issue": 5,
-    "note": "A nine-issue table view. It does not limit the 215-issue natural-language task."
+    "note": "A nine-issue table view with non-compete in place of recruitment-fair participation. It does not limit the 215-issue natural-language task."
   }
 }
