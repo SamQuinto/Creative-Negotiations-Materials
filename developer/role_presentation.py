@@ -452,6 +452,11 @@ def role_narrative(blocks, policy='open', *, separated=True):
         if kind in ('example', 'worked_example'):
             value = '<span style="display:block;margin-left:1.5em;"><em>' + value + '</em></span>'
         elif kind == 'payment_note':
+            if separated:
+                value = ('Your score is private. Each point from your final agreement is worth '
+                         '<strong>US$1, up to a maximum negotiation bonus of US$15</strong>. '
+                         'This is separate from your base payment and any survey-effort bonus. '
+                         'Without an agreement, you receive no negotiation bonus.')
             value = '<em style="color:' + RED + ';">' + value + '</em>'
         elif kind == 'number_4':
             value = '<span style="color:' + DARK_BLUE + ';">' + value + '</span>'

@@ -17,6 +17,12 @@ This note records where the survey measures came from and which questions were w
 
 ## Prolific research survey
 
+The 20 October payment notice appears before Q1 under the separate ID
+`survey_bonus_information`. It is an optional acknowledgment, not a measure
+or effort check. Q1–Q33, their wording, scale membership and branching stay
+unchanged. The notice explains the current 50% / 25% / 15% / 10% survey-effort
+bonus tiers; honest opinions and negative ratings do not reduce eligibility.
+
 | Questions | What they do | Source status |
 |---|---|---|
 | Q1–Q16 | Measure feelings about the outcome, self, process and relationship. | Full 16-item Subjective Value Inventory from Curhan, Elfenbein and Xu (2006). Q3 and Q5 are reverse-scored. |

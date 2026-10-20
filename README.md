@@ -29,6 +29,12 @@ These are the expanded-task narratives. For the Fixed-15 condition, the experime
 
 The HTML files are visual, interactive previews only. They do not save or transmit responses.
 
+### Current Prolific payment information
+
+[Review both roles for Fixed 15 and Latent 215](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_role_materials_preview.html). The payment paragraph near the end of each role explains **US$1 per point, capped at US$15 for the negotiation bonus**. The base payment and survey-effort bonus are separate. [Copy the Prolific study description](PROLIFIC_STUDY_DESCRIPTION.md).
+
+The [Prolific survey preview](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_post_negotiation_survey_preview.html) starts with a bonus notice above Q1. Among participants passing the survey-effort checks, the top 10% receive 50% of base payment, the next 20% receive 25%, the next 20% receive 15%, and the remaining 50% receive 10%. Existing Q1–Q33 and their IDs are unchanged; the separate acknowledgment is informational, not an effort check. The classroom survey and completed feedback pre-test are unchanged.
+
 ### Empirica scorer and scenarios
 
 [Open the public Empirica folder](empirica/). **Download everything inside that folder, including `app/`.** It now contains both Python commands, the current 215-issue scenario, and the complete shared scoring engine. No other repository folder is needed to run the scorers. [The short setup guide](empirica/README.md) includes a no-key installation check.

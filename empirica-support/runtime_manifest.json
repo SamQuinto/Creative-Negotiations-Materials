@@ -1,12 +1,12 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "d4bc970a8d00ddd3563f936f9015b0b7136c2e86",
-  "date": "2026-10-19",
-  "description": "Self-contained Empirica scoring package with tutorial spelling recovery and visible acknowledgment of unread wording. Tutorial catalogue and payoff rules unchanged.",
+  "source_commit": "6029a75aa39af1d7325ce180a049b7b320279e0f",
+  "date": "2026-10-20",
+  "description": "Current Prolific payment settings: US$15 agreement-bonus cap for Fixed 15, Flexible 15 and Flexible 215, plus separate survey-effort tiers. Payoff tables and scoring-engine code unchanged.",
   "files": [
     {
       "path": "developer/role_presentation.py",
-      "sha256": "1613ef3a4a571b2042dfe71e924939eb7f583b09f899fa950aae87c70da68849"
+      "sha256": "ceda68208f90f2541b336f0c0ae887a0ea82cd9a39e51e5ae62f3c281416f700"
     },
     {
       "path": "empirica-support/README.md",
@@ -30,15 +30,15 @@
     },
     {
       "path": "empirica-support/scenarios/fixed-15.json",
-      "sha256": "bd6ce48095f5f39609acdc92a97810f05b785a82d26f878ff70805215b160d69"
+      "sha256": "a8fce685d8fa7435c4f21f93c94b6c85bf254e4e06b08afcf900d0db50bea70a"
     },
     {
       "path": "empirica-support/scenarios/flexible-15.json",
-      "sha256": "30c0f2e5b775423d299e71528df3e6af29ab1cc406ec3a2c3d09bc0ea8f296e4"
+      "sha256": "d7d600201275c007fb21043cc11767710414622b06e699d20b6bdb276d5e28ec"
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "b815e9ead7e8646343037929573207f03f65a473eabe2e40fc5fd13b20e856e2"
+      "sha256": "d3eaedb8e1a6354b0c93753b344eb8b36146675a3e0200ed282def7d57043849"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -54,7 +54,7 @@
     },
     {
       "path": "empirica/README.md",
-      "sha256": "96ada1849425a74704221246d0b0fb625ce28afb0c9421c4e1552132d457995a"
+      "sha256": "2ced2fcfb3dc412c5a8c7be8ebc75bc6d5272332a0b415c863c47e1f1caf476b"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -86,7 +86,7 @@
     },
     {
       "path": "empirica/app/config/fixed-15.json",
-      "sha256": "0fdfb324b371f390ed63491eac5420f40e5f52c2931ce29465700bfaf293b15c"
+      "sha256": "f3b8c241024188d5888266df22035a33b48c7dacdd7feedff2aa7c43e0a010c4"
     },
     {
       "path": "empirica/app/config/issue-phrase-registry.json",
@@ -98,11 +98,11 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "b788146717af3b37fed265cf7934d0056c4486183569c0dc178f97f8c4b55c23"
+      "sha256": "1accf2ca151782aa9a88fefd06a71de6c1413f098df434e1412a48f33ffb03cb"
     },
     {
       "path": "empirica/app/config/small-15.json",
-      "sha256": "ab71b62ab9462047b58a1d1093892bd07b39ee0c8e02a02546774d411f6b1f4c"
+      "sha256": "c8efde558b23c1f079f09a45174deb12c4f853cb24812852837be90472f8817f"
     },
     {
       "path": "empirica/app/config/tutorial.json",
@@ -110,7 +110,7 @@
     },
     {
       "path": "empirica/flexible-215.json",
-      "sha256": "b815e9ead7e8646343037929573207f03f65a473eabe2e40fc5fd13b20e856e2"
+      "sha256": "d3eaedb8e1a6354b0c93753b344eb8b36146675a3e0200ed282def7d57043849"
     },
     {
       "path": "empirica/score_offer.py",

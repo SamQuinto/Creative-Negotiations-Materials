@@ -28,6 +28,29 @@ Both current surveys use `show_if.equals` and `show_if.not_equals`.
 
 The HTML previews implement both rules. The Empirica reader must do the same before deployment and must not require hidden questions.
 
+## Prolific payments (20 October 2026)
+
+The current Fixed-15, Flexible-15 and Flexible-215 scoring files store
+`payment.agreement_bonus_cap_usd = 15`. For the Prolific comparison, use Fixed 15
+and Flexible/Latent 215. Keep the raw payoff score unchanged in the scorer and
+research logs. For an accepted agreement, the negotiation payment is
+`min(15, own_points * 1 USD)`, with no negotiation bonus for an impasse.
+Base payment and survey-effort bonuses are separate and do not use this cap.
+The payment backend must apply this rule; changing a JSON file does not itself
+send a bonus payment or update an unrelated hard-coded payment function.
+
+Load the updated scenario JSON and the updated Prolific survey YAML together.
+The survey begins with `survey_bonus_information`, a single-select informational
+item with one optional acknowledgment. Preserve Q1–Q33 and their branching IDs.
+Display the label's line breaks (for example, `white-space: pre-line`). Do not
+count this acknowledgment as an attention/effort check or as part of any scale.
+
+Rank response effort and quality only among participants passing the effort
+checks. The four group shares are 10%, 20%, 20% and 50%; their bonus rates are
+50%, 25%, 15% and 10% of base payment. Do not rank participants by whether their
+ratings are positive or match the study predictions. Complete the assessment
+after collection; these percentages are not a live score for each survey item.
+
 ## Freeze live-study links
 
 During development, the README links follow `main`. Before data collection, replace `refs/heads/main` with the approved commit ID so later repository edits cannot change materials in an active study.

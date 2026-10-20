@@ -65,6 +65,13 @@ Separate real vacation or cash-support requests still count.
 Keep API keys and both roles' full payoff definitions server-side. Show each
 participant only the information they are allowed to see.
 
+For the Prolific study, the current Fixed-15 and Flexible-215 JSONs both specify
+a US$15 negotiation-bonus cap. Flexible 15 carries the same payment setting.
+This caps the money paid for an agreement, not the payoff returned by the scorer.
+Base payment and survey-effort bonuses are separate. The payment backend must
+use the JSON's `payment` settings; see the
+[payment integration note](../EMPIRICA_INTEGRATION.md#prolific-payments-20-october-2026).
+
 ### Participant instructions
 
 The scenario now separates the short preparation message (`readrole_instructions`)

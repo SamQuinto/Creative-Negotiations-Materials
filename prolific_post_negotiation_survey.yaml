@@ -69,6 +69,15 @@ scales:
     - "Very frequently"
 
 questions:
+  - id: survey_bonus_information
+    n: 0
+    page: 1
+    type: "single_select"
+    required: false
+    label: "Survey-effort bonuses\n\nPlease answer honestly and thoughtfully. Among participants who pass our survey-effort checks, additional bonuses are awarded according to response effort and quality:\n\nTop 10%: 50% of base payment\nNext 20%: 25% of base payment\nNext 20%: 15% of base payment\nRemaining 50%: 10% of base payment\n\nWe assess completeness, relevance and care, not whether your answers are positive or match a particular opinion. Your base payment and negotiation bonus are unaffected by this assessment. This survey bonus is separate from the US$15 negotiation-bonus cap."
+    options:
+      - "I have read this information."
+
   - id: q1
     n: 1
     page: 1
