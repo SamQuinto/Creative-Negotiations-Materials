@@ -2,7 +2,7 @@
 import math
 import re
 from decimal import Decimal
-from offer_engine import score_pair, format_system_output, SCORABLE, REJECTED, CLARIFICATION_NEEDED
+from offer_engine import score_pair, format_system_output, _scenario_issue_map, SCORABLE, REJECTED, CLARIFICATION_NEEDED
 from scenario_rules import active_scoring_scenario
 
 
@@ -11,10 +11,13 @@ def structured_interpretation(choices, scenario):
     if not isinstance(choices, dict) or not choices:
         raise ValueError('choices must be a non-empty object mapping issue names to values.')
     known = {issue['name']: issue for issue in scenario['issues']}
+    recognized_names = _scenario_issue_map(scenario)
     names_by_id = {issue['id']: issue['name'] for issue in scenario['issues'] if issue.get('id')}
     pairs, lines, seen = [], [], set()
     for key, value in choices.items():
         name = names_by_id.get(key, key)
+        if name not in known and name in recognized_names:
+            name = recognized_names[name]['name']
         if name not in known:
             raise ValueError(f'Unknown issue: {key}')
         if name in seen:

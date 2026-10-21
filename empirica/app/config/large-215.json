@@ -1,5 +1,7 @@
 {
   "schema_version": "4.2",
+  "scorer_contract_revision_date": "2026-10-21",
+  "scorer_contract_revision": "flexible-refinements-v19",
   "scenario_id": "candidate_recruiter_large_215",
   "title": "Candidate–Recruiter Negotiation — Human-Expanded 215-Issue Space",
   "condition": "large_215",
@@ -2299,20 +2301,41 @@
       "name": "Regular Social Media Posts for Company",
       "group": "Hinted",
       "required": false,
-      "kind": "discrete",
-      "options": [
-        {
-          "label": "Commitment",
-          "Candidate": -1,
-          "Recruiter": 1
-        },
-        {
-          "label": "No commitment",
-          "Candidate": 0,
-          "Recruiter": 0
-        }
+      "kind": "continuous",
+      "value_type": "commitment_fraction",
+      "unit": "share of the usual company social-media posting workload",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "samples": [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        1
       ],
-      "definition": "Whether the employee regularly helps turn client stories into company social-media or other public updates.",
+      "payoff": {
+        "Candidate": {
+          "min": 0,
+          "max": -1
+        },
+        "Recruiter": {
+          "min": 0,
+          "max": 1
+        }
+      },
+      "commitment_scale": {
+        "basis": "Share of the usual posting workload, not a count of posts with an unstated baseline.",
+        "language_levels": {
+          "No commitment": 0,
+          "Minimal commitment": 0.25,
+          "Reduced commitment": 0.5,
+          "Slightly reduced commitment": 0.75,
+          "Commitment": 1
+        },
+        "interpretation_note": "Slightly less means 75% of usual workload; less or reduced means 50%; minimal means 25%. These are researcher-set conventions, shown for participant review. An explicit percentage takes precedence."
+      },
+      "definition": "How much of the usual company social-media posting workload the employee commits to: 0 means no commitment and 1 means the full usual commitment. Exact fractions are scored proportionally.",
       "aliases": [
         "regular LinkedIn publicity",
         "recurring company LinkedIn posts",
@@ -2330,7 +2353,7 @@
         "Employer reputation",
         "Operational focus"
       ],
-      "payoff_justification": "Regular public posts give the company reusable visibility, which helps the Recruiter, but create recurring preparation and publicity work the Candidate would rather avoid. The broader label also reflects how participants naturally described social-media and public-communication work.",
+      "payoff_justification": "The original endpoints are unchanged: no commitment gives both parties 0; the full usual workload gives Candidate -1 and Recruiter +1. Smaller commitments reduce both the Candidate's burden and the Recruiter's benefit in exact proportion, so every intermediate choice remains zero-sum. Qualitative reductions use explicit researcher-set fractions and are shown in the interpretation. Fixed and frozen 15-issue versions retain their original choices.",
       "catalog_issue_id": "v2_015_regular_linkedin_posts_for_company"
     },
     {
@@ -2948,12 +2971,12 @@
     },
     {
       "id": "team_sales_bonus",
-      "name": "Team Sales Bonus",
+      "name": "Performance-Based Bonus",
       "group": "Expanded: Variable pay and financial terms",
       "required": false,
       "kind": "continuous",
       "value_type": "currency",
-      "unit": "US dollars paid once if team target is reached",
+      "unit": "US dollars paid once if the agreed performance target is reached",
       "min": 0.0,
       "max": 8000.0,
       "step": 1.0,
@@ -3002,13 +3025,18 @@
         2000.0,
         8000.0
       ],
-      "definition": "One-time payment when the assigned sales team reaches its agreed annual target.",
+      "definition": "One-time cash bonus when an agreed individual or team performance target is reached. This is separate from a sign-on payment, a salary increase, commission and a contract-renewal bonus. Individual and team targets use the same bonus-payoff scale.",
       "aliases": [
         "bonus for team sales",
         "team performance payment",
         "sales team bonus",
         "team bonus",
-        "group sales incentive"
+        "group sales incentive",
+        "performance based bonus",
+        "performance-related bonus",
+        "individual performance bonus",
+        "personal performance bonus",
+        "bonus based on work production"
       ],
       "candidate_interests": [
         "Income and financial reward",
@@ -3018,7 +3046,7 @@
         "Team functioning",
         "Rapid productivity"
       ],
-      "payoff_justification": "Role-material basis: The recruiter values team functioning, and a team-based incentive is a modest extension of that interest; the candidate values additional income that does not depend solely on individual attribution. Candidate logic: This issue represents Income and financial reward, Career Growth. The best listed term for Candidate is $8,000 paid once if team target is reached (+1); the least favorable is $0 paid once if team target is reached (-1). Intermediate terms receive the displayed intermediate points. Recruiter logic: This issue represents Team functioning, Rapid productivity. The best listed term for Recruiter is $0 paid once if team target is reached (+1); the least favorable is $8,000 paid once if team target is reached (-1). Intermediate terms receive the displayed intermediate points.",
+      "payoff_justification": "The former Team Sales Bonus now covers individual or team performance, consistent with the role interests in reward, productivity and cost. Its stable issue ID, anchors and all payoff slopes are unchanged: $0 gives Candidate -1 and Recruiter +1; $2,000 gives both 0; $8,000 gives Candidate +1 and Recruiter -1. Intermediate amounts keep the original piecewise interpolation. The parties' payoffs remain exact opposites. An unresolved maximum is not guessed as the agreed payout.",
       "catalog_issue_id": "v2_025_team_sales_bonus"
     },
     {

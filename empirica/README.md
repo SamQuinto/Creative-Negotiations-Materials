@@ -95,7 +95,34 @@ helpers, not scoring dependencies. Existing Empirica command paths do not need
 to change. For future updates, pull the repository and keep this whole folder
 on the same revision.
 
-The latest language update keeps unpriced personal requests separate from known
+### 21 October scorer update
+
+Update this whole folder, including `app/` and `flexible-215.json`, together.
+The shared scorer now handles the reviewed spellings and explicit zero
+allowances consistently. Definite salary and budget totals after probation
+use the later totals for points, keeping the starting amounts and timing
+visible without awarding the same pay rise twice.
+
+In Flexible 215, **Performance-Based Bonus** replaces the label Team Sales
+Bonus and covers individual or team targets on the same unchanged payoff
+curve: $0 gives Candidate −1 / Recruiter +1; $2,000 gives both 0; $8,000
+gives Candidate +1 / Recruiter −1. The old wording still works. A stated
+maximum needs a short question about the agreed payout.
+
+Company social-media posting now allows smaller commitments. The full usual
+workload gives Candidate −1 / Recruiter +1; half gives −0.5 / +0.5; no
+commitment gives both 0. The study conventions interpret slightly reduced
+as 75%, reduced as 50% and minimal as 25% of usual workload. Participants
+see the interpretation for checking, and an explicit percentage takes priority.
+Both refined issues remain zero-sum. The catalogue still has 215 issues;
+the other 213 issue definitions and fixed/frozen scenario payoffs are unchanged.
+
+The development release passed 1,008 offline checks and subchecks, not a
+fresh live-model accuracy test. Optional reproducible checks for these changes
+are in [`empirica-support/test_reviewed_language.py`](../empirica-support/test_reviewed_language.py).
+Nothing from that support folder is needed to run the scorer.
+
+The earlier language update keeps unpriced personal requests separate from known
 allowances. A relative's holiday does not request the Candidate's vacation days;
 an unpriced object for commuting does not automatically request cash support.
 Separate real vacation or cash-support requests still count.

@@ -17,7 +17,7 @@ from scenario_rules import active_scoring_scenario, is_fixed
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SCORER_VERSION = '2026-10-20-fixed-nine-v16'
+SCORER_VERSION = '2026-10-21-flexible-refinements-v19'
 SHARED_KEYS_DIR = Path(os.environ["CREATIVE_NEGOTIATIONS_KEYS_DIR"]) if os.environ.get("CREATIVE_NEGOTIATIONS_KEYS_DIR") else None
 
 
@@ -294,6 +294,8 @@ def _catalog(text: str) -> dict[str, object]:
                 "increment": issue.get("step"),
                 "sample_scale_values": issue.get("samples", []),
             }
+            if issue.get('commitment_scale'):
+                catalog[issue['name']]['commitment_scale'] = issue['commitment_scale']
             if open_value:
                 catalog[issue["name"]].update({
                     "scoring_reference_minimum": issue.get("min"),
@@ -326,7 +328,7 @@ def _llm_extract_once(text: str, previous_offer: str = "", dense_audit: bool = F
     open_capture = SCENARIO.get("issue_space", {}).get("unknown_term_policy") == "capture_unscored"
     social_issue = next((item for item in SCENARIO.get("issues", []) if item.get("id") == "linkedin_posts"), {})
     if social_issue.get("name") == "Regular Social Media Posts for Company":
-        social_rule = "Regular or recurring work on company social-media posts or public updates maps to Regular Social Media Posts for Company. Do not require a particular platform such as LinkedIn. If the participant names the activity but not whether it is a commitment, ask only whether it is included or optional.\n"
+        social_rule = "Regular or recurring work on company social-media posts or public updates maps to Regular Social Media Posts for Company. Do not require a particular platform such as LinkedIn. If the catalogue defines a commitment_fraction, use its commitment_scale workload conventions. An explicit percentage takes priority: 40% less means 0.6; 40% of usual means 0.4. Preserve the wording for participant review. Do not convert a count of posts into a workload fraction without a baseline. Without this catalogue scale, retain the original binary commitment/no-commitment choices.\n"
     else:
         social_rule = "Generic social-media or public-facing work does not specify LinkedIn: request the exact activity rather than guessing it.\n"
     outside_term_rule = (
@@ -363,6 +365,8 @@ def _llm_extract_once(text: str, previous_offer: str = "", dense_audit: bool = F
         "Building relationships with senior colleagues through a recruitment fair does not offer scheduled career-development conversations. Do not ask for their frequency unless those conversations or career guidance are actually proposed. An explicitly non-obligatory generic publicity activity does not require naming a platform to score the rest of the package; retain that wording without inventing LinkedIn work.\n"
         "A professional-development course offers Professional Training Program = Participation, not a Professional Development Budget unless money is stated. A mentoring relationship for twelve months offers Mentorship Program = Participation; it does not specify Mentor Meeting Frequency. Recruitment fairs are not sales coaching. Waiver of a non-compete means Waive. Choose exact discrete labels and keep unpriced frequency/duration detail as a note, not as an invalid option.\n"
         "An annual or yearly performance assessment is a review-frequency request, not a guaranteed salary increase. Do not ask for an increase percentage unless a guaranteed increase is actually proposed.\n"
+        "If Performance-Based Bonus is in the catalogue, it covers a cash bonus linked to individual or team performance using the same payoff curve. Do not require team performance or map it to a salary increase, sign-on payment or renewal payment. Extract the exact dollar payout; a stated maximum such as up to $2,000 needs an amount clarification, not a question about individual versus team performance.\n"
+        "For a definite salary or personal work-expense budget total after probation, use that later total for its main Salary or Personal Budget value. For example, $45,000 salary and $5,000 budget becoming $50,000 and $10,000 after six months are scored as Salary $50,000, Personal Budget $10,000 and Probation Length six months. Keep the initial amounts and timing in the source evidence; do not add Scheduled Salary Increase or Target-based pay increase for the same change. A bare 'salary will increase 50000' gives a new total, not an extra $50,000. Distinguish an explicit increase BY an amount, a percentage, a discretionary review or an unresolved performance condition; do not invent their resulting totals.\n"
         + social_rule +
         "Extract a catalog issue only when the participant actually states that term. Never add a choice merely because it would make the package realistic, internally complete, or similar to another stated term. A number attached to one term must not be reused for a neighboring term.\n"
         "For each pair, source_text must quote the shortest exact passage from the offer supporting that issue and choice (normally under 25 words). Omit all unmentioned issues entirely. Do not list catalog entries with 'Not specified', 'N/A', null, defaults, or empty source_text. If a term is genuinely offered but its value is unresolved, put that passage in ambiguities instead. Each ambiguity must identify its catalog issue (or General offer for intent/conditions). Do not ask about an optional neighboring issue that was never proposed; for example, voluntary publicity does not raise a question about paid publicity time.\n"

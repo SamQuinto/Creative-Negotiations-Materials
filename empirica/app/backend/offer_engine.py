@@ -11,6 +11,7 @@ from __future__ import annotations
 import re
 import math
 import calendar
+import unicodedata
 from collections import OrderedDict
 from datetime import date, datetime
 from decimal import Decimal
@@ -29,6 +30,8 @@ MIN_CONFIDENCE = 0.60
 SOCIAL_POST_INTERNAL = "Regular Linkedin Posts for Company"
 SOCIAL_POST_DISPLAY = "Regular Social Media Posts for Company"
 SOCIAL_POST_NAMES = {SOCIAL_POST_INTERNAL, SOCIAL_POST_DISPLAY}
+PERFORMANCE_BONUS_INTERNAL = 'Team Sales Bonus'
+PERFORMANCE_BONUS_DISPLAY = 'Performance-Based Bonus'
 
 
 ISSUE_ALIASES = {
@@ -41,6 +44,8 @@ ISSUE_ALIASES = {
     "Professional Associations Sponsorship": "Professional Associations Membership",
     "Professional Association Sponsorship": "Professional Associations Membership",
     "LinkedIn Posts": "Regular Linkedin Posts for Company",
+    "Performance-Based Bonus": "Team Sales Bonus",
+    "Performance Based Bonus": "Team Sales Bonus",
     "Leadership/Role in Team Events": "Role in Organizing Social Events",
 }
 
@@ -61,6 +66,65 @@ def canonical_pair(issue: str, option: str) -> tuple[str, str]:
 
 def _normalized_choice(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", str(value).lower()).strip()
+
+
+# Only use this vocabulary to read evidence, never to change a participant's
+# saved offer, assign a value, remove a negation, or turn one issue into another.
+_EVIDENCE_WORDS = frozenset('''salary budget probation vacation training professional
+participation membership association associations contract remote remotely
+mentorship mentoring sponsorship sponsored sponsor development reimbursement
+allowance insurance healthcare commission promotion confidentiality parental
+pension childcare caregiving termination retention relocation overtime wellness
+transport commuting equipment volunteering workshops increase bonus performance
+social publicity commitment reduced slightly minimal'''.split())
+_EVIDENCE_KEEP = frozenset({'trading', 'train', 'trains', 'trainer', 'vocation',
+                           'profession', 'contractor', 'mention', 'mentions',
+                           'monitoring', 'assurance', 'proportion'})
+
+
+def _spelling_distance(a: str, b: str) -> int:
+    """Small edit distance including an adjacent letter swap."""
+    rows = [list(range(len(b) + 1))]
+    for i, left in enumerate(a, 1):
+        row = [i]
+        for j, right in enumerate(b, 1):
+            value = min(row[-1] + 1, rows[-1][j] + 1,
+                        rows[-1][j - 1] + (left != right))
+            if i > 1 and j > 1 and left == b[j-2] and a[i-2] == right:
+                value = min(value, rows[-2][j-2] + 1)
+            row.append(value)
+        rows.append(row)
+    return rows[-1][-1]
+
+
+@lru_cache(maxsize=2048)
+def _evidence_word(word: str) -> str:
+    lower = word.lower()
+    if lower in _EVIDENCE_WORDS or lower in _EVIDENCE_KEEP or len(lower) < 4:
+        return word
+    allowed = 1 if len(lower) < 6 else 2
+    possible = [(candidate, _spelling_distance(lower, candidate))
+                for candidate in _EVIDENCE_WORDS
+                if abs(len(candidate) - len(lower)) <= allowed]
+    close = [(candidate, distance) for candidate, distance in possible
+             if distance <= (2 if min(len(lower), len(candidate)) >= 6 and max(len(lower), len(candidate)) >= 8 else 1)]
+    if not close:
+        return word
+    best = min(distance for _, distance in close)
+    winners = [candidate for candidate, distance in close if distance == best]
+    return winners[0] if len(winners) == 1 else word
+
+
+@lru_cache(maxsize=512)
+def _evidence_text(text: str) -> str:
+    """Consistent spelling/spacing for guards; original input stays untouched.
+
+    Numbers, currency signs, negations and punctuation retain their meaning.
+    A small ambiguous spelling is left alone rather than guessed.
+    """
+    text = unicodedata.normalize('NFKC', str(text))
+    text = re.sub(r'(?<=\d)(?=(?:days?|weeks?|months?|years?|hours?|remote|vacation|holiday)\b)', ' ', text, flags=re.I)
+    return re.sub(r'\b[A-Za-z]{4,}\b', lambda m: _evidence_word(m.group()), text)
 
 
 # A proposed contribution to LinkedIn is the posting issue; merely discussing
@@ -86,18 +150,18 @@ def source_quote_is_grounded(quote: str, text: str) -> bool:
     # Models occasionally prefix a correctly copied list item with "and".
     # Ignore only that coordinator, never negation, numbers or content words.
     quote=re.sub(r'^\s*and\s+','',quote,flags=re.I)
-    parts=[_normalized_choice(p) for p in re.split(r'\.{3}|…',quote)]
+    parts=[_normalized_choice(_evidence_text(p)) for p in re.split(r'\.{3}|…',quote)]
     parts=[p for p in parts if p]
     def grounded_part(part: str) -> str:
         # Short labels such as "NDA" must match as words. Without boundaries,
         # NDA was incorrectly treated as copied from the middle of "standard".
         return rf"\b{re.escape(part)}\b" if re.fullmatch(r"[a-z0-9]{1,3}", part) else re.escape(part)
-    if bool(parts) and bool(re.search('.*?'.join(grounded_part(p) for p in parts),_normalized_choice(text))):return True
+    if bool(parts) and bool(re.search('.*?'.join(grounded_part(p) for p in parts),_normalized_choice(_evidence_text(text)))):return True
     # Harmless grammatical edits in a copied quote must not erase a refusal.
     # Normalize only articles and these duty nouns. Keep negation, numbers,
     # named activities and their order; do not allow arbitrary paraphrases.
     def grammar(value):
-        value=re.sub(r'\b(?:a|an|the)\b',' ',_normalized_choice(value))
+        value=re.sub(r'\b(?:a|an|the)\b',' ',_normalized_choice(_evidence_text(value)))
         nouns={'commitments':'commitment','requirements':'requirement','obligations':'obligation','duties':'duty','responsibilities':'responsibility'}
         value=re.sub(r'\b(?:commitments|requirements|obligations|duties|responsibilities)\b',lambda m:nouns[m.group()],value)
         return ' '.join(value.split())
@@ -187,7 +251,7 @@ def _offer_clauses(text: str) -> list[str]:
 def _explicit_training_participation(text: str) -> bool:
     """An explicit agreement to receive training is the participation term,
     not a money allowance or an obligation to train other employees."""
-    for clause in _offer_clauses(text.lower()):
+    for clause in _offer_clauses(_evidence_text(text).lower()):
         if re.search(r'\b(?:agree\s+to|join|participate\s+in|receive)\s+(?:the\s+)?(?:professional\s+)?training\b(?!\s+(?:other|new|junior|employees|colleagues|coworkers)\b)',clause) and not re.search(r'\b(?:not|no|cannot|can[’\x27]t)\b[^.;]{0,30}\b(?:agree|join|participate|receive)\b',clause):
             return True
     return False
@@ -620,6 +684,11 @@ def _scenario_issue_map(scenario: dict[str, Any] | None) -> dict[str, dict[str, 
     if social:
         for name in SOCIAL_POST_NAMES:
             result[name] = social
+    bonus = next((item for item in scenario.get('issues', [])
+                  if isinstance(item, dict) and item.get('id') == 'team_sales_bonus'), None)
+    if bonus:
+        for name in (PERFORMANCE_BONUS_INTERNAL, PERFORMANCE_BONUS_DISPLAY, 'Performance Based Bonus'):
+            result[name] = bonus
     return result
 
 
@@ -741,6 +810,43 @@ def _explicit_cash_pairs(text: str) -> list[dict[str, Any]]:
     return result
 
 
+def _post_probation_totals(text: str) -> dict[str, dict[str, str]]:
+    """Use definite later totals for scoring, retaining the initial package.
+
+    This is a study scoring convention, not a time-weighted cash-flow model.
+    It applies to stated salary/budget totals after probation, not uncertain
+    target bonuses, discretionary reviews or an unstated increase amount.
+    """
+    money = r'\$?\s*\d[\d,.]*(?:\s*k)?'
+    phase = (r'\b(?:after|following|on\s+completion\s+of|upon\s+completion\s+of)\s+'
+             r'(?:the\s+)?(?:successful\s+completion\s+of\s+)?(?:(?:\d+|one|two|three|four|five|six|twelve)[-\s]+months?\s+)?'
+             r'(?:probation(?:ary)?|trial)(?:\s+period)?\b|\bpost[-\s]+probation\b')
+    readings = {}
+    header_active = False
+    for clause in _offer_clauses(_evidence_text(_focused_text(text))):
+        has_phase = bool(re.search(phase, clause, re.I))
+        if re.search(r'\b(?:initial(?:ly)?|at\s+(?:the\s+)?start|during\s+(?:the\s+)?probation)\b', clause, re.I) and not has_phase:
+            header_active = False
+        if has_phase and clause.rstrip().endswith(':'):
+            header_active = True
+            continue
+        if not (has_phase or header_active):
+            continue
+        if re.search(r'\b(?:might|may|could|possible|potential|discretion|review|targets?|performance|otherwise|or)\b', clause, re.I):
+            continue
+        if re.search(r'\b(?:no|not|never|without|cannot)\b|\b(?:increase|raise|decrease|reduction)\s+(?:of|by)\b|%', clause, re.I):
+            continue
+        # "Salary will increase 50000" gives a new total in this convention.
+        # An explicit "increase by 5000" is different and is not read as 5000.
+        simplified = re.sub(r'\b(?:will|would|shall|should)\s+|\b(?:increase[sd]?|decrease[sd]?|become[sd]?|be|rise[sd]?|fall[sd]?)\s+', '', clause, flags=re.I)
+        simplified = re.sub(r'(\b(?:salary|budget)\b\s*)from\s+('+money+r')\s+to\s+('+money+r')', r'\1\3', simplified, flags=re.I)
+        simplified = re.sub(r'(\b(?:salary|budget)\b\s*'+money+r')\s+(?:then|and\s+then)\s+('+money+r')', lambda m: re.sub(money+r'$', m.group(2), m.group(1)), simplified, flags=re.I)
+        pairs = _explicit_cash_pairs(simplified)
+        for pair in pairs:
+            readings[pair['issue']] = dict(value=pair['option'], source_text=clause)
+    return readings
+
+
 def _date_from_text(value: str, spec: dict[str, Any]) -> date:
     raw = value.strip()
     base_year = int(spec.get('assume_year') or date.fromisoformat(str(spec['min'])).year)
@@ -832,12 +938,63 @@ def _stated_start_date(text: str, scenario: dict[str, Any] | None, *, include_in
     return next(iter(dates)) if len(dates) == 1 else None
 
 
+def _commitment_fraction(option: str, spec: dict[str, Any]) -> float:
+    """Researcher-set workload conventions; explicit percentages take priority."""
+    text = _evidence_text(str(option)).lower().strip()
+    levels = spec.get('commitment_scale', {}).get('language_levels', {})
+    for label, value in levels.items():
+        if _normalized_choice(text) == _normalized_choice(label):return float(value)
+    if re.search(r'\bnot\s+(?:be\s+)?(?:reduc\w*|less|lower)\b', text):return 1.0
+    percent = re.search(r'(-?\d+(?:\.\d+)?)\s*(?:%|percent\b)', text)
+    if percent:
+        value = Decimal(percent.group(1)) / Decimal(100)
+        reduction = bool(re.search(r'\b(?:less|fewer|reduction|reduce\w*\s+by)\b', text))
+        return float(Decimal(1)-value if reduction else value)
+    if re.search(r'\b(?:no|without)\s+(?:(?:any|regular|recurring|posting|social|media)\s+)*commitment\b', text) or text in {'no','none','optional'}:return 0.0
+    if re.search(r'\b(?:slightly|a\s+little|a\s+bit)\s+(?:less|lower|reduc\w*)\b', text):return .75
+    if re.search(r'\b(?:minimal|very\s+little|quarter)\b', text):return .75 if re.search(r'\b(?:less|fewer)\b', text) else .25
+    if re.search(r'\b(?:half|less|reduced|partial|partly|limited)\b', text):return .5
+    if text in {'yes','included','full','full commitment'}:return 1.0
+    return _number_from_text(text)
+
+
+def _posting_workload_reading(text: str, scenario: dict[str, Any]) -> dict[str, Any] | None:
+    spec = _scenario_issue_map(scenario).get(SOCIAL_POST_INTERNAL, {})
+    if spec.get('value_type') != 'commitment_fraction':return None
+    media = r'\b(?:social[-\s]+media|linkedin|company\s+posts?|publicity\s+(?:work|posts?))\b'
+    boundary = r'\b(?:salary|budget|probation|contract|vacation|remote|training|bonus|commission|starting\s+date)\b'
+    readings = []
+    for original in _offer_clauses(_focused_text(text)):
+        clause = _evidence_text(original)
+        marker = re.search(media, clause, re.I)
+        if not marker:continue
+        before = re.split(boundary, clause[max(0,marker.start()-85):marker.start()], flags=re.I)[-1]
+        after = re.split(boundary, clause[marker.end():marker.end()+100], flags=re.I)[0]
+        phrase = before + marker.group() + after
+        if not re.search(r'\b(?:slightly|less|fewer|reduc\w*|minimal|half|quarter|partial|limited)\b|\d\s*(?:%|percent\b)', phrase, re.I):continue
+        if re.search(r'\b(?:previous|previously|last\s+job|used\s+to)\b', phrase, re.I) and not re.search(r'\b(?:want|offer|propose|will|would|include)\b', phrase, re.I):continue
+        # A post count cannot give a workload fraction without its baseline.
+        if re.search(r'\b\d+\s+posts?\b|\bposts?\s+(?:per|a|each)\s+(?:week|month)\b', phrase, re.I) and '%' not in phrase and 'percent' not in phrase:continue
+        try:value = _commitment_fraction(phrase, spec)
+        except ValueError:continue
+        if not 0 <= value <= 1:continue
+        readings.append(dict(value=value, source_text=original, interpreted_phrase=phrase.strip()))
+    if len({r['value'] for r in readings}) == 1:return readings[-1]
+    return None
+
+
 def _format_continuous(value: float | date, spec: dict[str, Any]) -> str:
     value_type = spec.get("value_type")
     if value_type == "date":
         assert isinstance(value, date)
         return value.strftime("%B") if value.day == 1 and not spec.get("display_day") else f"{value.strftime('%B')} {value.day}"
     numeric = float(value)
+    if spec.get('value_type') == 'commitment_fraction':
+        if numeric == 0:return 'No commitment'
+        if numeric == 1:return 'Commitment'
+        percentage = format(Decimal(str(numeric)) * Decimal(100), 'f')
+        if '.' in percentage:percentage = percentage.rstrip('0').rstrip('.')
+        return percentage+'% of usual posting commitment'
     shown = str(int(numeric)) if numeric.is_integer() else format(Decimal(str(numeric)), 'f')
     if value_type == "currency":
         return f"${numeric:,.0f}" if numeric.is_integer() else '$'+format(Decimal(str(numeric)), ',f')
@@ -946,7 +1103,8 @@ def score_pair(
             raise ValueError('please choose one value, not a range or alternatives')
         if spec.get('value_type') == 'currency' and re.search(r'£|€|\b(?:GBP|EUR|pounds?|euros?)\b', option, re.I):
             raise ValueError('please give this amount in US dollars; no currency conversion is assumed')
-        value = _money_number_from_text(option) if spec.get('value_type') == 'currency' else _number_from_text(option)
+        value = (_commitment_fraction(option, spec) if spec.get('value_type') == 'commitment_fraction'
+                 else _money_number_from_text(option) if spec.get('value_type') == 'currency' else _number_from_text(option))
         if not math.isfinite(value):
             raise ValueError('please use a finite number')
         low = float(spec["min"])
@@ -1027,7 +1185,7 @@ def _smart_text_findings(
     has_previous_context: bool = False,
 ) -> list[dict[str, Any]]:
     raw = _focused_text(text).strip()
-    lower = raw.lower()
+    lower = _evidence_text(raw).lower()
     findings: list[dict[str, Any]] = []
 
     salary_spec = _scenario_issue_map(scenario).get("Salary")
@@ -1282,7 +1440,14 @@ def _smart_text_findings(
         (r"\bcommission\s+(?:of\s+)?\$\s*\d", "Commission is scored as a percentage of credited customer payments. Please give one percentage."),
     ]
     for pattern, message in wrong_unit_checks:
-        if re.search(pattern, lower):
+        unit_match = re.search(pattern, lower)
+        if unit_match and ('Probation is scored in months' in message or 'Contract length is scored in years' in message):
+            # In "4 months probation 3 days remote work", the following
+            # number belongs to remote work, not to the preceding probation.
+            following = lower[unit_match.end():unit_match.end()+45]
+            if re.match(r'\s+(?:of\s+)?(?:remote\w*|wfh|work(?:ing)?\s+from\s+home|vacation|holiday)\b', following):
+                unit_match = None
+        if unit_match:
             findings.append(_finding(CLARIFICATION_NEEDED, "invalid_unit", message))
 
     # Detect out-of-range continuous values even if the extractor dropped them.
@@ -1361,6 +1526,9 @@ def _smart_text_findings(
         rf"\b(?:probation(?:ary)?|trial)(?:\s+period)?\b{duration_bridge}{{0,35}}?\b(?:(?:last|run|be|is)\w*\s+)?(?:for\s+)?({duration_token})\s*(months?|mos?|mo|years?|yrs?)\b",
         lower,
     )
+    if (probation_duration and probation_duration.group(2).startswith(('year', 'yr'))
+            and re.match(r'\s+(?:employment\s+)?(?:contract|agreement|term)\b', lower[probation_duration.end():])):
+        probation_duration = None
     if not probation_duration:
         probation_duration = re.search(
             rf"\b({duration_token})[-\s]?(months?|mos?|mo|years?|yrs?)\s+(?:of\s+)?(?:probation(?:ary)?|trial)(?:\s+period)?\b",
@@ -1404,16 +1572,19 @@ def _smart_text_findings(
         add_out_of_range_duration("Contract Length", years, f"{shown} years")
 
     range_checks = (
-        ("Probation Length", rf"\b(?:probation(?:ary)?|trial)(?:\s+period)?\b[^.;\n|]{{0,45}}\b(?:between\s+)?(?:{duration_token})\s*(?:-|to|and|or)\s*(?:{duration_token})\s*(?:months?|mos?|mo|years?|yrs?)\b"),
-        ("Contract Length", rf"\b(?:contract|employment\s+(?:agreement|term)|fixed[-\s]?(?:term\s+)?appointment)\b[^.;\n|]{{0,45}}\b(?:between\s+)?(?:{duration_token})\s*(?:-|to|and|or)\s*(?:{duration_token})\s*(?:months?|mos?|mo|years?|yrs?)\b"),
+        ("Probation Length", rf"\b(?:probation(?:ary)?|trial)(?:\s+period)?\b{duration_bridge}{{0,45}}\b(?:between\s+)?(?:{duration_token})\s*(?:-|to|and|or)\s*(?:{duration_token})\s*(?:months?|mos?|mo|years?|yrs?)\b"),
+        ("Contract Length", rf"\b(?:contract|employment\s+(?:agreement|term)|fixed[-\s]?(?:term\s+)?appointment)\b{duration_bridge}{{0,45}}\b(?:between\s+)?(?:{duration_token})\s*(?:-|to|and|or)\s*(?:{duration_token})\s*(?:months?|mos?|mo|years?|yrs?)\b"),
         ("Probation Length", rf"\b(?:between\s+)?(?:{duration_token})\s*(?:-|to|and|or)\s*(?:{duration_token})\s*(?:months?|mos?|mo|years?|yrs?)\s+(?:of\s+)?(?:probation|trial)\b"),
         ("Contract Length", rf"\b(?:between\s+)?(?:{duration_token})\s*(?:-|to|and|or)\s*(?:{duration_token})\s*(?:months?|mos?|mo|years?|yrs?)\s+(?:contract|employment\s+(?:agreement|term)|fixed[-\s]?(?:term\s+)?appointment)\b"),
     )
     for issue, pattern in range_checks:
         range_match = re.search(pattern, lower)
+        date_before_range = bool(range_match and re.search(
+            r'\b(?:jan(?:uary)?|feb(?:ruary)?|march|april|may|june|july|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*$',
+            lower[:range_match.start()], re.I))
         # A dash at the beginning of the next line is a bullet, not a range
         # operator between the preceding and following durations.
-        if range_match and not re.search(r"\n\s*-\s*", range_match.group(0)):
+        if range_match and not date_before_range and not re.search(r"\n\s*-\s*", range_match.group(0)):
             findings.append(_finding(
                 CLARIFICATION_NEEDED, "duration_range",
                 f"Please choose one exact {issue} value for this offer rather than a range or alternatives.",
@@ -1448,8 +1619,10 @@ def _smart_text_findings(
         remote = re.search(r"\b(?<![\d.,])(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+(?:remote(?:[-\s]+working)?|wfh|home[-\s]+working)\s+days?\s+(?:each|every|per|a)\s+(week|month)\b", remote_scan)
     if not remote and _scenario_issue_map(scenario).get('Remote Working Days', {}).get('default_period'):
         remote = re.search(r'\b(?:remotely|remote\s+work|wfh|work(?:ing)?\s+from\s+home)\s+(?:for\s+)?(\d+(?:\.\d+)?|one|two|three|four|five|six|seven)\s+times?\s+(?:each|every|per|a)\s+(week|month)\b', remote_scan)
+    if not remote:
+        remote = re.search(r'\b(?:remotely|remote\s+work|remote\s+working|wfh|work(?:ing)?\s+from\s+home)\b[^.;\n]{0,24}?\b(once|twice|thrice)\s+(?:each|every|per|a)\s+(week|month)\b', remote_scan)
     if remote:
-        number = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7"}.get(remote.group(1), remote.group(1))
+        number = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7", "once": "1", "twice": "2", "thrice": "3"}.get(remote.group(1), remote.group(1))
         option = f"{number} days / {remote.group(2)}"
         spec = issue_specs.get("Remote Working Days")
         expected_period = "week" if "week" in str((spec or {}).get("unit", "")).lower() else "month"
@@ -1598,7 +1771,7 @@ def _usual_allowance_readings(text: str, scenario: dict[str, Any] | None) -> dic
 
 def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     """Deterministic aliases for the documented study issues missing in the old run."""
-    lower = _focused_text(text).lower()
+    lower = _evidence_text(_focused_text(text)).lower()
     for short, expanded in {"won't":"will not","wouldn't":"would not","don't":"do not",
             "doesn't":"does not","shouldn't":"should not","can't":"cannot","couldn't":"could not",
             "isn't":"is not","aren't":"are not","wasn't":"was not","weren't":"were not",
@@ -1848,6 +2021,7 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
     remote_patterns = [
         rf"\b({number_token})\s+{remote_context}\s+days?(?:\s+(?:each|every|per|a)\s+(week|month))?\b",
         rf"\b{remote_context}\b.{{0,22}}?\b(?<![\d.,])({number_token})\s+days?(?:\s+(?:each|every|per|a)\s+(week|month))?\b",
+        rf"\b{remote_context}\b[^.;\n]{{0,24}}?\b(once|twice|thrice)\s+(?:each|every|per|a)\s+(week|month)\b",
     ]
     if _scenario_issue_map(scenario).get('Remote Working Days', {}).get('default_period') == 'week':
         remote_patterns += [rf'\b{remote_context}\s+(?:for\s+)?({number_token})\s+times?(?:\s+(?:each|every|per|a)\s+(week|month))?\b']
@@ -1858,6 +2032,8 @@ def _study_pair_enrichment(text: str, scenario: dict[str, Any] | None = None) ->
         match = re.search(pattern, remote_scan)
         if match:
             days = word_number(match.group(1))
+            if days is None:
+                days = {'once': 1, 'twice': 2, 'thrice': 3}.get(match.group(1))
             if match.start(1) > 0 and remote_scan[match.start(1)-1] in '-−':
                 days = -abs(days)
             spec = _scenario_issue_map(scenario).get("Remote Working Days")
@@ -2856,6 +3032,7 @@ def evaluate_offer(
         offer_intent = "offer"
     if not isinstance(raw_pairs, list):
         raw_pairs = []
+    original_interpretation = [dict(p) for p in raw_pairs if isinstance(p, dict)]
 
     grounded_pairs=[];discarded_predictions=[];carried_issue_names=set()
     for p in raw_pairs:
@@ -2968,6 +3145,32 @@ def evaluate_offer(
         quote_resolutions.append(resolved)
     enriched_pairs.extend(quote_resolutions)
     combined_pairs = _repair_misrouted_discrete_pairs(list(raw_pairs) + enriched_pairs, scenario)
+    later_totals = _post_probation_totals(text) if not is_fixed(scenario) else {}
+    if later_totals:
+        money_changes = {'Scheduled Salary Increase', 'Target-based pay increase'} if 'Salary' in later_totals else set()
+        def is_later_total_detail(source: str) -> bool:
+            return bool(source) and any(source_quote_is_grounded(source, r['source_text']) for r in later_totals.values())
+        combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict) and (
+            p.get('issue') in later_totals or (p.get('issue') in money_changes
+                and (not p.get('source_text') or is_later_total_detail(str(p['source_text']))))))]
+        for name, reading in later_totals.items():
+            combined_pairs.append(dict(issue=name, option=reading['value'], confidence=1,
+                source_text=reading['source_text'], source='post_probation_total'))
+            try:
+                label = score_pair(name, reading['value'], role, payoff, scenario)[0]
+            except (ValueError, KeyError, TypeError):
+                label = reading['value']
+            unpriced_details.append(dict(issue=name, source_text=reading['source_text'],
+                detail=f'Points use the later {name.lower()}: {label} after probation. Starting amounts and timing are retained, without extra pay-rise points.',
+                meaning='Prespecified later-total scoring convention; not time-weighted pay.'))
+        resolved_questions = {str(d.get('question', '')) for d in extraction.get('ambiguity_details', [])
+            if isinstance(d, dict) and d.get('issue') in set(later_totals) | money_changes
+            and is_later_total_detail(str(d.get('source_text', '')))} if isinstance(extraction, dict) else set()
+        model_ambiguities = [q for q in model_ambiguities if str(q) not in resolved_questions]
+        findings = [f for f in findings if not (
+            f.get('code') in {'salary_range', 'budget_range'}
+            and ('Salary' if f['code']=='salary_range' else 'Personal Budget') in later_totals
+            and re.search(r'\bfrom\b.+\bto\b', later_totals['Salary' if f['code']=='salary_range' else 'Personal Budget']['source_text'], re.I))]
     usual_readings = _usual_allowance_readings(text, scenario)
     for name, reading in usual_readings.items():
         # A delta is not the final allowance. Replace a model's possible "1"
@@ -3072,7 +3275,7 @@ def evaluate_offer(
     # days). Remove a small set of high-risk model-only mappings unless their
     # defining object is actually present in the offer. Deterministic aliases
     # added above remain available for genuine wording.
-    lower_text = _focused_text(text).lower()
+    lower_text = _evidence_text(_focused_text(text)).lower()
     lower_text = re.sub(r'\bprobstion\b','probation',lower_text)
     # One clause-scoped filter, not a second whole-sentence deletion pass.
     # 'would not include X, and would retain Y' must preserve positive Y.
@@ -3102,6 +3305,7 @@ def evaluate_offer(
     optional_continuous_evidence["Remote Working Days"] += (
         rf"|\b(?:hybrid|remote|wfh)\b[^.;]{{0,35}}\b{number_evidence}\b[^.;]{{0,20}}\bdays?\b"
         rf"|\b{number_evidence}\b[^.;]{{0,20}}\bdays?\b[^.;]{{0,25}}\b(?:from\s+home|remote|wfh)\b"
+        r"|\b(?:remote\w*|wfh|work(?:ing)?\s+from\s+home)\b[^.;\n]{0,24}\b(?:once|twice|thrice)\s+(?:a|per|each|every)\s+(?:week|month)\b"
     )
     combined_pairs = [
         pair for pair in combined_pairs
@@ -3170,7 +3374,7 @@ def evaluate_offer(
             ]
     evidence_required = {
         "Senior Career Guidance": r"\bcareer[-\s]+(?:development|guidance|advi\w*|mentor\w*|conversations?|counse\w*)\b|\b(?:senior\s+career[-\s]?advis\w*|advice\s+outside\s+my\s+direct\s+reporting\s+line)\b",
-        "Professional Associations Membership": r"\b(?:professional[-\s]+(?:associations?|memberships?|bodies)|association[-\s]+(?:dues|fees|membership|sponsorship)|membership\s+(?:dues|fees))\b",
+        "Professional Associations Membership": r"\b(?:professional[-\s]+(?:associations?|memberships?|bodies|societ(?:y|ies)|guilds?|networks?)|association[-\s]+(?:dues|fees|membership|sponsorship)|(?:industry|trade)[-\s]+(?:bodies|body|societ(?:y|ies)|groups?|guilds?|networks?))\b",
         "Sales Coaching Frequency": r"\b(?:sales[-\s]+coach(?:ing)?|coach(?:ing)?\s+sessions?)\b",
         "Contract Renewal Notice": r"\b(?:renewal\s+notice|notice\s+(?:before|of|about|prior)|contract\s+(?:expiry|expiration)|ends?\s+with\s+notice)\b",
         "Professional Development Budget": r"\bprofessional\s+development\s+(?:budget|allowance)\b|\b(?:development|training|learning|courses?)\b[^;.]{0,35}(?:\$|\bUSD\b|\bdollars?\b|\bbudget\b)|(?:\$\s*\d[\d,.]*|\b\d+\s+dollars?\b)[^;.]{0,40}\b(?:development|training|learning|courses?)\b",
@@ -3205,6 +3409,9 @@ def evaluate_offer(
     evidence_required['Mentorship Program'] = r'\bmentor(?:ing|ship)?\b'
     evidence_required['Professional Associations Membership'] += r'|\b(?:sales|industry|trade)[-\s]+associations?\b'
     evidence_required['Professional Associations Membership'] += r'|\b(?:firm|company|employer)\s+sponsors?\s+(?:professional\s+)?associations?\b'
+    evidence_required['Professional Associations Membership'] += (
+        r'|\b(?:sponsor\w*|funded|paid)\s+membership\b(?=[^.;]{0,100}\b(?:skills?|professional|industry|networking|business\s+relationships)\b)'
+    )
     evidence_required['Travel Meal Reimbursement'] = r'\b(?:meals?|breakfast|lunch|dinner|food|subsistence|per\s+diem)\b'
     evidence_required['Commuting Support'] = r'\bcommut\w*\b|\btravel\s+to\s+work\b|\b(?:transport|parking)\s+(?:allowance|reimbursement|payment|costs?)\b'
     evidence_required['Four-Day Workweek Trial'] = r'\b'+_FOUR_DAY_PATTERN+r'\b|\bcompressed[-\s]+workweek\b'
@@ -3389,6 +3596,14 @@ def evaluate_offer(
             pair for pair in combined_pairs
             if not (isinstance(pair, dict) and canonical_pair(str(pair.get("issue", "")), str(pair.get("option", "")))[0] == "Mentorship Program")
         ]
+    mentor_clauses = [c for c in _offer_clauses(lower_text) if re.search(r'\bmentor(?:ing|ship)?\b', c)]
+    background_mentoring_only = bool(mentor_clauses) and all(
+        re.search(r'\b(?:have|had|my)\b[^.;]{0,35}\bexperience\b[^.;]{0,35}\bmentor|\bused\s+to\s+mentor', c)
+        and not re.search(r'\b(?:want|request|propose|offer|include|receive|assign|would\s+like|will\s+have)\b', c)
+        for c in mentor_clauses)
+    if background_mentoring_only:
+        combined_pairs = [p for p in combined_pairs if not (
+            isinstance(p, dict) and p.get('issue') in {'Mentorship Program', 'Mentoring Assignment Choice', 'Mentor Meeting Frequency'})]
     raw_issue_names = {
         canonical_pair(str(pair.get("issue", "")).strip(), str(pair.get("option", "")).strip())[0]
         for pair in combined_pairs if isinstance(pair, dict)
@@ -3726,6 +3941,121 @@ def evaluate_offer(
             "This has not been scored because it does not contain a final offer. Please submit one complete offer when you are ready.",
         ))
 
+    # A performance pay rise is one financial choice. Its review date does
+    # not also promise a different job or a separate promotion entitlement.
+    for clause in _offer_clauses(_evidence_text(_focused_text(text))):
+        pay_rise = bool(re.search(r'\b(?:pay|salary)\s+(?:rise|raise|increase)\b|\bincrease\s+in\s+(?:pay|salary)\b|\b\d+(?:\.\d+)?\s*(?:%|percent)\s+(?:pay|salary)\s+increase\b', clause, re.I))
+        performance = bool(re.search(r'\b(?:performance|targets?|objectives?)\b', clause, re.I))
+        if not (pay_rise and performance and 'Target-based pay increase' in _scenario_issue_map(scenario)):
+            continue
+        cap = re.search(r'\bup\s+to\s+(\d+(?:\.\d+)?)\s*(?:%|percent\b)', clause, re.I)
+        purely_financial_promotion = bool(re.search(r'\bpromotion\s+to\s+(?:get|receive|obtain)\b[^.;]{0,40}\b(?:pay|salary)\b', clause, re.I))
+        if purely_financial_promotion and not re.search(r'\b(?:new\s+(?:role|title)|manager|director|responsibilit\w*)\b', clause, re.I):
+            combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict)
+                and p.get('issue') in {'Promotion Eligibility Timing', 'Performance-Based Progression'}
+                and (not p.get('source_text') or source_quote_is_grounded(str(p['source_text']), clause)))]
+        if cap:
+            combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict) and p.get('issue') == 'Target-based pay increase')]
+            # Replace a model's longer question about the same missing value,
+            # while leaving questions about unrelated features intact.
+            findings = [f for f in findings if not (f.get('code') == 'model_ambiguity'
+                and set(f.get('issues', [])) == {'Target-based pay increase'})]
+            example = cap.group(1)
+            timing = re.search(r'\bafter\s+((?:\d+|one|two|three|six|twelve)\s+months?)\b', clause, re.I)
+            when = ' after ' + timing.group(1) if timing else ''
+            findings.append(_finding(CLARIFICATION_NEEDED, 'pay_rise_cap',
+                'I’ve picked up the performance-based pay rise. Please give one exact percentage. '
+                f'For example: “A {example}% salary increase{when} if the agreed performance target is met.”',
+                issue='Target-based pay increase'))
+        if purely_financial_promotion or cap:
+            unpriced_details.append(dict(issue='Target-based pay increase', detail=clause,
+                meaning='Timing is retained without separate promotion points. A cap is not an agreed exact percentage.'))
+
+    posting_reading = _posting_workload_reading(text, scenario)
+    if posting_reading:
+        combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict) and p.get('issue') in SOCIAL_POST_NAMES)]
+        combined_pairs.append(dict(issue=SOCIAL_POST_INTERNAL, option=str(posting_reading['value']),
+            confidence=1, source_text=posting_reading['source_text']))
+        findings = [f for f in findings if not (f.get('code') == 'model_ambiguity'
+            and set(f.get('issues', [])) and set(f['issues']).issubset(SOCIAL_POST_NAMES))]
+
+    # A performance bonus is not necessarily a team bonus, and a ceiling is
+    # not the agreed payout. Read its own phrase, not an earlier mention of
+    # the team in (for example) the probation explanation.
+    bonus_spec = _scenario_issue_map(scenario).get(PERFORMANCE_BONUS_INTERNAL)
+    if bonus_spec:
+        bonus_text = _evidence_text(_focused_text(text))
+        bonus_boundary = r';|\n|(?<!\d)\.|\.(?!\d)|\b(?:salary|budget|probation|contract|vacation|starting\s+date)\b'
+        for match in re.finditer(r'\bbonu(?:s|ses)\b', bonus_text, re.I):
+            before = re.split(bonus_boundary, bonus_text[max(0, match.start()-90):match.start()], flags=re.I)[-1]
+            after = re.split(bonus_boundary, bonus_text[match.end():match.end()+140], flags=re.I)[0]
+            phrase = before + match.group() + after
+            if not re.search(r'\b(?:performance|targets?|objectives?)\b', phrase, re.I):
+                continue
+            if re.search(r'\b(?:no|without|exclude)\s+(?:(?:a|any|possible|performance|team|individual)\s+)*bonus\b', phrase, re.I):
+                continue
+            if (re.search(r'\b(?:previous|previously|used\s+to|last\s+job)\b', phrase, re.I)
+                    and not re.search(r'\b(?:offer|propose|want|will|would|include)\b', phrase, re.I)):
+                continue
+            if bonus_spec['name'] == PERFORMANCE_BONUS_DISPLAY:
+                # Individual and team targets now share one unchanged cash
+                # payoff curve. Ask only about an unresolved payout amount.
+                amount_token = r'\$?\s*(\d[\d,]*(?:\.\d+)?\s*k?)(?![\d,.])'
+                amount_match = re.match(r'\s*[:=]?\s*(?:(?:of|is|worth|paid|payable|at)\s+)*'+amount_token, after, re.I)
+                if amount_match and re.match(r'\s*(?:percent|months?|years?|targets?|sales|units?)\b|\s*%', after[amount_match.end():], re.I):amount_match = None
+                if not amount_match:
+                    amount_match = re.search(amount_token+r'\s+(?:(?:individual|team|performance|based|related)[-\s]+)*$', before, re.I)
+                cap = re.search(r'\b(?:up\s+to|at\s+most|maximum\s+(?:of\s+)?|capped\s+at)\s*'+amount_token+r'\b', phrase, re.I)
+                combined_pairs = [p for p in combined_pairs if not (isinstance(p, dict) and (
+                    canonical_pair(str(p.get('issue','')),str(p.get('option','')))[0] == PERFORMANCE_BONUS_INTERNAL
+                    or (p.get('issue') in {'Starting Bonus','Contract-Renewal Bonus'} and p.get('source_text')
+                        and source_quote_is_grounded(str(p['source_text']), phrase))))]
+                findings = [f for f in findings if not (f.get('code') == 'model_ambiguity'
+                    and set(f.get('issues', [])) and set(f['issues']).issubset({PERFORMANCE_BONUS_INTERNAL,PERFORMANCE_BONUS_DISPLAY}))]
+                if cap:
+                    ceiling = _money_number_from_text(cap.group(1))
+                    label = f'${ceiling:,.0f}' if ceiling.is_integer() else f'${ceiling:,.2f}'
+                    findings.append(_finding(CLARIFICATION_NEEDED,'performance_bonus_scope',
+                        f'Is {label} the agreed performance bonus, or only the maximum?',issue=PERFORMANCE_BONUS_INTERNAL,source_text=phrase.strip()))
+                elif amount_match:
+                    combined_pairs.append(dict(issue=PERFORMANCE_BONUS_INTERNAL, option=str(_money_number_from_text(amount_match.group(1))),
+                        confidence=1,source_text=phrase.strip()))
+                else:
+                    findings.append(_finding(CLARIFICATION_NEEDED,'performance_bonus_amount',
+                        'What dollar bonus would be paid if the agreed performance target is met?',issue=PERFORMANCE_BONUS_INTERNAL,source_text=phrase.strip()))
+                continue
+            team = bool(re.search(r'\b(?:team|group|department|collective|company[-\s]wide)\b', phrase, re.I))
+            individual = bool(re.search(r'\b(?:individual|personal|own)\b|\b(?:your|my)\s+(?:sales\s+)?(?:performance|targets?)\b', phrase, re.I))
+            cap = re.search(r'\b(?:up\s+to|at\s+most|maximum\s+(?:of\s+)?|capped\s+at)\s*\$?\s*(\d[\d,]*(?:\.\d+)?\s*k?)\b', phrase, re.I)
+            scope_unclear = team == individual
+            if not (scope_unclear or cap or individual):
+                continue
+            def guessed_bonus(p: Any) -> bool:
+                if not isinstance(p, dict):
+                    return False
+                if p.get('issue') == 'Team Sales Bonus':
+                    return True
+                return bool(p.get('issue') in {'Starting Bonus', 'Contract-Renewal Bonus'}
+                    and p.get('source_text') and source_quote_is_grounded(str(p['source_text']), phrase))
+            combined_pairs = [p for p in combined_pairs if not guessed_bonus(p)]
+            if individual and not team and not cap:
+                if _open_capture_enabled(scenario):
+                    captured_novel_terms.append(phrase.strip())
+                continue
+            questions = []
+            if scope_unclear:
+                questions.append('Is this bonus based on individual or team performance?')
+            if cap:
+                ceiling = _money_number_from_text(cap.group(1))
+                label = f'${ceiling:,.0f}' if ceiling.is_integer() else f'${ceiling:,.2f}'
+                questions.append(f'Is {label} the agreed amount, or only the maximum?')
+            elif scope_unclear and not re.search(r'\d', phrase):
+                questions.append('What exact bonus amount do you propose?')
+            findings = [f for f in findings if not (f.get('code') == 'model_ambiguity'
+                and set(f.get('issues', [])) == {'Team Sales Bonus'})]
+            findings.append(_finding(CLARIFICATION_NEEDED, 'performance_bonus_scope',
+                ' '.join(questions), issue='Team Sales Bonus', source_text=phrase.strip()))
+
     last_by_issue: OrderedDict[str, dict[str, Any]] = OrderedDict()
     current_issues=_scenario_issue_map(scenario)
     if ('Company Car' in current_issues and current_issues['Company Car'].get('bare_request_default')
@@ -3848,6 +4178,9 @@ def evaluate_offer(
                         message = (f'Vacation cannot be negative or exceed 365 days per year. Please choose one annual allowance (0–365 days).' if issue == 'Vacation Days' else
                             'There are five working days per week in this scenario. Please choose 0–5 remote-working days per week.' if issue == 'Remote Working Days' else
                             f'{option} does not match the allowed proposal values for {issue}. Please choose from {domain_low} to {domain_high}.')
+                elif spec.get('value_type') == 'commitment_fraction':
+                    allowed = ['0%–100% of the usual posting workload']
+                    message = 'Please give the posting workload as a share of usual, for example 50% or half. A post count alone needs the usual workload for comparison.'
                 elif spec.get("value_type") == "date":
                     low_label = _format_continuous(date.fromisoformat(str(spec["min"])), spec)
                     high_label = _format_continuous(date.fromisoformat(str(spec["max"])), spec)
@@ -3976,9 +4309,33 @@ def evaluate_offer(
         "unpriced_details": unpriced_details,
         "discarded_predictions": discarded_predictions,
         "semantic_repairs": semantic_repairs,
+        "valuation_basis": {name: {'rule': 'post_probation_total', **reading} for name, reading in later_totals.items()},
     }
+    # Internal review trail, not extra participant instructions. Checking only
+    # the model's output misses features removed later by a safety check.
+    interpretation_audit = []
+    for p in original_interpretation:
+        name = canonical_pair(str(p.get('issue', '')), str(p.get('option', '')))[0]
+        public_name = str((issue_specs.get(name) or {}).get('name', name))
+        related_findings = [f for f in findings if f.get('issue') in {name, public_name} or name in f.get('issues', []) or public_name in f.get('issues', [])]
+        discarded = next((d.get('reason') for d in discarded_predictions if d.get('pair') == p), '')
+        if public_name in valid_pairs:
+            handling, note = 'scored', 'Retained in the final interpretation; check the displayed choice.'
+        elif related_findings:
+            handling, note = 'needs_correction', ' '.join(f.get('message', '') for f in related_findings)
+        elif any(d.get('issue') == name for d in unpriced_details):
+            handling, note = 'retained_without_points', 'Kept as an extra detail without separate points.'
+        else:
+            handling, note = 'not_retained', discarded or 'Removed during validation; inspect whether this was appropriate.'
+        interpretation_audit.append(dict(issue=public_name, model_choice=p.get('option'),
+            source_text=p.get('source_text', ''), handling=handling,
+            scored_choice=valid_pairs.get(public_name), note=note))
+    result['interpretation_audit'] = interpretation_audit
     result["display_text"] = format_system_output(result)
     interpretation_notes = []
+    if posting_reading and SOCIAL_POST_DISPLAY in valid_pairs:
+        result['commitment_interpretation'] = posting_reading
+        interpretation_notes.append(f"I read the social-media request as {valid_pairs[SOCIAL_POST_DISPLAY]}. Qualitative reductions use the study's stated workload conventions; please check this before sending.")
     for name, reading in usual_readings.items():
         if reading.get('value') is not None and name in valid_pairs:
             interpretation_notes.append(f"{name}: {valid_pairs[name]}. {reading['note']} Please check this interpretation before sending.")

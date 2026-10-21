@@ -86,8 +86,21 @@ def main() -> None:
                             '--choices-json', json.dumps(choices), '--json')
             assert response['decision'] == 'scorable' and response['total_for_proposer'] < -999, response
 
+        for bonus_name in ('Performance-Based Bonus', 'Team Sales Bonus'):
+            choices = {'Salary': 55000, 'Personal Budget': 9000, 'Starting Date': '2026-01-01',
+                       'Regular Social Media Posts for Company': .75, bonus_name: 4000}
+            for role, expected in [('Candidate', .85), ('Recruiter', 1.15)]:
+                response = call('score_offer.py', '--issue-space', '215', '--role', role,
+                                '--choices-json', json.dumps(choices), '--json')
+                assert response['decision'] == 'scorable', response
+                assert response['scorer_routing']['calls'] == 0, response
+                assert math.isclose(response['total_for_proposer'], expected, abs_tol=1e-9), response
+                assert response['valid_pairs']['Performance-Based Bonus'] == '$4,000', response
+                assert response['valid_pairs']['Regular Social Media Posts for Company'] == '75% of usual posting commitment', response
+
     print(f'PASS: {count} offline command-line checks. Main and tutorial scorers, both roles, '
-          'all six bundled issue spaces, external 215 JSON, invalid dates, and September deadline. '
+          'all six bundled issue spaces, external 215 JSON, invalid dates, September deadline, '
+          'proportional social-media commitments and old/new performance-bonus names. '
           'No sibling repository files, API keys, or model calls required.')
 
 

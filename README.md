@@ -55,6 +55,14 @@ The current nine-issue agenda includes the **non-compete clause instead of recru
 
 Both current conditions use mirrored priorities: remote work matters more to the Candidate (−2 to +2), while probation matters more to the Recruiter (−2 to +2). Counterpart weights stay at ±1. This allows a longer probation period to be traded for more remote work so both parties gain. The role explanations, table values and continuous scoring rules reflect these weights. Earlier 15-issue configurations and the tutorial are unchanged.
 
+The 21 October update renames Team Sales Bonus to **Performance-Based Bonus**
+in Flexible 215, covering individual or team targets on the unchanged payoff
+curve. Social-media commitments can now receive proportional points. Both
+issues remain zero-sum; the other 213 definitions and the fixed/frozen scenario
+payoffs are unchanged. The shared scorer also includes the reviewed human-pilot
+wording repairs and later-total scoring convention. [What changed and how to
+update the package](empirica/README.md#21-october-scorer-update).
+
 These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and show only the assigned role's material. The main prototype repository remains private.
 
 ## Which survey to use

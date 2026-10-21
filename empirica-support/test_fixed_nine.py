@@ -121,7 +121,18 @@ class FixedNineChecks(unittest.TestCase):
 
     def test_counts_and_separate_conditions(self):
         fixed, flex, old = load('fixed-9'), load('flexible-215'), load('fixed-15')
-        self.assertEqual(fixed['issues'], flex['issues'])
+        # The frozen fixed condition retains its original catalogue. Later
+        # changes to inactive flexible issues must not change its nine payoffs.
+        fixed_issues = {issue['id']: issue for issue in fixed['issues']}
+        flex_issues = {issue['id']: issue for issue in flex['issues']}
+        self.assertEqual(set(fixed_issues), set(flex_issues))
+        flexible_only_changes = {key for key in fixed_issues
+                                 if fixed_issues[key] != flex_issues[key]}
+        self.assertEqual(flexible_only_changes, {'linkedin_posts', 'team_sales_bonus'})
+        self.assertTrue(all(fixed_issues[key]['name'] not in NAMES
+                            for key in flexible_only_changes))
+        self.assertEqual(active_scoring_scenario(fixed)['issues'],
+                         [issue for issue in flex['issues'] if issue['name'] in NAMES])
         self.assertEqual(len(fixed['issues']), 215)
         self.assertEqual(len(active_scoring_scenario(fixed)['issues']), 9)
         self.assertEqual(len(active_scoring_scenario(flex)['issues']), 215)

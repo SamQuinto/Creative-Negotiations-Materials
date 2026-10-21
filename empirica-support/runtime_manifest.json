@@ -1,8 +1,8 @@
 {
   "canonical_repository": "https://github.com/SamQuinto/Creative-Negotiations",
-  "source_commit": "a815c1e1125e58535341f0470224696875650014",
-  "date": "2026-10-20",
-  "description": "Fixed 9 replaces recruitment-fair participation with the non-compete clause; the same nine-row table view is included in Flexible 215, whose full issue catalogue is unchanged. All underlying payoffs and the mirrored remote-work/probation priorities are preserved. Fixed-9 exact ZOPA: 28,845 of 312,500 packages (9.2304%); maximum joint payoff 6. Both role narratives already explain the non-compete interests and need no extra text. Existing 15-issue configurations, tutorial, offer interpretation and payoff arithmetic are unchanged.",
+  "source_commit": "048806be25488f2d00865dadb4ee87080bcebe37",
+  "date": "2026-10-21",
+  "description": "Human-pilot spelling and explicit-zero repairs; definite post-probation salary/budget totals; proportional company social-media commitment; Performance-Based Bonus replaces Team Sales Bonus using the unchanged opposite payoff curve. Still 215 issues; other 213 definitions and fixed/frozen scenario payoffs unchanged. Includes legacy bonus-name compatibility for natural-language and explicit-choice inputs.",
   "files": [
     {
       "path": "developer/role_presentation.py",
@@ -21,6 +21,10 @@
       "sha256": "5845b07a918763052324589498ce48ea0604726a508a675533b0a63f93fa1acc"
     },
     {
+      "path": "empirica-support/empirica-ui-fixes.patch",
+      "sha256": "7168595e756fe947f2e5fc7cfe8fdf29bca538b2c43718b5efc192e69e22369e"
+    },
+    {
       "path": "empirica-support/preview.html",
       "sha256": "f5caf8f1c17a87baa223f147a8a4ef7f2889938fafb5156f90be59e74d0c116f"
     },
@@ -33,12 +37,16 @@
       "sha256": "35a790897f2e891537836fa6575e8319a33d953a0fe9e5d1da524d52011259d0"
     },
     {
+      "path": "empirica-support/scenarios/fixed-9.json",
+      "sha256": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b"
+    },
+    {
       "path": "empirica-support/scenarios/flexible-15.json",
       "sha256": "226b4f0c8245e8a2ee6de765ee8707cc12fef8efbad09fe6d650f9e9e1c1f28c"
     },
     {
       "path": "empirica-support/scenarios/flexible-215.json",
-      "sha256": "fade56aeedea3ffb3301250bff619ea36d8882701ce9fc9ee65ce30a6e533c98"
+      "sha256": "07d74975d61084a69493110172ed62070fb99a78bf51b3218caf235c043bcdd8"
     },
     {
       "path": "empirica-support/scenarios/tutorial.json",
@@ -49,12 +57,24 @@
       "sha256": "2f210c876e58320c2b1189014998a98790bb354a6653f6facb07107345c265c8"
     },
     {
+      "path": "empirica-support/test_fixed_nine.py",
+      "sha256": "30165ee2f16c27d1271e061b9e993295ce4a302c84b31031b79e7dc57db29b64"
+    },
+    {
       "path": "empirica-support/test_language_rules.py",
       "sha256": "97fde7be80086c1549fc49ba7402d95dc8947077fc0d4bce5d7f6dc41d4f9a0b"
     },
     {
+      "path": "empirica-support/test_reviewed_language.py",
+      "sha256": "9d6f7dfd5ba7484188478b36531f55ef364fe1f0e4acc5820185db029de878d2"
+    },
+    {
+      "path": "empirica-support/test_tutorial_language.py",
+      "sha256": "ecf9ded2171c2a44de4d12789d889f99578dba067ab97aee9d7df2e8a8ab41e4"
+    },
+    {
       "path": "empirica/README.md",
-      "sha256": "3653bce6e1facd671fecbf34acda0c9e1ec44968f0730088ea89c482de552f84"
+      "sha256": "1767b7db1f310c0b3848f0b09b70c456c482f37eb28b73d8f9f427e435c462cb"
     },
     {
       "path": "empirica/app/backend/api_budget.py",
@@ -62,7 +82,7 @@
     },
     {
       "path": "empirica/app/backend/offer_engine.py",
-      "sha256": "634e8ff3b3bde34fc7b18149d25d5ac5ba89e1108e4610608bef6445b4b257d5"
+      "sha256": "86a2c01c450ba88912b01f009a1351b5c26119a7bb8345d75d2253ea4633608c"
     },
     {
       "path": "empirica/app/backend/scenario_rules.py",
@@ -74,23 +94,27 @@
     },
     {
       "path": "empirica/app/backend/stream.py",
-      "sha256": "64f57528d7bde4800548714b7b0e8460e2aeec6b7d345c0bde5d3643e312fb0e"
+      "sha256": "f84035ce7201d8585198706ac68cbeb1983e99bf17f195d3b0eca732b1cfe4cc"
     },
     {
       "path": "empirica/app/backend/structured_offer.py",
-      "sha256": "b5784d2f1478f032c361984e0b78c86c350c53d9df929cef4331b90c6ea0f8dc"
+      "sha256": "e3fbac05ba403e1089da1e096d1cd341cf31220b1113331d5d64f6d1d91e34b9"
     },
     {
       "path": "empirica/app/check_installation.py",
-      "sha256": "dd783b3c8edd6f32ccd7546ee0577cfb0d3d302d62e84d6532523528390ad606"
+      "sha256": "e1ba1ca88c8a676bd5074160733684c00296778df858adb582960209c6588a19"
     },
     {
       "path": "empirica/app/config/fixed-15.json",
       "sha256": "84aaa8e0f45b911117d483778b859e20f87d7e12bb2fd5907a83f22fa056ed3a"
     },
     {
+      "path": "empirica/app/config/fixed-9.json",
+      "sha256": "431880d306a495d26d1e153b2728ce36c8b4ae9955fee11187ca9c175f0cca83"
+    },
+    {
       "path": "empirica/app/config/issue-phrase-registry.json",
-      "sha256": "d0e5321c30d291679469d7806a266105f39636ca35ee957a448095aeb0da08c9"
+      "sha256": "87c5ad8f2679e87ee6487ad20f3c8d87492bcce6609ce89acf22c2933ffc5c0a"
     },
     {
       "path": "empirica/app/config/large-200.json",
@@ -98,7 +122,7 @@
     },
     {
       "path": "empirica/app/config/large-215.json",
-      "sha256": "f5cfcf7c0fe8edce10197c368aad9ca905a46d02a9bc3c254b9e47205fcbf5f4"
+      "sha256": "6512faa7dc829d8fb9fe0cad686cc0bfb977e0d38abed4c24974094a83b836bf"
     },
     {
       "path": "empirica/app/config/small-15.json",
@@ -109,8 +133,16 @@
       "sha256": "6d7533ef6901a6d3f7e8a482dd7bf121f49eebfa65f804c30d7280d5608d268f"
     },
     {
+      "path": "empirica/app/openai_key_example.txt",
+      "sha256": "c40fd5eeed2701d90e373f9fd496ff800f69f05ecea4bc3eac336007e08f1fbf"
+    },
+    {
+      "path": "empirica/fixed-9.json",
+      "sha256": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b"
+    },
+    {
       "path": "empirica/flexible-215.json",
-      "sha256": "fade56aeedea3ffb3301250bff619ea36d8882701ce9fc9ee65ce30a6e533c98"
+      "sha256": "07d74975d61084a69493110172ed62070fb99a78bf51b3218caf235c043bcdd8"
     },
     {
       "path": "empirica/score_offer.py",
@@ -119,35 +151,22 @@
     {
       "path": "empirica/score_tutorial_offer.py",
       "sha256": "e7272b4c92f1e0a1fa3357c14e5f631e99ef6aaace285eb1ac8d4a4b364a0b83"
-    },
-    {
-      "path": "empirica-support/test_tutorial_language.py",
-      "sha256": "ecf9ded2171c2a44de4d12789d889f99578dba067ab97aee9d7df2e8a8ab41e4"
-    },
-    {
-      "path": "empirica/app/openai_key_example.txt",
-      "sha256": "c40fd5eeed2701d90e373f9fd496ff800f69f05ecea4bc3eac336007e08f1fbf"
-    },
-    {
-      "path": "empirica-support/empirica-ui-fixes.patch",
-      "sha256": "7168595e756fe947f2e5fc7cfe8fdf29bca538b2c43718b5efc192e69e22369e"
-    },
-    {
-      "path": "empirica/fixed-9.json",
-      "sha256": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b"
-    },
-    {
-      "path": "empirica/app/config/fixed-9.json",
-      "sha256": "431880d306a495d26d1e153b2728ce36c8b4ae9955fee11187ca9c175f0cca83"
-    },
-    {
-      "path": "empirica-support/scenarios/fixed-9.json",
-      "sha256": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b"
-    },
-    {
-      "path": "empirica-support/test_fixed_nine.py",
-      "sha256": "22175dcc6be3fd0ab090f59e37e63d2bba3b7111b48e317afd76a9bf39639f78"
     }
   ],
-  "layout_revision": "2026-10-17-self-contained-empirica"
+  "layout_revision": "2026-10-17-self-contained-empirica",
+  "scorer_version": "2026-10-21-flexible-refinements-v19",
+  "checks": {
+    "canonical_offline_checks": 1008,
+    "canonical_passed": 1008,
+    "canonical_failed": 0,
+    "standalone_installation_cli_checks": 31,
+    "additional_package_cli_checks": 15,
+    "public_test_methods": {
+      "reviewed_language": 9,
+      "fixed_nine": 18,
+      "existing_language": 26,
+      "tutorial_language": 15
+    },
+    "scope": "Offline supplied interpretations, deterministic recovery, arithmetic and isolated CLI checks. No fresh LLM/API interpretation accuracy claim or paid calls."
+  }
 }

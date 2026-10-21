@@ -1313,6 +1313,21 @@
       "issue_name": "Regular Social Media Posts for Company",
       "variants": [
         {
+          "text": "slightly less social media publicity less commitment",
+          "origin": "De-identified human pilot wording, 20 October 2026",
+          "runtime_enabled": true
+        },
+        {
+          "text": "reduced company social media commitment",
+          "origin": "Researcher-defined workload convention, 21 October 2026",
+          "runtime_enabled": true
+        },
+        {
+          "text": "40% less company social media posting",
+          "origin": "GenAI-assisted validation wording, 21 October 2026",
+          "runtime_enabled": true
+        },
+        {
           "text": "company social posts",
           "origin": "GenAI-assisted catalogue wording",
           "runtime_enabled": true
@@ -1720,7 +1735,7 @@
     },
     {
       "issue_id": "team_sales_bonus",
-      "issue_name": "Team Sales Bonus",
+      "issue_name": "Performance-Based Bonus",
       "variants": [
         {
           "text": "Annual bonus",
@@ -1800,6 +1815,11 @@
         {
           "text": "team performance payment",
           "origin": "GenAI-assisted catalogue wording",
+          "runtime_enabled": true
+        },
+        {
+          "text": "Performance-Based Bonus",
+          "origin": "Researcher-approved broader label, 21 October 2026",
           "runtime_enabled": true
         },
         {
