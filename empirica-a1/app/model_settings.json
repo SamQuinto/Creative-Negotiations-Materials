@@ -1,0 +1,10 @@
+{
+  "model": "gpt-6.1-sol",
+  "reasoning": "low",
+  "api_prices_per_million": [2.5, 0.1, 10.0],
+  "pricing_note": "Input, cached input and output estimates for the spending guard, not an invoice. Verify prices before live use.",
+  "guidance": {
+    "scenario_id": "candidate_recruiter_large_215",
+    "file": "prompts/job_reading_notes.txt"
+  }
+}

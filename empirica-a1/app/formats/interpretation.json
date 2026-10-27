@@ -1,0 +1,106 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issue": {
+            "type": "string",
+            "enum": []
+          },
+          "option": {
+            "type": "string",
+            "description": "One exact catalogue choice label, or a precise numerical value in the configured unit."
+          },
+          "source_text": {
+            "type": "string",
+            "description": "Copy exact supporting words from the current offer, or from the earlier offer when this choice is carried forward."
+          },
+          "from_previous_offer": {
+            "type": "boolean",
+            "description": "True only for an earlier choice retained through an explicit reference in the new offer."
+          }
+        },
+        "required": [
+          "issue",
+          "option",
+          "source_text",
+          "from_previous_offer"
+        ]
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issue": {
+            "type": "string",
+            "enum": []
+          },
+          "question": {
+            "type": "string",
+            "description": "One brief, friendly question that explains what is needed to understand this choice."
+          },
+          "source_text": {
+            "type": "string",
+            "description": "Copy the unclear offer wording; use an empty string for a required issue that was not mentioned."
+          }
+        },
+        "required": [
+          "issue",
+          "question",
+          "source_text"
+        ]
+      }
+    },
+    "novel_terms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Plausible proposed features outside this catalogue, kept in the person's own words without points."
+    },
+    "unsupported_terms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Unrelated or impossible requests, separate from genuine negotiation choices."
+    },
+    "offer_intent": {
+      "type": "string",
+      "enum": [
+        "offer",
+        "uncertain",
+        "not_an_offer"
+      ],
+      "description": "A partial proposal or list of requested features is still an offer; missing required choices can be clarified."
+    },
+    "explicit_reference": {
+      "type": "string",
+      "description": "Copy the current words asking to keep earlier choices, or use an empty string when there is no reference."
+    },
+    "interpretation_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Brief useful notes about how a choice or a supplied scenario convention was read."
+    }
+  },
+  "required": [
+    "pairs",
+    "ambiguities",
+    "novel_terms",
+    "unsupported_terms",
+    "offer_intent",
+    "explicit_reference",
+    "interpretation_notes"
+  ]
+}
