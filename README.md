@@ -37,15 +37,15 @@ The [Prolific survey preview](https://raw.githack.com/SamQuinto/Creative-Negotia
 
 ### Empirica scorer and scenarios
 
-**A1 main scorer:** [Joshua's self-contained A1 package](empirica-a1/) uses the
-full-table advanced-model architecture. Download that whole folder and use
-its `score_offer.py` for A1. The existing `empirica/` package below remains A2;
-its main and tutorial files have not been replaced. Keep the tutorial on
-`empirica/score_tutorial_offer.py`. [A1 setup](empirica-a1/README.md).
+**Canonical scorer package:** [empirica/](empirica/) contains the A1 main scorer,
+the existing tutorial scorer, both scenario JSONs and the complete `app/` folder.
+Keep the same paths: `empirica/score_offer.py` and
+`empirica/score_tutorial_offer.py`. Download or update the whole folder together.
+[Setup](empirica/README.md). No separate A1 folder is needed.
 
 [Open the public Empirica folder](empirica/). **Download everything inside that folder, including `app/`.** It now contains both Python commands, the current 215-issue scenario, and the complete shared scoring engine. No other repository folder is needed to run the scorers. [The short setup guide](empirica/README.md) includes a no-key installation check.
 
-[Detailed instructions, extra tests, the preview, and other scenario exports](empirica-support/) are kept separately. The optional preview also uses the single helper in `developer/`; neither sibling folder is required to run the scorers. If you clone the whole repository, keep your Empirica commands pointed at `empirica/score_offer.py` and `empirica/score_tutorial_offer.py`. The [key template](empirica/app/openai_key_example.txt) contains a placeholder only; copy it to `empirica/app/openai_key.txt` and add your own key locally, or set `OPENAI_API_KEY` on the server. Never commit a real key. The exact engine revision and file hashes are in the [runtime manifest](empirica-support/runtime_manifest.json).
+[Detailed instructions, extra tests, the preview, and other scenario exports](empirica-support/) are kept separately. The optional preview also uses the single helper in `developer/`; neither sibling folder is required to run the scorers. If you clone the whole repository, keep your Empirica commands pointed at `empirica/score_offer.py` and `empirica/score_tutorial_offer.py`. The [key template](empirica/app/openai_key_example.txt) contains a placeholder only; copy it to `empirica/app/openai_key.txt` and add your own key locally, or set `OPENAI_API_KEY` on the server. Never commit a real key. The current engine revision and file hashes are in the [runtime manifest](empirica/runtime_manifest.json).
 
 | Backend scenario | Public raw JSON |
 |---|---|

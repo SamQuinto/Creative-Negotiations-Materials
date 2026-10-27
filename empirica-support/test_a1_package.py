@@ -11,8 +11,8 @@ import unittest
 from unittest.mock import patch
 import urllib.error
 
-ROOT = Path(__file__).resolve().parents[1] / 'empirica-a1'
-sys.path.insert(0, str(ROOT / 'app/backend'))
+ROOT = Path(__file__).resolve().parents[1] / 'empirica'
+sys.path.insert(0, str(ROOT / 'app/a1/backend'))
 from scorer import Scorer
 from api_budget import Ledger, BillingUncertain
 

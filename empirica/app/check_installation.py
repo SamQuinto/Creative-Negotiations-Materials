@@ -18,7 +18,7 @@ PACKAGE = Path(__file__).resolve().parents[1]
 def main() -> None:
     for name in ('score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json'):
         assert (PACKAGE / name).is_file(), f'Missing package file: {name}'
-    for source in (PACKAGE / 'app/backend').glob('*.py'):
+    for source in (PACKAGE / 'app').rglob('*.py'):
         ast.parse(source.read_text(encoding='utf-8'), filename=str(source))
     for definition in (PACKAGE / 'app/config').glob('*.json'):
         json.loads(definition.read_text(encoding='utf-8'))

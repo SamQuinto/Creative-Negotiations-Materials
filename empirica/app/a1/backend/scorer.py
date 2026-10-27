@@ -13,7 +13,7 @@ import offer_engine
 from api_budget import Ledger, PRICES, guarded_post
 
 APP = Path(__file__).resolve().parents[1]
-PACKAGE = APP.parent
+PACKAGE = APP.parents[1]
 VERSION = 'A1-empirica-2026-10-27'
 
 
@@ -23,7 +23,7 @@ def read_json(path):
 
 def api_key():
     value = os.environ.get('OPENAI_API_KEY', '').strip()
-    path = APP / 'openai_key.txt'
+    path = PACKAGE / 'app/openai_key.txt'
     if not value and path.is_file():
         value = path.read_text(encoding='utf-8-sig').strip()
     if not value or value == 'YOUR_OPENAI_API_KEY_HERE':
@@ -34,7 +34,7 @@ def api_key():
 class Scorer:
     def __init__(self, scenario_file=None, *, helper=True, model=None, reasoning=None,
                  reading_notes=None):
-        self.scenario_file = Path(scenario_file or PACKAGE / 'flexible-215.json').resolve()
+        self.scenario_file = Path(scenario_file or APP / 'scoring_table.json').resolve()
         self.table = read_json(self.scenario_file)
         self.settings = read_json(APP / 'model_settings.json')
         self.model = model or self.settings['model']
@@ -67,7 +67,13 @@ class Scorer:
         if not isinstance(choices, dict) or not choices:
             raise ValueError('choices-json must be a non-empty object.')
         pairs = []
+        known = {item['name']: item for item in self.table['issues']}
+        recognized = offer_engine._scenario_issue_map(self.table)
+        names_by_id = {item['id']: item['name'] for item in self.table['issues'] if item.get('id')}
         for issue, value in choices.items():
+            issue = names_by_id.get(issue, issue)
+            if issue not in known and issue in recognized:
+                issue = recognized[issue]['name']
             if value is None or isinstance(value, (bool, dict, list)):
                 raise ValueError('Each explicit choice must be a string or number.')
             option = str(value)

@@ -1,5 +1,10 @@
 # Empirica integration
 
+**27 October 2026:** the canonical `empirica/` folder now runs A1 for the main
+215-issue negotiation. Both command paths remain `empirica/score_offer.py` and
+`empirica/score_tutorial_offer.py`. The tutorial retains its existing scorer.
+Update the whole folder, including `app/`; see [current setup](empirica/README.md).
+
 ## Load the assigned role only
 
 After assigning Candidate or Recruiter, load the matching role JSON. Each file keeps the existing `roles` and `tips` structure but contains only one role. Render `roles[0].narrative`; do not load the other party's private material into the participant interface.
