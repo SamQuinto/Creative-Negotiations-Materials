@@ -1,5 +1,7 @@
 """A1 deployment tests with simulated HTTP responses; no paid calls or real keys."""
 from copy import deepcopy
+from contextlib import redirect_stdout
+import importlib.util
 import io
 import json
 from pathlib import Path
@@ -14,7 +16,7 @@ import urllib.error
 ROOT = Path(__file__).resolve().parents[1] / 'empirica'
 sys.path.insert(0, str(ROOT / 'app/a1/backend'))
 from scorer import Scorer
-from api_budget import Ledger, BillingUncertain
+from api_budget import Ledger, BillingUncertain, BudgetStop, PRICES
 
 TEXT = "I'd like 4 remote work days and 60 vacation days, on top of a salary of 65k\nclient budget of 13.25 grand!\nand perhaps start date as early as possible pls.\nOh and waive my non copete"
 CHOICES = {'Remote Working Days': '4', 'Vacation Days': '60', 'Salary': '65000',
@@ -162,6 +164,167 @@ class A1Tests(unittest.TestCase):
                 self.scorer.live(TEXT, 'Candidate', '', Path(folder)/'ledger.sqlite', 1)
             self.assertEqual(transport.call_count, 1)
             self.assertEqual(Ledger(Path(folder)/'ledger.sqlite', 1).status()['unknown'], 1)
+
+    def locked_ledger(self, folder):
+        path = Path(folder) / 'ledger.sqlite'
+        PRICES[self.scorer.model] = tuple(self.scorer.settings['api_prices_per_million'])
+        ledger = Ledger(path, 1)
+        call = ledger.reserve('earlier_request', self.scorer.request(TEXT))
+        ledger.uncertain(call, 'HTTP 503')
+        return path
+
+    def test_study_default_never_opens_a_ledger(self):
+        with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                patch('scorer.Ledger', side_effect=AssertionError('Must not open a ledger')), \
+                patch('urllib.request.urlopen', return_value=FakeResponse(self.response_body())) as transport:
+            raw, receipt = self.scorer.live(TEXT, 'Candidate', '')
+        self.assertEqual(transport.call_count, 1)
+        self.assertAlmostEqual(raw['total'], 7.8)
+        self.assertEqual(receipt['accounting_mode'], 'usage_estimate_no_budget_ledger')
+        self.assertAlmostEqual(receipt['estimated_cost_usd'], .00158)
+
+    def test_study_ignores_old_unknown_billing_without_changing_ledger(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.locked_ledger(folder)
+            before = path.read_bytes()
+            with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                    patch('urllib.request.urlopen', return_value=FakeResponse(self.response_body())):
+                result, _ = self.scorer.live(TEXT, 'Candidate', '', path)
+            self.assertEqual(result['decision'], 'scorable')
+            self.assertEqual(path.read_bytes(), before)
+            self.assertEqual(Ledger(path, 1).status()['unknown'], 1)
+
+    def test_study_ignores_exhausted_test_budget_without_resetting_it(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.locked_ledger(folder)
+            with Ledger(path, 1).connect() as db:
+                db.execute("UPDATE calls SET status='completed',cost=1")
+            before = path.read_bytes()
+            with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                    patch('urllib.request.urlopen', return_value=FakeResponse(self.response_body())):
+                raw, _ = self.scorer.live(TEXT, 'Candidate', '', path)
+            self.assertAlmostEqual(raw['total'], 7.8)
+            self.assertEqual(path.read_bytes(), before)
+
+    def test_study_http_503_does_not_retry_or_block_next_offer(self):
+        with tempfile.TemporaryDirectory() as folder, \
+                patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}):
+            path = Path(folder) / 'not_created.sqlite'
+            error = urllib.error.HTTPError('https://api.openai.com/v1/responses', 503,
+                                          'Unavailable', {}, io.BytesIO(b'{}'))
+            with patch('urllib.request.urlopen', side_effect=[error, FakeResponse(self.response_body())]) as transport:
+                with self.assertRaisesRegex(BudgetStop, 'temporarily unavailable.*HTTP 503'):
+                    self.scorer.live(TEXT, 'Candidate', '', path)
+                self.assertEqual(transport.call_count, 1)
+                raw, _ = Scorer().live(TEXT, 'Candidate', '', path)
+            self.assertEqual(transport.call_count, 2)
+            self.assertEqual(raw['decision'], 'scorable')
+            self.assertFalse(path.exists())
+
+    def test_study_timeout_does_not_retry_or_block_next_offer(self):
+        with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                patch('urllib.request.urlopen', side_effect=[TimeoutError(), FakeResponse(self.response_body())]) as transport:
+            with self.assertRaisesRegex(BudgetStop, 'timeout'):
+                self.scorer.live(TEXT, 'Candidate', '')
+            self.assertEqual(transport.call_count, 1)
+            raw, _ = self.scorer.live(TEXT, 'Candidate', '')
+        self.assertEqual(transport.call_count, 2)
+        self.assertAlmostEqual(raw['total'], 7.8)
+
+    def test_study_connection_failure_does_not_block_next_offer(self):
+        with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                patch('urllib.request.urlopen', side_effect=[urllib.error.URLError('offline'), FakeResponse(self.response_body())]):
+            with self.assertRaisesRegex(BudgetStop, 'connection problem'):
+                self.scorer.live(TEXT, 'Candidate', '')
+            raw, _ = self.scorer.live(TEXT, 'Candidate', '')
+        self.assertEqual(raw['decision'], 'scorable')
+
+    def test_study_http_errors_have_safe_distinct_messages(self):
+        examples = [
+            (400, '', 'rejected this scoring request'),
+            (401, '', 'authentication or access'),
+            (403, '', 'authentication or access'),
+            (408, '', 'temporarily unavailable'),
+            (409, '', 'temporarily unavailable'),
+            (429, 'rate_limit_exceeded', 'temporarily rate-limited'),
+            (429, 'insufficient_quota', 'credit, spending or usage limit'),
+            (429, 'credit_balance_exhausted', 'credit, spending or usage limit'),
+            (429, 'project_spend_limit_exceeded', 'credit, spending or usage limit'),
+            (500, '', 'temporarily unavailable'),
+            (503, 'server_is_overloaded', 'temporarily unavailable'),
+        ]
+        for status, code, message in examples:
+            with self.subTest(status=status, code=code):
+                body = json.dumps({'error': {'code': code, 'message': 'PRIVATE_KEY_SHOULD_NOT_APPEAR'}}).encode()
+                error = urllib.error.HTTPError('https://api.openai.com/v1/responses', status, 'Error', {}, io.BytesIO(body))
+                with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                        patch('urllib.request.urlopen', side_effect=error) as transport:
+                    with self.assertRaises(BudgetStop) as caught:
+                        self.scorer.live(TEXT, 'Candidate', '')
+                self.assertIn(message, str(caught.exception))
+                self.assertNotIn('PRIVATE_KEY_SHOULD_NOT_APPEAR', str(caught.exception))
+                self.assertNotIn('LOCAL_TEST_PLACEHOLDER', str(caught.exception))
+                self.assertEqual(transport.call_count, 1)
+
+    def test_study_bad_response_does_not_block_next_offer(self):
+        for response in (io.BytesIO(b'{not JSON'), FakeResponse([])):
+            with self.subTest(response=type(response).__name__), \
+                    patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                    patch('urllib.request.urlopen', side_effect=[response, FakeResponse(self.response_body())]):
+                with self.assertRaisesRegex(BudgetStop, 'unreadable response'):
+                    self.scorer.live(TEXT, 'Candidate', '')
+                raw, _ = self.scorer.live(TEXT, 'Candidate', '')
+                self.assertEqual(raw['decision'], 'scorable')
+
+    def test_study_missing_or_invalid_usage_does_not_discard_a_valid_offer(self):
+        for usage in (None, {}, 'invalid', {'input_tokens': 1000, 'output_tokens': 100,
+                                           'input_tokens_details': {'cached_tokens': 1001}}):
+            with self.subTest(usage=usage):
+                body = self.response_body()
+                body['usage'] = usage
+                with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                        patch('urllib.request.urlopen', return_value=FakeResponse(body)):
+                    raw, receipt = self.scorer.live(TEXT, 'Candidate', '')
+                self.assertEqual(raw['decision'], 'scorable')
+                self.assertIsNone(receipt['estimated_cost_usd'])
+                self.assertIn('accounting_warning', receipt)
+                formatted = self.scorer.for_empirica(raw, receipt=receipt)
+                self.assertAlmostEqual(formatted['total_for_proposer'], 7.8)
+
+    def test_explicit_test_budget_still_enforces_unknown_billing_lock(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.locked_ledger(folder)
+            with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                    patch('urllib.request.urlopen') as transport:
+                with self.assertRaisesRegex(BillingUncertain, 'unknown billing'):
+                    self.scorer.live(TEXT, 'Candidate', '', path, 1)
+            transport.assert_not_called()
+
+    def test_explicit_test_budget_still_stops_at_its_limit(self):
+        with tempfile.TemporaryDirectory() as folder, \
+                patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER'}), \
+                patch('urllib.request.urlopen') as transport:
+            with self.assertRaisesRegex(BudgetStop, 'budget would be exceeded'):
+                self.scorer.live(TEXT, 'Candidate', '', Path(folder) / 'test.sqlite', .000001)
+        transport.assert_not_called()
+
+    def test_cli_ignores_old_budget_environment_and_locked_ledger(self):
+        spec = importlib.util.spec_from_file_location('a1_entry_for_test', ROOT / 'score_offer.py')
+        entry = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(entry)
+        with tempfile.TemporaryDirectory() as folder:
+            path = self.locked_ledger(folder)
+            output = io.StringIO()
+            with patch.dict('os.environ', {'OPENAI_API_KEY': 'LOCAL_TEST_PLACEHOLDER',
+                    'NOVA_A1_BUDGET_USD': 'not-a-number', 'NOVA_A1_API_LEDGER': str(path)}), \
+                    patch('sys.argv', ['score_offer.py', '--text', TEXT, '--json']), \
+                    patch('urllib.request.urlopen', return_value=FakeResponse(self.response_body())), \
+                    redirect_stdout(output):
+                code = entry.main()
+            result = json.loads(output.getvalue())
+            self.assertEqual(code, 0, result)
+            self.assertAlmostEqual(result['total_for_proposer'], 7.8)
+            self.assertEqual(Ledger(path, 1).status()['unknown'], 1)
 
     def test_standalone_copy_and_another_working_directory(self):
         with tempfile.TemporaryDirectory(prefix='NOVA A1 package ') as folder:

@@ -42,7 +42,8 @@ def main(default_space=None):
     parser.add_argument('--helper', choices=('on', 'off'), default='on')
     parser.add_argument('--reading-notes', help='Optional exercise-specific guidance file.')
     parser.add_argument('--reasoning', choices=('low', 'medium', 'high', 'xhigh', 'max'))
-    parser.add_argument('--api-budget', type=float, default=float(os.environ.get('NOVA_A1_BUDGET_USD', '25')))
+    parser.add_argument('--api-budget', type=float, default=None,
+                        help='Opt in to a shared spending limit for controlled tests, not live studies.')
     parser.add_argument('--api-ledger', default=os.environ.get('NOVA_A1_API_LEDGER', str(ROOT / 'app/.runtime/scoring.sqlite')))
     args = parser.parse_args()
     try:

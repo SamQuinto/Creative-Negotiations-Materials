@@ -61,13 +61,23 @@ These checks make no API calls. `--helper off` disables A1's optional job
 guidance; `--reading-notes` supplies a replacement file for another exercise.
 Prompt, model or scenario changes require their own validation.
 
-A1's API spending guard defaults to US$25 per persistent ledger. Set
-`NOVA_A1_API_LEDGER` to a writable server path and `NOVA_A1_BUDGET_USD` to the
-agreed limit, or use `--api-ledger` and `--api-budget`. The current guard accepts
-limits up to US$45. Verify price estimates in `app/a1/model_settings.json` before
-live use. Requests are not retried automatically; uncertain billing stops
-further dispatch until the ledger is reconciled. Do not delete a live ledger
-to bypass its limit.
+Normal A1 study scoring has **no local spending cap or shared billing lock**.
+It reports token usage and estimated API cost, but does not open the old SQLite
+budget ledger. An HTTP error or timeout affects only that request; it cannot
+lock out later offers. There are no automatic retries. Provider-side credit,
+usage and access limits still apply.
+
+**Updating after the billing-lock error:** update the complete `empirica/`
+folder and keep the normal command shown above. No ledger deletion, reset or
+ROOT edit is needed. `NOVA_A1_BUDGET_USD` no longer turns on a budget guard.
+An explicitly supplied `--api-budget` still enables the conservative guard for
+controlled tests, so omit that argument for a live study. Old ledgers are left
+untouched for accounting review.
+
+For an explicitly budget-limited test only, supply `--api-budget` and
+`--api-ledger` together. This optional test mode retains the previous spending
+limit and uncertain-billing lock. Verify cost estimates in
+`app/a1/model_settings.json`; they are estimates, not a billing invoice.
 
 The evaluated low-reasoning A1 with guidance passed 973/1,000 development
 inputs. Packaging checks preserve its requests and scoring results on all

@@ -10,7 +10,7 @@ from pathlib import Path
 
 import interpretation
 import offer_engine
-from api_budget import Ledger, PRICES, guarded_post
+from api_budget import Ledger, PRICES, guarded_post, live_post
 
 APP = Path(__file__).resolve().parents[1]
 PACKAGE = APP.parents[1]
@@ -85,7 +85,7 @@ class Scorer:
                     'explicit_reference': '', 'interpretation_notes': []}
         return self.finalize(text, response, role)
 
-    def live(self, text, role, previous_offer, ledger_path, budget):
+    def live(self, text, role, previous_offer, ledger_path=None, budget=None):
         prices = self.settings.get('api_prices_per_million')
         if not isinstance(prices, list) or len(prices) != 3 or not all(
             isinstance(p, (float, int)) and math.isfinite(p) and p >= 0 for p in prices):
@@ -94,8 +94,15 @@ class Scorer:
             raise ValueError('For a different model, update app/model_settings.json and its prices together.')
         PRICES[self.model] = tuple(prices)
         request = self.request(text, role, previous_offer)
-        body, receipt = guarded_post('https://api.openai.com/v1/responses', request,
-            api_key(), Ledger(ledger_path, budget), 'A1_main_offer', timeout=120)
+        if budget is None:
+            # Study scoring must not inherit a shared development-budget lock.
+            body, receipt = live_post('https://api.openai.com/v1/responses', request,
+                api_key(), timeout=120)
+        else:
+            if ledger_path is None:
+                raise ValueError('A ledger path is required for an explicit API budget.')
+            body, receipt = guarded_post('https://api.openai.com/v1/responses', request,
+                api_key(), Ledger(ledger_path, budget), 'A1_main_offer', timeout=120)
         if body.get('status') != 'completed':
             raise ValueError('The model response did not complete. Please try scoring again.')
         parts = [part for item in body.get('output', []) for part in item.get('content', [])]

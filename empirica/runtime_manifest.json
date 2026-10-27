@@ -10,21 +10,31 @@
   "tutorial_behavior_unchanged": true,
   "previous_A2_entrypoint": "app/backend/score_offer_a2.py",
   "checks": {
-    "unit_tests_passed": 16,
+    "unit_tests_passed": 28,
+    "billing_lock_regression_tests_passed": 12,
     "standalone_copy_from_another_directory": true,
     "saved_A1_requests_identical": 1000,
     "saved_A1_raw_responses_identical": 1000,
     "Empirica_semantic_fields_identical": 1000,
     "new_API_calls": 0
   },
-  "scope": "Canonical folder deployment equivalence with recorded A1 interpretations; not new accuracy or holdout evidence.",
+  "scope": "Canonical folder deployment equivalence with recorded A1 interpretations; not new accuracy or holdout evidence. The saved 1,000-case checks are from the original release. The billing fix leaves prompts, interpretation and score calculations unchanged.",
+  "billing_lock_fix": {
+    "date": "2026-10-27",
+    "live_study_uses_budget_ledger": false,
+    "automatic_retries": false,
+    "explicit_test_budget_argument": "--api-budget",
+    "old_ledgers_preserved": true,
+    "old_budget_environment_variable_activates_guard": false,
+    "validation": "28 offline tests, including 12 billing-lock regressions; no new API calls."
+  },
   "file_sha256_lf": {
-    "app/a1/backend/api_budget.py": "1ed17810240d8cf9f8b8f64d6370116e2f4815c3926951737ee39349bf8f998d",
+    "app/a1/backend/api_budget.py": "b30d0ff2ef8f4563fa9f9d2c369148a2cdecb7ac0d4f1baa536111ff44f55dbc",
     "app/a1/backend/interpretation.py": "0e38354d523166252562c3bc415991e4b3e4d73cc3fab00f2c72fe75c9d6c9f8",
     "app/a1/backend/offer_engine.py": "3e691464b9d1c4d15821164bb7fa9481cef8f440dbb417c98feae81acc949e67",
     "app/a1/backend/scenario.py": "c83f18cd267ae77dc980907943a9fcafe7859063f8609f17082a2d5a5d919cc6",
     "app/a1/backend/scenario_rules.py": "99f7fa32c657a0b305e41def60d6813d869227f95e3f277b240e4dcf8c998691",
-    "app/a1/backend/scorer.py": "3237e8b9d151055cd77a687b7a9528bd54ae1db1421034102c98b0e9e19b8425",
+    "app/a1/backend/scorer.py": "f122a9b4ccfe09cd0aa351c922b9717224fc1f4badc871e2c6531d4eb02425bd",
     "app/a1/formats/interpretation.json": "249a74bcc04782bc8e2cfb8dfab0694d1e6b0cce5d8487389319568e579f293a",
     "app/a1/model_settings.json": "3132ff74274eeed4ce4068ecaea72acb6438da04c8ad7228942103c55d07e494",
     "app/a1/prompts/general_interpretation.txt": "1db2068017cb12a7b4b1fa13d48def299335136a5ccc151734ab43f19990bce4",
@@ -48,8 +58,8 @@
     "app/openai_key_example.txt": "c40fd5eeed2701d90e373f9fd496ff800f69f05ecea4bc3eac336007e08f1fbf",
     "fixed-9.json": "6b46e9c8f879c0fdfd83c943f66a17a62acced0d640550f166e5979769a52a2b",
     "flexible-215.json": "07d74975d61084a69493110172ed62070fb99a78bf51b3218caf235c043bcdd8",
-    "README.md": "167093d1dd5294c8a257319f2ac87fdd4b39f7045094a6c63fcfc6939ee58b3f",
-    "score_offer.py": "f9595567118704ab64af6725f47649de3e519eb8a5bdc78ef5885e60f3050fa9",
+    "README.md": "2675278d57c33d2b4d42cfec01f2de87f97fb1808f551d826dc84eb33c38d2b3",
+    "score_offer.py": "42620850f87429fca9445a581a1066b1c2b8adca06451e407911b98cb50caa51",
     "score_tutorial_offer.py": "e7272b4c92f1e0a1fa3357c14e5f631e99ef6aaace285eb1ac8d4a4b364a0b83"
   }
 }

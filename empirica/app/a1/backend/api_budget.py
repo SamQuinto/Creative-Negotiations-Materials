@@ -1,8 +1,9 @@
-"""Opt-in, cross-process OpenAI request accounting. Standard-library only.
+"""Live API requests and opt-in test-budget accounting. Standard-library only.
 
-SQLite transactions reserve money before each physical HTTP call. Responses are
-booked BEFORE callers parse model text. Unknown billing suspends new dispatch;
-there are no automatic retries. Keys/HTTP headers are never saved in this file.
+Live requests do not read or change a shared budget ledger. An API failure affects
+that request, not later offers. Explicitly budgeted tests retain the conservative
+SQLite reservations and uncertain-billing lock. Neither mode retries automatically.
+Keys and HTTP authorization headers are never saved in the ledger.
 """
 from __future__ import annotations
 import hashlib
@@ -20,6 +21,81 @@ PRICES={'gpt-5.6-luna':(.20,.02,1.20),'gpt-5-nano':(.05,.005,.40)}
 
 class BudgetStop(RuntimeError):pass
 class BillingUncertain(BudgetStop):pass
+
+
+def live_post(url, payload, key, timeout=90):
+    """Send one study request, with no persistent budget lock and no retries."""
+    if url not in ('https://api.openai.com/v1/responses', 'https://api.openai.com/v1/chat/completions'):
+        raise ValueError('Only the explicit OpenAI endpoints are allowed.')
+    request = urllib.request.Request(url,
+        data=json.dumps(payload, ensure_ascii=False).encode('utf-8'),
+        headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'},
+        method='POST')
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            body = json.loads(response.read().decode('utf-8'))
+    except urllib.error.HTTPError as exc:
+        # Do not expose provider error bodies, which can include private key text.
+        code = ''
+        try:
+            error = json.loads(exc.read().decode('utf-8')).get('error', {})
+            if isinstance(error, dict):
+                code = error.get('code', '')
+        except (ValueError, UnicodeError, AttributeError):
+            pass
+        if exc.code in (401, 403):
+            message = 'API authentication or access failed. Please check the server API key and permissions.'
+        elif exc.code == 429 and code in (
+                'insufficient_quota', 'credit_balance_exhausted',
+                'organization_spend_limit_exceeded', 'project_spend_limit_exceeded',
+                'organization_usage_limit_exceeded', 'billing_hard_limit_reached'):
+            message = 'The API account has reached a credit, spending or usage limit. Please check the account.'
+        elif exc.code == 429:
+            message = 'The scoring service is temporarily rate-limited. Please wait before calculating again.'
+        elif exc.code >= 500 or exc.code in (408, 409):
+            message = 'The scoring service is temporarily unavailable. Please wait briefly and calculate again.'
+        else:
+            message = 'The API rejected this scoring request. Please check the server configuration.'
+        raise BudgetStop(f'{message} (HTTP {exc.code}.) No automatic retry was made.') from None
+    except (TimeoutError, urllib.error.URLError, OSError):
+        raise BudgetStop('The scoring request could not be completed because of a connection problem or timeout. '
+                         'Please wait briefly before calculating again. No automatic retry was made.') from None
+    except (ValueError, UnicodeError):
+        raise BudgetStop('The scoring service returned an unreadable response. '
+                         'Please calculate again. No automatic retry was made.') from None
+    if not isinstance(body, dict):
+        raise BudgetStop('The scoring service returned an unreadable response. Please calculate again.')
+    return body, _live_receipt(payload, body)
+
+
+def _live_receipt(payload, body):
+    """Estimate cost from reported usage; accounting must not discard a valid offer."""
+    usage = body.get('usage') or {}
+    usage = usage if isinstance(usage, dict) else {}
+    detail = usage.get('input_tokens_details', usage.get('prompt_tokens_details')) or {}
+    detail = detail if isinstance(detail, dict) else {}
+    inp = usage.get('input_tokens', usage.get('prompt_tokens'))
+    out = usage.get('output_tokens', usage.get('completion_tokens'))
+    cached = detail.get('cached_tokens', 0) or 0
+    requested, returned = payload['model'], body.get('model', '')
+    valid_usage = all(isinstance(v, int) and not isinstance(v, bool) and v >= 0
+                      for v in (inp, out, cached)) and cached <= inp
+    receipt = dict(response_id=body.get('id'), model=returned,
+        input_tokens=inp if valid_usage else None,
+        cached_input_tokens=cached if valid_usage else None,
+        output_tokens=out if valid_usage else None,
+        estimated_cost_usd=None, standard_token_estimate_usd=None,
+        accounting_mode='usage_estimate_no_budget_ledger')
+    if valid_usage and requested in PRICES and isinstance(returned, str) and (
+            returned == requested or returned.startswith(requested + '-')):
+        a, b, c = PRICES[requested]
+        receipt['standard_token_estimate_usd'] = ((inp-cached)*a + cached*b + out*c) / 1e6
+        receipt['estimated_cost_usd'] = ((inp-cached)*a*(1.25 if requested == 'gpt-5.6-luna' else 1)
+                                         + cached*b + out*c) / 1e6
+    else:
+        receipt['accounting_warning'] = 'Usage or model could not be priced safely; no cost estimate is reported.'
+    return receipt
+
 
 class Ledger:
     def __init__(self,path,limit):
