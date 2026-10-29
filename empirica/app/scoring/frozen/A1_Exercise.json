@@ -1,0 +1,13 @@
+{
+  "title": "Candidate–Recruiter Negotiation — Human-Expanded 215-Issue Space",
+  "required_issues": [
+    "Salary",
+    "Personal Budget",
+    "Starting Date"
+  ],
+  "outside_table_policy": "capture_unscored",
+  "role_names": [
+    "Candidate",
+    "Recruiter"
+  ]
+}

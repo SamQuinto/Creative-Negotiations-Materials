@@ -1,92 +1,63 @@
 # Empirica scoring package
 
-**This is the canonical folder for Joshua. Download or update everything here,
-including `app/`. Both command paths stay the same.**
+This is the folder Joshua uses for the study. Please update **everything in `empirica/`, including the whole `app/` folder**. Keep the files together; the two command paths have not changed.
 
-- `score_offer.py`: A1 main scorer, using `gpt-6.1-sol`, low reasoning and the
-  evaluated job-exercise guidance. It defaults to the full 215-issue task.
-- `score_tutorial_offer.py`: the existing tutorial scorer, with its existing
-  scenario and interpretation behavior. It has not been switched to A1.
-- `flexible-215.json` and `fixed-9.json`: the existing participant/scenario JSONs.
-- `app/`: all required prompts, score calculation, scenarios and supporting files.
+## Current scorers
 
-The old A2 main scorer is retained inside `app/backend/score_offer_a2.py`.
-The tutorial and explicitly selected historical issue spaces use that retained
-implementation. Do not move individual files out of this folder.
+Both `score_offer.py` and `score_tutorial_offer.py` now use the latest tested **A1 with low reasoning** by default: `gpt-6.1-sol`, the general-purpose prompt, and the full issue definitions for the selected exercise. A1 no longer adds the older job-specific helper prompt. The tutorial uses the same general prompt with its own exercise files.
+
+The latest **A2** job scorer is included too. It uses `gpt-5.6-luna`, exercise-specific instructions and the tested Python corrections. Select it explicitly with `--architecture A2`. A2's tutorial path remains the separately developed tutorial implementation; it does not use the fitted job corrections. We recommend the default A1 for the tutorial.
+
+`flexible-215.json` and `fixed-9.json` remain the participant-material files. Their numerical values and the nine fixed issues are unchanged. Agreement metadata now consistently allows a score of **0 or higher for each party**.
+
+## Add or update your key
+
+You need Python 3.11 or later, with no extra Python packages.
+
+1. Set `OPENAI_API_KEY` in the server environment, or make a copy of `app/openai_key_example.txt` called **`app/openai_key.txt`**.
+2. If using the file, replace its placeholder with your actual key, save it as plain text, and keep it in `app/`. Put only the key in that file. On Windows, show file-name extensions so it does not accidentally become `openai_key.txt.txt`.
+3. To replace a key later, edit that same file or update the server environment. An environment key takes priority over the file. If the server keeps its own environment open, restart that process after changing its environment key.
+
+Please keep the key private. It is read on the server, never included in a model request's offer text or returned to the participant. OpenAI's [authentication guidance](https://developers.openai.com/api/reference/overview#authentication) explains why keys should stay server-side. Your OpenAI account needs available credit and access to the selected model.
 
 ## Run
 
-Use Python 3.11 or later. No extra Python packages or ROOT edits are needed.
-Check the complete package without a key or paid model calls:
+From this folder:
 
-```text
-python app/check_installation.py
-```
-
-Set `OPENAI_API_KEY` on the server, or copy `app/openai_key_example.txt` to
-`app/openai_key.txt` and replace the placeholder with your own key. The existing
-key location is unchanged. Keep the key private and server-side.
-
-```text
+```sh
 python score_offer.py --role Candidate --issue-space 215 --text "salary 65k budget 13.25 grand start ASAP 4 remote days 60 vacation days waive non-compete" --json
-python score_tutorial_offer.py --text "venue fee 300 September 15 close at 9pm" --json
+python score_tutorial_offer.py --role Candidate --text "Venue fee $350, event date September 12 next year, closing time 8 p.m., venue projector included" --json
 ```
 
-Those two commands make paid model calls. Both can be run by full path from
-another working directory. Existing `--role`, `--text`, `--previous-offer`,
-`--scenario-file`, `--issue-space`, and `--json` arguments remain available.
-No frontend patch is required by this package.
+These make paid calls. You can also run either script by its full path from another working directory; no ROOT edit or sibling folder is needed.
 
-## A1 settings and checks
+Use `--reasoning high` for A1-high or `--architecture A2` for A2. The existing `--role`, `--text`, `--previous-offer`, `--issue-space`, `--scenario-file` and `--json` arguments remain available. Explicit choices supplied with `--choices-json` are scored without an API call. A1 can read an external scenario; the fitted A2 is intended for the included exercises.
 
-A1 sends every active issue description and choice to the advanced model in
-one request. The Python script calculates the researcher-defined scores;
-numerical scoring weights are not sent to the model. Empirica's existing
-response fields and string-list score breakdowns are retained.
+Historical `15`, `200`, `fixed-9` and `fixed-15` command paths remain available. The main command defaults to `215`; the tutorial command defaults to `tutorial`.
 
-The A1 files are under `app/a1/`: the general prompt, optional job guidance,
-response format, model settings, frozen scoring table and Python implementation.
-The default table matches the evaluated A1 configuration. Its 215 issue
-definitions and numerical scores match the public Flexible 215 scenario, but
-role summaries and interpretation notes can differ. An explicit
-`--scenario-file` is supported; changing it can change the model request.
-Treatment role-data URLs and fixed-condition table scoring are unchanged.
+## Check the update without paid calls
 
-```text
+```sh
+python app/check_installation.py
 python score_offer.py --version
+python score_tutorial_offer.py --version
 python score_offer.py --text "salary 50k budget 10k start March 1" --preview
 ```
 
-These checks make no API calls. `--helper off` disables A1's optional job
-guidance; `--reading-notes` supplies a replacement file for another exercise.
-Prompt, model or scenario changes require their own validation.
+`--preview` shows the exact model request without sending it. `--replay path/to/interpretation.json` scores a saved interpretation without a model call. The installation check covers both roles, both exercises, the retained issue spaces, and numerical and date checks. Additional packaging tests are in `empirica-support/`; that folder is not needed to run the study.
 
-Normal A1 study scoring has **no local spending cap or shared billing lock**.
-It reports token usage and estimated API cost, but does not open the old SQLite
-budget ledger. An HTTP error or timeout affects only that request; it cannot
-lock out later offers. There are no automatic retries. Provider-side credit,
-usage and access limits still apply.
+## Where the current files live
 
-**Updating after the billing-lock error:** update the complete `empirica/`
-folder and keep the normal command shown above. No ledger deletion, reset or
-ROOT edit is needed. `NOVA_A1_BUDGET_USD` no longer turns on a budget guard.
-An explicitly supplied `--api-budget` still enables the conservative guard for
-controlled tests, so omit that argument for a live study. Old ledgers are left
-untouched for accounting review.
+- `app/scoring/prompts/`: the exact A1 and A2 instructions.
+- `app/scoring/frozen/`: the evaluated job and tutorial exercise information, role materials, issue definitions, response formats and scoring tables.
+- `app/scoring/A1-1.py` and `A1-2.py`: prepare A1's request, then check and score its interpretation.
+- `app/scoring/A2-1.py` and `A2-2.py`: prepare A2's selected-issue request, then apply its fitted corrections and score the result.
+- `app/scoring/a2_custom_rules.py`: the tested job-specific corrections.
+- `app/empirica_bridge.py`: preserves the study's command-line arguments and response fields.
+- `app/a1/` and `app/backend/`: the shared checks, numerical scoring functions and retained historical implementation.
 
-For an explicitly budget-limited test only, supply `--api-budget` and
-`--api-ledger` together. This optional test mode retains the previous spending
-limit and uncertain-billing lock. Verify cost estimates in
-`app/a1/model_settings.json`; they are estimates, not a billing invoice.
+The prompts, exercise inputs and scoring code are synchronized with the [NOVA replication implementation](https://github.com/SamQuinto/NOVA-Replication-Materials/tree/main/1_Architecture_and_Demonstration). Packaging checks verify that model requests and scored terms match that implementation. They are not a new accuracy study.
 
-The evaluated low-reasoning A1 with guidance passed 973/1,000 development
-inputs. Packaging checks preserve its requests and scoring results on all
-1,000 saved cases; they are not a new live accuracy or holdout test. This is
-not A2's separately fitted 1,000/1,000 result. The current release fingerprint
-and checks are in `runtime_manifest.json`.
+Normal study scoring has **no local spending guard, billing ledger or automatic retries**. An old development ledger or budget environment variable cannot block later offers. OpenAI's own credit, rate and access limits still apply. Do not pass the older `--api-budget` or `--api-ledger` options to this study scorer. The retired `--helper on` and `--reading-notes` options are not used by the current general A1.
 
-The backend response contains both roles' private scores. Keep it server-side
-and continue showing each negotiator only their own score. The US$15 bonus
-cap in the participant JSONs limits money paid, not the raw research score.
-
-[OpenAI structured-output request format](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses)
+The response contains private values for both roles. Keep it server-side and display only the intended negotiator's value. The US$15 payment cap is separate from the raw research score.

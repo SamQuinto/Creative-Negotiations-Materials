@@ -1,6 +1,8 @@
 # Empirica setup, tests, and other scenarios
 
-The [Empirica folder](../empirica/) contains both scorer commands, the Fixed-9 and Flexible-215 scenarios, and the complete engine in `empirica/app/`. That folder alone is sufficient for scoring. This support folder holds further instructions, tests, the optional local preview, and five scenario exports. The direct Fixed-9 and Flexible-215 files match their copies in `scenarios/`; the smoke test checks this. [runtime_manifest.json](runtime_manifest.json) records the engine source revision, package layout, and file hashes. Update the whole `empirica/` folder together, not just the two Python entry points. Archived experimental versions keep their earlier payoffs.
+The current study package is [empirica](../empirica/). Both main and tutorial commands now default to the general-purpose A1 at low reasoning; the current A2 is available with `--architecture A2`. Download that whole folder, including `app`. The older development notes below describe retained historical paths, not the current default. See the [current setup and commands](../empirica/README.md).
+
+The [Empirica folder](../empirica/) contains both scorer commands, the Fixed-9 and Flexible-215 scenarios, and the complete engine in `empirica/app/`. That folder alone is sufficient for scoring. This support folder holds further instructions, tests, the optional preview, and five scenario exports. The direct Fixed-9 and Flexible-215 files match their copies in `scenarios/`; the smoke test checks this. The [current runtime manifest](../empirica/runtime_manifest.json) records the engine revision, source files and checks. Update the whole `empirica/` folder together, not just the two Python entry points. Archived experimental versions keep their earlier numerical values.
 
 ## Download and run
 
@@ -33,7 +35,7 @@ python empirica/score_offer.py --issue-space 215 --version
 python empirica/score_offer.py --scenario-file empirica/flexible-215.json --role Candidate --text "salary 55k budget 9k start January 1" --json
 ```
 
-The main command defaults to Flexible 15. Use `--issue-space fixed-9` for the current control or `215` for NOVA. `fixed-15` and `15` remain available; `200` selects the archived scenario. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all nine rows for Fixed 9, or all 15 for the retained Fixed 15 condition.
+The main command defaults to Flexible 215. Use `--issue-space fixed-9` for the current control or `215` for NOVA. `fixed-15` and `15` remain available; `200` selects the archived scenario. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all nine rows for Fixed 9, or all 15 for the retained Fixed 15 condition.
 
 Natural-language offers use Nano for routine interpretation and independent Luna review when flagged. Payoffs are calculated by the shared deterministic engine. A month-only start such as May is shown as May 1 for confirmation; a supplied day is preserved. Salary and budget accept any non-negative amount, with proportional scoring beyond the displayed reference anchors.
 

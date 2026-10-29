@@ -1,0 +1,13 @@
+{
+  "title": "Community Make & Meet venue practice",
+  "required_issues": [
+    "Venue fee",
+    "Event date",
+    "Closing time"
+  ],
+  "outside_table_policy": "capture_unscored",
+  "role_names": {
+    "Candidate": "Community Event Organizer",
+    "Recruiter": "Venue Manager"
+  }
+}

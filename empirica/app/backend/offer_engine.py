@@ -3018,6 +3018,14 @@ def evaluate_offer(
     if isinstance(scenario, dict) and scenario.get("validation_profile") == "tutorial":
         return _evaluate_tutorial_offer(text, role, extraction, payoff, required_issues, scenario)
 
+    from job_offer_refinements import active as refinements_active, scoring_examples, refine_pairs, retain_unhandled
+    if refinements_active(scenario) and scoring_examples(text):
+        result = evaluate_offer('', role, {'pairs': [], 'offer_intent': 'not_an_offer'}, payoff, required_issues, scenario)
+        result['message'] = 'These look like scoring examples, not one offer. Please enter the choices you want to propose.'
+        result['display_text'] = result['message']
+        result['messages'] = [result['message']]
+        return result
+
     if isinstance(extraction, dict):
         raw_pairs = extraction.get("pairs", [])
         model_ambiguities = extraction.get("ambiguities", [])
@@ -3289,7 +3297,7 @@ def evaluate_offer(
         )
 
     optional_continuous_evidence = {
-        "Vacation Days": numbered_issue(r"vacation|vacay|annual\s+leave|holiday|(?:paid\s+)?days?\s+off|time\s+off"),
+        "Vacation Days": numbered_issue(r"vacations?|vacays?|vaccations?|annual\s+leave|holidays?|(?:paid\s+)?days?\s+off|time\s+off"),
         "Remote Working Days": numbered_issue(r"remote(?:ly|[-\s]+working|\s+work)?|wfh|home[-\s]+working|work(?:ing)?[-\s]from[-\s]home"),
         "Probation Length": (
             numbered_issue(r"probation(?:ary)?|trial(?:\s+period)?")
@@ -4056,6 +4064,12 @@ def evaluate_offer(
             findings.append(_finding(CLARIFICATION_NEEDED, 'performance_bonus_scope',
                 ' '.join(questions), issue='Team Sales Bonus', source_text=phrase.strip()))
 
+    combined_pairs, retained_refinements = refine_pairs(text, role, combined_pairs, scenario)
+    captured_novel_terms.extend(retained_refinements)
+    from job_offer_refinements import training_other_staff_only
+    if refinements_active(scenario) and training_other_staff_only(text):
+        findings = [f for f in findings if not (f.get('code') == 'model_ambiguity'
+            and (f.get('issue') == 'Professional Training Program' or f.get('issues') == ['Professional Training Program']))]
     last_by_issue: OrderedDict[str, dict[str, Any]] = OrderedDict()
     current_issues=_scenario_issue_map(scenario)
     if ('Company Car' in current_issues and current_issues['Company Car'].get('bare_request_default')
@@ -4350,6 +4364,7 @@ def evaluate_offer(
     if interpretation_notes:
         result['interpretation_notes'] = interpretation_notes
         result['display_text'] += '\n\n' + '\n'.join(interpretation_notes)
+    retain_unhandled(text, result, scenario)
     return result
 
 

@@ -15,7 +15,7 @@ from offer_engine import score_pair
 
 
 def main():
-    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json', 'app', 'README.md'}
+    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json', 'app', 'README.md', 'runtime_manifest.json'}
     published_files = {p.name for p in (ROOT / 'empirica').iterdir() if p.name != '__pycache__'}
     assert published_files == expected_files, published_files
     assert (ROOT / 'empirica/flexible-215.json').read_bytes() == (ROOT / 'empirica-support/scenarios/flexible-215.json').read_bytes(), '215 scenario copies differ'
@@ -79,14 +79,8 @@ def main():
             capture_output=True,text=True,encoding='utf-8',timeout=60)
         assert completed.returncode==0,completed.stderr or completed.stdout
         print(completed.stdout.strip())
-        flat=Path(folder)/'legacy layout';flat.mkdir()
-        for relative in ('app/backend','app/config'):
-            shutil.copytree(ROOT/'empirica'/relative,flat/relative,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
-        (flat/'empirica').mkdir()
-        for script in ('score_offer.py','score_tutorial_offer.py'):
-            shutil.copy2(ROOT/'empirica'/script,flat/'empirica'/script)
-        for script,wanted in (('score_offer.py',15),('score_tutorial_offer.py',9)):
-            completed=subprocess.run([sys.executable,str(flat/'empirica'/script),'--version'],cwd=folder,env=env,
+        for script,wanted in (('score_offer.py',215),('score_tutorial_offer.py',9)):
+            completed=subprocess.run([sys.executable,str(handoff/script),'--version'],cwd=folder,env=env,
                 capture_output=True,text=True,encoding='utf-8',timeout=20)
             assert completed.returncode==0,completed.stderr or completed.stdout
             assert json.loads(completed.stdout)['issue_count']==wanted,completed.stdout
@@ -96,7 +90,7 @@ def main():
     spec.loader.exec_module(preview)
     preview.load()
     assert set(preview.SCENARIOS) == {'fixed-15', 'flexible-15', 'flexible-215', 'tutorial'}
-    print(f'PASS: {count} additional CLI checks, all four exports, both roles, invalid dates, the old and new layouts, identical 215 exports, and preview imports. No AI calls.')
+    print(f'PASS: {count} additional CLI checks, all four exports, both roles, invalid dates, the standalone package, identical 215 exports, and preview imports. No AI calls.')
 
 
 if __name__ == '__main__':

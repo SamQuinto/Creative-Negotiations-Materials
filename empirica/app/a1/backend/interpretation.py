@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import math
 import unicodedata
+import re
 from scenario import active_scoring_scenario
 DEFAULT_MODEL = None
 DEFAULT_REASONING = None
@@ -94,7 +95,12 @@ def _plain(text):
     return ' '.join(unicodedata.normalize('NFKC', str(text)).split()).casefold()
 
 def _quoted(quote, text):
-    return bool(_plain(quote)) and _plain(quote) in _plain(text)
+    if bool(_plain(quote)) and _plain(quote) in _plain(text):return True
+    # Formatting differences are not differences in meaning. Require the same
+    # contiguous words and numeric tokens; never fuzzy-match a different word.
+    tokens=lambda s:re.findall(r'\d+(?:[.,]\d+)*|[^\W\d_]+',_plain(s),re.UNICODE)
+    q=tokens(quote);t=tokens(text)
+    return bool(q) and any(t[i:i+len(q)]==q for i in range(len(t)-len(q)+1))
 
 def finalize(text, role, interpretation, scenario, previous_offer=''):
     """Generic schema/evidence/domain checks only; no V1 language filters."""

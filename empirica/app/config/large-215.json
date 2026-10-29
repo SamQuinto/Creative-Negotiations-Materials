@@ -12924,9 +12924,9 @@
   "agreement_rules": {
     "require_nonnegative_each_party": true,
     "threshold": 0,
-    "require_positive_each_party": true,
-    "allow_zero": false,
-    "comparison": ">"
+    "require_positive_each_party": false,
+    "allow_zero": true,
+    "comparison": ">="
   },
   "scenario_variant": {
     "id": "large_215",

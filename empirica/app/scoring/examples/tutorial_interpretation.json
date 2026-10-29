@@ -1,0 +1,15 @@
+{
+  "pairs": [
+    {"issue": "Venue fee", "option": "350", "source_text": "Venue fee $350", "from_previous_offer": false},
+    {"issue": "Event date", "option": "2027-09-12", "source_text": "event date September 12 next year", "from_previous_offer": false},
+    {"issue": "Closing time", "option": "8:00 p.m.", "source_text": "closing time 8 p.m.", "from_previous_offer": false},
+    {"issue": "Projector", "option": "Venue projector included", "source_text": "venue projector included", "from_previous_offer": false}
+  ],
+  "ambiguities": [],
+  "ambiguity_details": [],
+  "novel_terms": [],
+  "unsupported_terms": [],
+  "offer_intent": "offer",
+  "explicit_reference": "",
+  "interpretation_notes": []
+}

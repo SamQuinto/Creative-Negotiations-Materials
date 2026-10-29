@@ -1,0 +1,50 @@
+{
+  "pairs": [
+    {
+      "source_text": "in the office for 1 day",
+      "issue": "Remote Working Days",
+      "option": "4",
+      "from_previous_offer": false
+    },
+    {
+      "source_text": "6o vacations days",
+      "issue": "Vacation Days",
+      "option": "60",
+      "from_previous_offer": false
+    },
+    {
+      "source_text": "salary of 65k",
+      "issue": "Salary",
+      "option": "65000",
+      "from_previous_offer": false
+    },
+    {
+      "source_text": "client budget of 13.25 grand",
+      "issue": "Personal Budget",
+      "option": "13250",
+      "from_previous_offer": false
+    },
+    {
+      "source_text": "start date as early as possible pls",
+      "issue": "Starting Date",
+      "option": "2026-01-01",
+      "from_previous_offer": false
+    },
+    {
+      "source_text": "waive my non copete",
+      "issue": "Non-compete Clause",
+      "option": "Waive",
+      "from_previous_offer": false
+    }
+  ],
+  "ambiguities": [],
+  "novel_terms": [],
+  "unsupported_terms": [],
+  "offer_intent": "offer",
+  "explicit_reference": "",
+  "interpretation_notes": [
+    "One office day is interpreted as a weekly arrangement, leaving four remote working days.",
+    "Read '6o' as a typo for 60 vacation days per year.",
+    "Applied the supplied ASAP convention to the requested earliest possible start date."
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "rule": "Units and shorthand",
+    "explanation": "Salary and work-expense budget are separate annual dollar amounts; read k, grand, ordinary typos and attached units in context. Do not silently convert a stated currency."
+  },
+  {
+    "rule": "Reference values versus hard limits",
+    "explanation": "Salary/budget anchors are not proposal limits; permitted non-negative values extrapolate. Vacation is annual, default usual 30; remote working is weekly across five workdays, default usual three. Annual vacation cannot exceed 365 and remote work cannot exceed five workdays. Do not invent a monthly conversion."
+  },
+  {
+    "rule": "Relative allowances",
+    "explanation": "Add clearly requested extra vacation to the usual 30; respect explicit periods. Ask for volunteering in days rather than assuming an afternoon is half a day."
+  },
+  {
+    "rule": "Dates",
+    "explanation": "Ignore the supplied year; use month/day internally in 2026. Month alone/early means day 1; mid means day 15; end means the last day. ASAP means January 1. Ask about conflicting dates unless one clearly replaces the other. A start after September triggers the fixed failure rule; other benefits cannot make that agreement feasible."
+  },
+  {
+    "rule": "Exact money and alternatives",
+    "explanation": "A minimum, range or possible cap is not one guaranteed payment. Do not choose a bound without the agreed convention. Keep alternatives separate rather than combining their benefits."
+  },
+  {
+    "rule": "Benefit defaults",
+    "explanation": "Bare company car means dedicated car; membership means company-paid sponsorship; receiving a mentor means mentoring participation; a training plan counts as training participation. Health insurance without a contribution does not establish the employer premium share; explicit free insurance means 100%."
+  },
+  {
+    "rule": "Who does the duty",
+    "explanation": "Ordinary job benefits describe the candidate’s package, even in recruiter-proposed wording. For explicit duties, I/we means the proposer and you the counterpart. Do not reverse who attends, coaches, organises or pays."
+  },
+  {
+    "rule": "Changes and contingencies",
+    "explanation": "An explicit later salary/budget total after probation replaces its initial total; retain probation separately. Do not also award a duplicate pay-rise benefit. A review, promotion, conditional bonus and guaranteed pay increase are distinct promises."
+  },
+  {
+    "rule": "Prior offers",
+    "explanation": "Carry forward earlier choices only when the current text actually refers to them, and only to the extent of that reference. A new salary alone does not inherit an old budget/date."
+  },
+  {
+    "rule": "Reasonable coverage",
+    "explanation": "Recognise the issue, not every incidental qualification. Mentor duration and bank-holiday inclusion need not be restated as separate features. Tentative but meaningful training or sponsorship must be acknowledged. An unfinished heading or general background may be ignored."
+  },
+  {
+    "rule": "Social-media duties",
+    "explanation": "Ordinary willingness to help with company posts can mean the usual commitment; a concrete post count alone does not establish a fraction of the usual workload."
+  },
+  {
+    "rule": "New or unsupported ideas",
+    "explanation": "Use a genuinely matching issue or acknowledge the idea without points; do not force a nearby but different benefit. Permanent contracts, unusual timing and staged versions of existing issues do not automatically create new issue categories."
+  },
+  {
+    "rule": "Scope before matching",
+    "explanation": "Protected time for learning is not automatically company-funded participation in an external training program. A standalone Participation with no named activity does not establish which activity is accepted. Ask what that word refers to."
+  },
+  {
+    "rule": "Incomplete headings",
+    "explanation": "Career advancement or Recruitment fair position as an unfinished heading does not select a review arrangement or commitment. Do not select a benefit just because its topic is named."
+  },
+  {
+    "rule": "Exact evidence",
+    "explanation": "Copy a short continuous piece of the actual current offer for each pair. Do not correct its spelling or punctuation inside the quote; put the normalized choice in option. Prior offer text is context only unless the current offer explicitly refers to it."
+  }
+]

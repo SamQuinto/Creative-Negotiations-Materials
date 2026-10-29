@@ -1,8 +1,9 @@
 # Empirica integration
 
-**27 October 2026:** the canonical `empirica/` folder now runs A1 for the main
-215-issue negotiation. Both command paths remain `empirica/score_offer.py` and
-`empirica/score_tutorial_offer.py`. The tutorial retains its existing scorer.
+**29 October 2026:** the canonical `empirica/` folder runs the latest general-purpose
+A1 at low reasoning for both the main 215-issue negotiation and the tutorial.
+Both command paths remain `empirica/score_offer.py` and
+`empirica/score_tutorial_offer.py`. The current fitted A2 is available with `--architecture A2`.
 Update the whole folder, including `app/`; see [current setup](empirica/README.md).
 
 ## Load the assigned role only

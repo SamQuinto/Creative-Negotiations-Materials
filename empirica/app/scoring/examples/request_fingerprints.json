@@ -1,0 +1,53 @@
+{
+  "source_commit": "6dd45114ba8075ed1bd801c839fe45e6ff544221",
+  "configurations": [
+    {
+      "exercise": "job",
+      "architecture": "A1",
+      "reasoning": "low",
+      "request_sha256": "7155764b963886a600fa56dff82d9d91311023ac158f3c9c507e4d23c6ddc5de",
+      "request_identical": true,
+      "scored_terms_identical": true
+    },
+    {
+      "exercise": "job",
+      "architecture": "A1",
+      "reasoning": "high",
+      "request_sha256": "ab7e55e28a093187e849cefb29feeb88f89bbc1d7a4766fa74f3a60944b3f35e",
+      "request_identical": true,
+      "scored_terms_identical": true
+    },
+    {
+      "exercise": "job",
+      "architecture": "A2",
+      "reasoning": "low",
+      "request_sha256": "c3f4cc4460b8b2883dfe6eb67c8ce9f9f25a4872bb19d27bb1ff2da0356c4907",
+      "request_identical": true,
+      "scored_terms_identical": true
+    },
+    {
+      "exercise": "tutorial",
+      "architecture": "A1",
+      "reasoning": "low",
+      "request_sha256": "a0e79aeada8cdd6c91ac42787a619e28bb5e451e0337bccab8692a00091c6706",
+      "request_identical": true,
+      "scored_terms_identical": true
+    },
+    {
+      "exercise": "tutorial",
+      "architecture": "A1",
+      "reasoning": "high",
+      "request_sha256": "b4d43768225f0ae5ce77c2e56cf507476d87c735bda0d8b20dd478d029f8cb69",
+      "request_identical": true,
+      "scored_terms_identical": true
+    },
+    {
+      "exercise": "tutorial",
+      "architecture": "A2",
+      "reasoning": "low",
+      "request_sha256": "0f4dc0ba078c7b49c2f8a6290980528deb85066283e92e3cb32e8aea2b7b4da4",
+      "request_identical": true,
+      "scored_terms_identical": true
+    }
+  ]
+}

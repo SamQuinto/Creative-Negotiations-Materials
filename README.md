@@ -37,8 +37,8 @@ The [Prolific survey preview](https://raw.githack.com/SamQuinto/Creative-Negotia
 
 ### Empirica scorer and scenarios
 
-**Canonical scorer package:** [empirica/](empirica/) contains the A1 main scorer,
-the existing tutorial scorer, both scenario JSONs and the complete `app/` folder.
+**Canonical scorer package:** [empirica/](empirica/) contains the current A1 main
+and tutorial scorers, the fitted A2 option, both scenario JSONs and the complete `app/` folder.
 Keep the same paths: `empirica/score_offer.py` and
 `empirica/score_tutorial_offer.py`. Download or update the whole folder together.
 [Setup](empirica/README.md). No separate A1 folder is needed.
@@ -67,7 +67,7 @@ curve. Social-media commitments can now receive proportional points. Both
 issues remain zero-sum; the other 213 definitions and the fixed/frozen scenario
 payoffs are unchanged. The shared scorer also includes the reviewed human-pilot
 wording repairs and later-total scoring convention. [What changed and how to
-update the package](empirica/README.md#21-october-scorer-update).
+update the package](empirica/README.md).
 
 These complete scoring files include both roles' payoffs and the issue catalogue. They are publicly inspectable, not participant-facing role files; load them server-side and show only the assigned role's material. The main prototype repository remains private.
 

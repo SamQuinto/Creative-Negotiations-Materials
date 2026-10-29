@@ -1,0 +1,186 @@
+[
+  {
+    "name": "Venue fee",
+    "definition": "The total price paid to rent the venue.",
+    "kind": "continuous",
+    "value_type": "currency",
+    "unit": "USD",
+    "aliases": [
+      "fee",
+      "venue cost",
+      "rental cost",
+      "price",
+      "cost of the venue",
+      "hall price",
+      "hall hire",
+      "booking cost",
+      "space rental"
+    ],
+    "required": true,
+    "reference_values": [
+      100,
+      800
+    ],
+    "permitted_values": {
+      "min": 100,
+      "max": 800
+    },
+    "reference_values_are_not_limits": false
+  },
+  {
+    "name": "Event date",
+    "definition": "The calendar date when the community event takes place.",
+    "kind": "continuous",
+    "value_type": "date",
+    "unit": "date",
+    "aliases": [
+      "date",
+      "day",
+      "event day",
+      "booking date",
+      "start date"
+    ],
+    "required": true,
+    "reference_values": [
+      "2027-08-01",
+      "2027-09-30"
+    ],
+    "permitted_values": {
+      "min": "2027-08-01",
+      "max": "2027-09-30"
+    },
+    "reference_values_are_not_limits": false,
+    "default_year": 2027
+  },
+  {
+    "name": "Closing time",
+    "definition": "The time when the event ends and guests leave.",
+    "kind": "discrete",
+    "aliases": [
+      "close",
+      "closing",
+      "end time",
+      "finish time",
+      "wrap up"
+    ],
+    "required": true,
+    "choices": [
+      "5:00 p.m.",
+      "6:00 p.m.",
+      "7:00 p.m.",
+      "8:00 p.m.",
+      "9:00 p.m.",
+      "10:00 p.m.",
+      "11:00 p.m."
+    ]
+  },
+  {
+    "name": "Projector",
+    "definition": "Who supplies the projector used for demonstrations.",
+    "kind": "discrete",
+    "aliases": [
+      "projector",
+      "screen",
+      "presentation equipment",
+      "AV equipment",
+      "display screen"
+    ],
+    "required": false,
+    "choices": [
+      "Venue projector included",
+      "Organizer brings a projector"
+    ]
+  },
+  {
+    "name": "Cleanup",
+    "definition": "Who cleans the room after the event.",
+    "kind": "discrete",
+    "aliases": [
+      "cleanup",
+      "cleaning",
+      "tidy up",
+      "clear the room",
+      "leave the room clean"
+    ],
+    "required": false,
+    "choices": [
+      "Organizer handles cleanup",
+      "Venue handles cleanup"
+    ]
+  },
+  {
+    "name": "Cancellation notice",
+    "definition": "Whether the organizer may cancel without a charge by giving notice.",
+    "kind": "discrete",
+    "aliases": [
+      "cancellation",
+      "cancel",
+      "refund",
+      "notice"
+    ],
+    "required": false,
+    "choices": [
+      "Free cancellation allowed with notice",
+      "Booking is non-refundable"
+    ]
+  },
+  {
+    "name": "Setup access",
+    "definition": "Whether the organizer may enter before the event to prepare the room.",
+    "kind": "discrete",
+    "aliases": [
+      "setup",
+      "set up",
+      "early access",
+      "access before",
+      "load in",
+      "arrive early",
+      "get in early"
+    ],
+    "required": false,
+    "choices": [
+      "Early setup access included",
+      "No early setup access"
+    ]
+  },
+  {
+    "name": "Door staffing",
+    "definition": "Who provides people to welcome guests and manage the entrance.",
+    "kind": "discrete",
+    "aliases": [
+      "door staff",
+      "entrance staff",
+      "check-in staff",
+      "registration staff",
+      "greeters",
+      "door volunteers",
+      "event security",
+      "security staff"
+    ],
+    "required": false,
+    "choices": [
+      "Venue provides door staff",
+      "Organizer provides door staff"
+    ]
+  },
+  {
+    "name": "Food and refreshments",
+    "definition": "Who provides food or refreshments for the event.",
+    "kind": "discrete",
+    "aliases": [
+      "food",
+      "free food",
+      "refreshments",
+      "snacks",
+      "drinks",
+      "catering",
+      "food service"
+    ],
+    "required": false,
+    "choices": [
+      "Venue provides refreshments at no extra charge",
+      "Organizer provides refreshments",
+      "No refreshments included"
+    ]
+  }
+]

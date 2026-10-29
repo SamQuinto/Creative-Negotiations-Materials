@@ -1,0 +1,13 @@
+{
+  "pairs": [
+    {"issue": "Salary", "option": "55000", "source_text": "Salary $55,000", "from_previous_offer": false},
+    {"issue": "Personal Budget", "option": "10000", "source_text": "personal work-expense budget $10,000", "from_previous_offer": false},
+    {"issue": "Starting Date", "option": "2026-05-01", "source_text": "starting date May 1", "from_previous_offer": false}
+  ],
+  "ambiguities": [],
+  "novel_terms": [],
+  "unsupported_terms": [],
+  "offer_intent": "offer",
+  "explicit_reference": "",
+  "interpretation_notes": []
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run one tutorial offer through the same scorer used by the Creative Negotiations app."""
+"""Score a tutorial offer with the current general-purpose A1 by default."""
 
 from __future__ import annotations
 
