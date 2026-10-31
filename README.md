@@ -16,9 +16,9 @@ Current materials for the Candidate–Recruiter negotiation project. This public
 
 Load only the role JSON and survey YAML matching the participant's assigned role.
 
-The `_200` role filenames preserve the earlier feedback pre-test wording and payoffs. They are historical materials, not the current classroom or Prolific experiment. Use the current Fixed-9 or Flexible-215 scenario links below for those setups. Historical participant materials are not rewritten when the experiment changes.
+The `_200` role filenames preserve the earlier feedback pre-test wording and payoffs. They are historical materials, not the current classroom or Prolific experiment. Use the current Fixed-9 or Flexible-216 scenario links below for those setups. Historical participant materials are not rewritten when the experiment changes.
 
-For the current fixed/control condition, use the separate Fixed-9 scenario below. It keeps the same role story as Flexible 215, with numerical explanations and tips matched to the choices in its nine-row own-payoff table. Fixed 15 remains available separately for earlier designs. The main prototype is in the [prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
+For the current fixed/control condition, use the separate Fixed-9 scenario below. It keeps the same role story as Flexible 216, with numerical explanations and tips matched to the choices in its nine-row own-payoff table. Fixed 15 remains available separately for earlier designs. The main prototype is in the [prototype repository](https://github.com/SamQuinto/Creative-Negotiations).
 
 ### Post-negotiation surveys
 
@@ -52,12 +52,15 @@ Keep the same paths: `empirica/score_offer.py` and
 | Fixed 9 — current control | [fixed-9.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/fixed-9.json) |
 | Fixed 15 | [fixed-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/fixed-15.json) |
 | Flexible 15 | [flexible-15.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/flexible-15.json) |
-| Flexible 215 | [flexible-215.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json) |
+| Flexible 216 — current NOVA | [flexible-216.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-216.json) |
+| Flexible 216 — classroom, no monetary-payment notice | [flexible-216-classroom.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-216-classroom.json) |
 | Tutorial | [tutorial.json](https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica-support/scenarios/tutorial.json) |
 
-Use **Fixed 9 for control** and **Flexible 215 for NOVA** in the treatment's `roleDataURL`. Each file has its own role narratives. Both have a nine-row `determinatescoretable`, at most five choices per issue, and table scores rounded to two decimals. Flexible 215 still scores its full catalogue and requires only salary, budget and starting date in natural-language offers. Fixed 9 retains that catalogue in the file but activates only its nine listed issues. Fixed 15 is separate and unchanged.
+Use **Fixed 9 for the fixed-issue condition** and **Flexible 216 for NOVA** in the treatment's `roleDataURL`. Each file has its own role narratives. Both have a nine-row `determinatescoretable`, at most five choices per issue, and table scores rounded to two decimals. Flexible 216 scores its full table and requires only salary, budget and starting date in natural-language offers. Fixed 9 activates only its nine listed issues. Fixed 15 is separate and unchanged.
 
-The current nine-issue agenda includes the **non-compete clause instead of recruitment-fair participation**. Waiving the clause gives Candidate +1 and Recruiter −1; keeping it gives both 0. Training remains in Fixed 9. Recruitment-fair participation remains available in Flexible 215, alongside the non-compete clause.
+Flexible 216 adds **Workplace Coffee** after the October 27, 2026 pilot. Free coffee is worth **+1 to the Candidate and 0 to the Recruiter**; no free coffee is worth 0 to both. The previous 215 issue definitions are unchanged, and the original 215-issue files remain available for historical replication. The classroom version has the same scores but omits the Prolific payment notice and disables monetary-payment metadata.
+
+The current nine-issue agenda includes the **non-compete clause instead of recruitment-fair participation**. Waiving the clause gives Candidate +1 and Recruiter −1; keeping it gives both 0. Training remains in Fixed 9. Recruitment-fair participation remains available in Flexible 216, alongside the non-compete clause.
 
 Both current conditions use mirrored priorities: remote work matters more to the Candidate (−2 to +2), while probation matters more to the Recruiter (−2 to +2). Counterpart weights stay at ±1. This allows a longer probation period to be traded for more remote work so both parties gain. The role explanations, table values and continuous scoring rules reflect these weights. Earlier 15-issue configurations and the tutorial are unchanged.
 

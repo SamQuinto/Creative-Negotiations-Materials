@@ -8,7 +8,8 @@ import common1225 as c
 sys.path.insert(0,str(c.W.parent/'a1/backend'))
 from scorer import Scorer
 import interpretation
-SCORER=Scorer(c.W/'frozen/Scoring_Table.json',helper=False)
+from runtime_setup import a1_setup
+SCORER=a1_setup('job')
 
 def finalize(case,extraction):
     value=copy.deepcopy(extraction);text=case['offer'];prior=case['previous_offer']

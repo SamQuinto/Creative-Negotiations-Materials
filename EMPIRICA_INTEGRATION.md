@@ -10,7 +10,7 @@ Update the whole folder, including `app/`; see [current setup](empirica/README.m
 
 After assigning Candidate or Recruiter, load the matching role JSON. Each file keeps the existing `roles` and `tips` structure but contains only one role. Render `roles[0].narrative`; do not load the other party's private material into the participant interface.
 
-The `_200` single-role files preserve the historical feedback pre-test. Current classroom and Prolific setups should use the Fixed-9 or Flexible-215 scenario matching their issue condition, and render only the assigned role. Both current scenarios include the mirrored priority update. Treatment nudges and survey questions are separate and unchanged.
+The `_200` single-role files preserve the historical feedback pre-test. Current classroom and Prolific setups should use the Fixed-9 or Flexible-216 scenario matching their issue condition, and render only the assigned role. Both current scenarios include the mirrored priority update. Treatment nudges and survey questions are separate and unchanged.
 
 ## Render role formatting safely
 
@@ -71,10 +71,10 @@ roleDataURL: https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-M
 For NOVA, use the natural-language scoring mode and this `roleDataURL`:
 
 ```text
-https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-215.json
+https://raw.githubusercontent.com/SamQuinto/Creative-Negotiations-Materials/main/empirica/flexible-216.json
 ```
 
-Fixed 9 keeps the same role story as Flexible 215. Its numerical explanations
+Fixed 9 keeps the same role story as Flexible 216. Its numerical explanations
 and tips describe the available table choices rather than open amounts or
 intermediate values. A short closing transition leads to its nine mandatory
 issues and nine payoff-table rows for each role.
@@ -82,7 +82,7 @@ Other issue definitions stay stored in `issues`, but
 `active_issues` prevents them from entering a scored fixed offer. The updated
 scorer applies that restriction; keep the whole `empirica/` folder together.
 
-Flexible 215 keeps the full catalogue and flexible narratives. Only salary,
+Flexible 216 keeps the full scoring table and flexible narratives. Only salary,
 personal budget and starting date are required for natural-language offers.
 Its separate `determinatescoretable` also contains nine rows, as requested for
 table-mode compatibility. This display table does not restrict flexible
@@ -90,9 +90,9 @@ scoring and is not a list of the only issues that can be negotiated.
 
 Both nine-row tables use at most five representative choices per issue, with
 table scores rounded to two decimal places. The continuous rules remain full
-precision; salary and budget in Flexible 215 still have no upper proposal bound.
+precision; salary and budget in Flexible 216 still have no upper proposal bound.
 The fifth Flexible-215 tip is removed; agreement still requires both parties
-to accept an offer worth more than zero to each. Fixed 15 is
+to accept an offer worth zero or more to each. Fixed 15 is
 retained separately and unchanged. No external interface changes are included
 in this update. Start a fresh test game to load the selected scenario.
 

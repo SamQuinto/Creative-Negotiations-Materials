@@ -6,7 +6,7 @@ import argparse,hashlib,importlib.util,json,os,sys
 APP=Path(__file__).resolve().parent
 PACKAGE=APP.parent
 ENGINE=APP/'scoring'
-RELEASE='NOVA-empirica-2026-10-29'
+RELEASE='NOVA-empirica-2026-10-31-216'
 sys.path.insert(0,str(ENGINE))
 import common1225 as calls
 import nova_cli
@@ -63,8 +63,8 @@ def main(default_space=None):
     if hasattr(sys.stdout,'reconfigure'):sys.stdout.reconfigure(encoding='utf-8')
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--role',choices=['Candidate','Recruiter'],default='Candidate')
-    parser.add_argument('--issue-space',choices=['215','tutorial','15','200','fixed-9','fixed-15'],
-                        default=default_space or os.environ.get('SCORER_DEFAULT_SPACE','215'))
+    parser.add_argument('--issue-space',choices=['216','215','tutorial','15','200','fixed-9','fixed-15'],
+                        default=default_space or os.environ.get('SCORER_DEFAULT_SPACE','216'))
     parser.add_argument('--architecture',choices=['A1','A2'],default='A1')
     parser.add_argument('--reasoning',choices=['low','medium','high','xhigh','max'],default='low')
     inputs=parser.add_mutually_exclusive_group()
@@ -81,6 +81,8 @@ def main(default_space=None):
         if args.issue_space in ['15','200','fixed-9','fixed-15']:
             return historical(default_space)
         exercise='tutorial' if args.issue_space=='tutorial' else 'job'
+        # Select the current table without altering the evaluated 215-issue snapshot.
+        os.environ['NOVA_JOB_SCORING_RELEASE']='216' if args.issue_space=='216' else '215'
         if args.architecture=='A2' and args.reasoning!='low':raise ValueError('The tested A2 uses low reasoning.')
         if args.helper=='on' or args.reading_notes:
             raise ValueError('Current A1 uses the general prompt without an addendum. Remove --helper on or --reading-notes.')

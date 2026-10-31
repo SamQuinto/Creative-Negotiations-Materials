@@ -5,7 +5,8 @@ import common1225 as c
 ROOT = Path(__file__).resolve().parent
 
 def data_dir(exercise):
-    return ROOT / 'frozen/tutorial' if exercise == 'tutorial' else ROOT / 'frozen'
+    if exercise == 'tutorial': return ROOT / 'frozen/tutorial'
+    return ROOT / 'current' if os.environ.get('NOVA_JOB_SCORING_RELEASE') == '216' else ROOT / 'frozen'
 
 def a1_setup(exercise):
     sys.path.insert(0, str(ROOT.parent / 'a1/backend'))

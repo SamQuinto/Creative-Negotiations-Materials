@@ -278,6 +278,10 @@ def customize(case,value,table,engine):
     # 7. Retain meaningful new requests which a short model answer may omit.
     # Each pattern names an actual proposed topic, not all words in the offer.
     retained_patterns=[r'concrete ways to build relationships',r'(?:dont|don.t|do not) want to promote(?: social media)?',r'\b(?:time (?:off )?in lieu|employer.s? rights|study leave|free coffee|supervision|progression review)\b',r'\b(?:ideal position would be in|prefer.*position in)\b',r'\b(?:training and growth as|training period|work day schedule|9[-–]5 job)\b',r'bonus for passing prob\w*tion',r'\b1 month probabtion\b',r'\bmay be renewed based on performance\b',r'\bmain\w*nance program\w*\b',r'^\s*Participation\s*$']
+    # The post-pilot table can now price coffee. Do not also report a scored
+    # coffee clause as unpriced; retain the old behavior for the frozen table.
+    if any(p.get('issue')=='Workplace Coffee' for p in pairs):
+        retained_patterns=[p.replace('|free coffee','') for p in retained_patterns]
     for clause in re.split(r'[;\n]|(?<!\d)\.(?!\d)',text):
         if clause.strip() and any(re.search(p,clause,re.I) for p in retained_patterns):
             value.setdefault('novel_terms',[]).append(clause.strip())

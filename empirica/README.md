@@ -8,7 +8,9 @@ Both `score_offer.py` and `score_tutorial_offer.py` now use the latest tested **
 
 The latest **A2** job scorer is included too. It uses `gpt-5.6-luna`, exercise-specific instructions and the tested Python corrections. Select it explicitly with `--architecture A2`. A2's tutorial path remains the separately developed tutorial implementation; it does not use the fitted job corrections. We recommend the default A1 for the tutorial.
 
-`flexible-215.json` and `fixed-9.json` remain the participant-material files. Their numerical values and the nine fixed issues are unchanged. Agreement metadata now consistently allows a score of **0 or higher for each party**.
+Use [`flexible-216.json`](flexible-216.json) for NOVA and `fixed-9.json` for the fixed condition. The current table adds **Workplace Coffee**: free coffee is worth **+1 to the Candidate and 0 to the Recruiter**; no free coffee is worth 0 to both. All previous 215 issues and the nine fixed issues are unchanged. Agreement metadata allows a score of **0 or higher for each party**.
+
+For classroom use, [`flexible-216-classroom.json`](flexible-216-classroom.json) has the same scoring table but removes the Prolific payment notice and disables monetary-payment metadata. The classroom survey is [`class_post_negotiation_survey.yaml`](../class_post_negotiation_survey.yaml).
 
 ## Add or update your key
 
@@ -25,7 +27,7 @@ Please keep the key private. It is read on the server, never included in a model
 From this folder:
 
 ```sh
-python score_offer.py --role Candidate --issue-space 215 --text "salary 65k budget 13.25 grand start ASAP 4 remote days 60 vacation days waive non-compete" --json
+python score_offer.py --role Candidate --issue-space 216 --text "salary 65k budget 13.25 grand start ASAP 4 remote days 60 vacation days waive non-compete" --json
 python score_tutorial_offer.py --role Candidate --text "Venue fee $350, event date September 12 next year, closing time 8 p.m., venue projector included" --json
 ```
 
@@ -33,7 +35,7 @@ These make paid calls. You can also run either script by its full path from anot
 
 Use `--reasoning high` for A1-high or `--architecture A2` for A2. The existing `--role`, `--text`, `--previous-offer`, `--issue-space`, `--scenario-file` and `--json` arguments remain available. Explicit choices supplied with `--choices-json` are scored without an API call. A1 can read an external scenario; the fitted A2 is intended for the included exercises.
 
-Historical `15`, `200`, `fixed-9` and `fixed-15` command paths remain available. The main command defaults to `215`; the tutorial command defaults to `tutorial`.
+Historical `15`, `200`, `215`, `fixed-9` and `fixed-15` command paths remain available. The main command defaults to `216`; the tutorial command defaults to `tutorial`. Explicit `--issue-space 215` uses the original, frozen validation table. Both A1 and A2 use the current table when `216` is selected.
 
 ## Check the update without paid calls
 
@@ -50,6 +52,7 @@ python score_offer.py --text "salary 50k budget 10k start March 1" --preview
 
 - `app/scoring/prompts/`: the exact A1 and A2 instructions.
 - `app/scoring/frozen/`: the evaluated job and tutorial exercise information, role materials, issue definitions, response formats and scoring tables.
+- `app/scoring/current/`: the current 216-issue job table and corresponding request inputs. The frozen validation files remain unchanged.
 - `app/scoring/A1-1.py` and `A1-2.py`: prepare A1's request, then check and score its interpretation.
 - `app/scoring/A2-1.py` and `A2-2.py`: prepare A2's selected-issue request, then apply its fitted corrections and score the result.
 - `app/scoring/a2_custom_rules.py`: the tested job-specific corrections.

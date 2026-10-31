@@ -16,7 +16,8 @@ PACKAGE = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    for name in ('score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json'):
+    for name in ('score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json',
+                 'flexible-216.json', 'flexible-216-classroom.json'):
         assert (PACKAGE / name).is_file(), f'Missing package file: {name}'
     for source in (PACKAGE / 'app').rglob('*.py'):
         ast.parse(source.read_text(encoding='utf-8'), filename=str(source))
@@ -32,6 +33,7 @@ def main() -> None:
                 'Probation Length': 3, 'Contract Length': 3, 'Vacation Days': 30,
                 'Remote Working Days': 3, 'Venue fee': 300, 'Event date': '2027-09-15'}
     spaces = {'15': ('small-15.json', 15), '215': ('large-215.json', 215),
+              '216': ('large-216.json', 216),
               'fixed-9': ('fixed-9.json', 9),
               'fixed-15': ('fixed-15.json', 15), 'tutorial': ('tutorial.json', 9),
               '200': ('large-200.json', 200)}
@@ -99,7 +101,7 @@ def main() -> None:
                 assert response['valid_pairs']['Regular Social Media Posts for Company'] == '75% of usual posting commitment', response
 
     print(f'PASS: {count} offline command-line checks. Main and tutorial scorers, both roles, '
-          'all six bundled issue spaces, external 215 JSON, invalid dates, September deadline, '
+          'all seven bundled issue spaces, external 215 JSON, invalid dates, September deadline, '
           'proportional social-media commitments and old/new performance-bonus names. '
           'No sibling repository files, API keys, or model calls required.')
 
