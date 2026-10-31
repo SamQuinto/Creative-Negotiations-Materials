@@ -7,6 +7,12 @@ scales:
     - "5"
     - "6"
     - "7 — Strongly agree"
+  agree_5:
+    - "1 — Strongly disagree"
+    - "2 — Disagree"
+    - "3 — Neither agree nor disagree"
+    - "4 — Agree"
+    - "5 — Strongly agree"
   svi_satisfaction_7:
     - "1 — Not at all satisfied"
     - "2"
@@ -225,7 +231,7 @@ questions:
     page: 2
     section: "Offer scoring"
     type: "likert"
-    scale: "agree_7"
+    scale: "agree_5"
     required: true
     label: "The scores my offers received were consistent with the interests and priorities described in my role narrative."
 
@@ -258,5 +264,5 @@ questions:
     page: 2
     type: "open_text"
     required: false
-    label: "Any other feedback for us?"
+    label: "Any other feedback on this exercise?"
     hint: "Optional."
