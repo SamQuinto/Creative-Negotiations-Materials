@@ -76,7 +76,7 @@ These complete scoring files include both roles' payoffs and the issue catalogue
 
 ## Which survey to use
 
-- **Classroom:** a short teaching and reflection survey for the Control versus Perspective Taking exercise. It compares an open-ended negotiation with a predefined-issue exercise such as New Recruit and supports discussion of strategy, learning, and how negotiations became stuck or resumed progress.
+- **Classroom:** a short teaching and reflection survey for the classroom exercise. It compares an open-ended negotiation with a predefined-issue exercise such as New Recruit and supports discussion of strategy, learning, and how negotiations became stuck or resumed progress. Q18 asks whether NOVA's scores matched the role materials; Q19 provides an optional explanation box.
 - **Prolific:** the research survey for Fixed-9 versus Latent-215. It includes the full Subjective Value Inventory, perceived realism and role engagement, Creative Process Engagement, Creative Self-Efficacy, offer-strategy reflection, and the plain-language “felt stuck” module.
 
 Issue generation, issue redefinition, issue diversity, agreement, time, offers, payoffs, joint gains, and Pareto efficiency come from behavioral experiment logs rather than survey self-reports.

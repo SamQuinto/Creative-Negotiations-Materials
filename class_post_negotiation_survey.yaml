@@ -7,6 +7,15 @@ scales:
     - "5"
     - "6"
     - "7 — Strongly agree"
+  agree_7_with_na:
+    - "1 — Strongly disagree"
+    - "2"
+    - "3"
+    - "4 — Neither agree nor disagree"
+    - "5"
+    - "6"
+    - "7 — Strongly agree"
+    - "N/A"
   svi_satisfaction_7:
     - "1 — Not at all satisfied"
     - "2"
@@ -204,3 +213,21 @@ questions:
     required: false
     label: "Is there anything else that would be useful or interesting to discuss in class, or anything we should change about this activity?"
     hint: "Optional."
+
+  - id: q18
+    n: 18
+    page: 2
+    section: "Offer scoring"
+    type: "likert"
+    scale: "agree_7_with_na"
+    required: true
+    label: "The scores NOVA gave my offers were consistent with the interests and priorities described in my role materials."
+    hint: "Choose Not applicable if you could not assess this."
+
+  - id: q19
+    n: 19
+    page: 2
+    type: "open_text"
+    required: false
+    label: "Please explain your answer, if you wish."
+    hint: "Optional. You can describe an offer or score that seemed consistent or inconsistent with your role materials."
