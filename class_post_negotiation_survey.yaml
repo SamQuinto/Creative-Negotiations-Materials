@@ -212,12 +212,12 @@ questions:
     type: "likert"
     scale: "agree_7"
     required: true
-    label: "The scores that this exercise gave my offers were consistent with the interests and priorities described in my role narrative."
+    label: "The scores my offers received were consistent with the interests and priorities described in my role narrative."
 
   - id: q19
     n: 19
     page: 2
     type: "open_text"
     required: false
-    label: "Please explain your answer, if you wish."
-    hint: "Optional. You can describe an offer or score that seemed consistent or inconsistent with your role narrative."
+    label: "Please explain your answer to the previous question."
+    hint: "Optional."
