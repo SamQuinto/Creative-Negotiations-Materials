@@ -59,7 +59,6 @@ questions:
   - id: q1
     n: 1
     page: 1
-    section: "How you approached the negotiation"
     type: "likert"
     scale: "agree_7"
     required: true
@@ -92,7 +91,6 @@ questions:
   - id: q5
     n: 5
     page: 1
-    section: "Your experience and outcome"
     type: "likert"
     scale: "svi_satisfaction_7"
     required: true
@@ -141,7 +139,6 @@ questions:
   - id: q9
     n: 11
     page: 2
-    section: "Comparing your strategies"
     type: "open_text"
     required: true
     label: "How did your strategy in this negotiation differ from previous classroom negotiations with fixed issues and outcomes (e.g., New Recruit)?"
@@ -158,7 +155,6 @@ questions:
   - id: q11
     n: 13
     page: 2
-    section: "Taking the learning forward"
     type: "open_text"
     required: true
     label: "What is one lesson from this experience that you want to carry into a future negotiation? Be specific about what you would do."
@@ -167,7 +163,6 @@ questions:
   - id: q12
     n: 14
     page: 2
-    section: "When the negotiation felt stuck"
     type: "single_select"
     style: "pills"
     required: true
@@ -229,7 +224,6 @@ questions:
   - id: q18
     n: 19
     page: 2
-    section: "Offer scoring"
     type: "likert"
     scale: "agree_5"
     required: true

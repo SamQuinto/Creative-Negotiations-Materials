@@ -29,6 +29,8 @@ For the current fixed/control condition, use the separate Fixed-9 scenario below
 
 The HTML files are visual, interactive previews only. They do not save or transmit responses.
 
+The classroom HTML preview includes **Skip to next page** so researchers can browse without answering. This button is not part of the Empirica survey; its required questions are unchanged.
+
 ### Current Prolific payment information
 
 [Review both roles for Fixed 9, Fixed 15 and Latent 215](https://raw.githack.com/SamQuinto/Creative-Negotiations-Materials/main/prolific_role_materials_preview.html). The payment paragraph near the end of each role explains **US$1 per point, capped at US$15 for the negotiation bonus**. The base payment and survey-effort bonus are separate. [Copy the Prolific study description](PROLIFIC_STUDY_DESCRIPTION.md).
