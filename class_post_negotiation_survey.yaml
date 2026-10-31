@@ -236,3 +236,27 @@ questions:
     required: false
     label: "Please explain your answer to the previous question."
     hint: "Optional."
+
+  - id: q22
+    n: 21
+    page: 2
+    type: "open_text"
+    required: false
+    label: "Do you recall any issues that should have been scored differently for your role?"
+    hint: "Optional. Name the issue, suggest a positive, zero or negative score, and briefly explain why."
+
+  - id: q23
+    n: 22
+    page: 2
+    type: "open_text"
+    required: false
+    label: "Are there any other creative ideas or issues you think should be included in this negotiation?"
+    hint: "Optional. For each idea, suggest −1, 0 or +1 for the Candidate and for the Recruiter, and briefly explain why."
+
+  - id: q24
+    n: 23
+    page: 2
+    type: "open_text"
+    required: false
+    label: "Any other feedback for us?"
+    hint: "Optional."
