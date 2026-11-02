@@ -13,15 +13,6 @@ scales:
     - "3 — Neither agree nor disagree"
     - "4 — Agree"
     - "5 — Strongly agree"
-  svi_satisfaction_7:
-    - "1 — Not at all satisfied"
-    - "2"
-    - "3"
-    - "4 — Moderately satisfied"
-    - "5"
-    - "6"
-    - "7 — Perfectly satisfied"
-    - "N/A"
   compare_satisfaction_7:
     - "1 — Much less satisfied"
     - "2"
@@ -80,24 +71,8 @@ questions:
     required: true
     label: "I was able to use my understanding of the other party to shape the questions I asked, the offers I made, or the way I responded."
 
-  - id: q4
-    n: 4
-    page: 1
-    type: "likert"
-    scale: "agree_7"
-    required: true
-    label: "During the negotiation, I carefully kept my own role and the information I was given in mind."
-
-  - id: q5
-    n: 5
-    page: 1
-    type: "likert"
-    scale: "svi_satisfaction_7"
-    required: true
-    label: "How satisfied are you with your own outcome—i.e., the extent to which the terms of your agreement (or lack of agreement) benefit you?"
-
   - id: q6
-    n: 6
+    n: 4
     page: 1
     type: "likert"
     scale: "compare_satisfaction_7"
@@ -105,7 +80,7 @@ questions:
     label: "Compared with previous classroom negotiations where the possible outcomes and issues were fixed (e.g., New Recruit), how satisfied are you with the outcome of this negotiation?"
 
   - id: q7
-    n: 7
+    n: 5
     page: 1
     type: "likert"
     scale: "compare_realism_7"
@@ -113,7 +88,7 @@ questions:
     label: "Compared with previous classroom negotiations where the possible outcomes and issues were fixed (e.g., New Recruit), how realistic did this negotiation feel?"
 
   - id: q8
-    n: 8
+    n: 6
     page: 1
     type: "likert"
     scale: "compare_creativity_7"
@@ -121,7 +96,7 @@ questions:
     label: "Compared with previous classroom negotiations where the possible outcomes and issues were fixed (e.g., New Recruit), how creative did you feel?"
 
   - id: q20
-    n: 9
+    n: 7
     page: 1
     type: "likert"
     scale: "compare_confidence_7"
@@ -129,7 +104,7 @@ questions:
     label: "Compared with previous classroom negotiations where the possible outcomes and issues were fixed (e.g., New Recruit), how confident were you in your ability to come up with creative ideas?"
 
   - id: q21
-    n: 10
+    n: 8
     page: 1
     type: "likert"
     scale: "compare_confidence_7"
@@ -137,23 +112,23 @@ questions:
     label: "Compared with previous classroom negotiations where the possible outcomes and issues were fixed (e.g., New Recruit), how confident were you in your ability to solve negotiation problems creatively?"
 
   - id: q9
-    n: 11
-    page: 2
+    n: 9
+    page: 1
     type: "open_text"
     required: true
     label: "How did your strategy in this negotiation differ from previous classroom negotiations with fixed issues and outcomes (e.g., New Recruit)?"
     hint: "A short response is fine."
 
   - id: q10
-    n: 12
-    page: 2
+    n: 10
+    page: 1
     type: "open_text"
     required: true
     label: "Which negotiation principles or ideas from class were most useful in this type of negotiation?"
     hint: "A short response is fine."
 
   - id: q11
-    n: 13
+    n: 11
     page: 2
     type: "open_text"
     required: true
@@ -161,7 +136,7 @@ questions:
     hint: "A short response is fine."
 
   - id: q12
-    n: 14
+    n: 12
     page: 2
     type: "single_select"
     style: "pills"
@@ -173,7 +148,7 @@ questions:
       - "No"
 
   - id: q13
-    n: 15
+    n: 13
     page: 2
     type: "multi_select"
     required: true
@@ -189,7 +164,7 @@ questions:
       - "4th quarter of the negotiation"
 
   - id: q14
-    n: 16
+    n: 14
     page: 2
     type: "open_text"
     required: true
@@ -200,7 +175,7 @@ questions:
     hint: "Begin with Yes, Partly, or No. If you became unstuck, describe what changed and what you and the other party did. If you did not, describe why the negotiation remained stuck."
 
   - id: q15
-    n: 17
+    n: 15
     page: 2
     type: "open_text"
     required: true
@@ -211,7 +186,7 @@ questions:
     hint: "If you did not feel stuck in those earlier negotiations, simply say so. A short response is fine."
 
   - id: q16
-    n: 18
+    n: 16
     page: 2
     type: "open_text"
     required: false
@@ -222,7 +197,7 @@ questions:
     hint: "Optional. A short response is fine."
 
   - id: q18
-    n: 19
+    n: 17
     page: 2
     type: "likert"
     scale: "agree_5"
@@ -230,7 +205,7 @@ questions:
     label: "The scores my offers received were consistent with the interests and priorities described in my role narrative."
 
   - id: q19
-    n: 20
+    n: 18
     page: 2
     type: "open_text"
     required: false
@@ -238,7 +213,7 @@ questions:
     hint: "Optional."
 
   - id: q22
-    n: 21
+    n: 19
     page: 2
     type: "open_text"
     required: false
@@ -246,7 +221,7 @@ questions:
     hint: "Optional. Name the issue, suggest a positive, zero or negative score, and briefly explain why."
 
   - id: q23
-    n: 22
+    n: 20
     page: 2
     type: "open_text"
     required: false
@@ -254,7 +229,7 @@ questions:
     hint: "Optional. For each idea, suggest −1, 0 or +1 for the Candidate and for the Recruiter, and briefly explain why."
 
   - id: q24
-    n: 23
+    n: 21
     page: 2
     type: "open_text"
     required: false
