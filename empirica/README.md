@@ -8,7 +8,7 @@ Both `score_offer.py` and `score_tutorial_offer.py` now use the latest tested **
 
 The latest **A2** job scorer is included too. It uses `gpt-5.6-luna`, exercise-specific instructions and the tested Python corrections. Select it explicitly with `--architecture A2`. A2's tutorial path remains the separately developed tutorial implementation; it does not use the fitted job corrections. We recommend the default A1 for the tutorial.
 
-Use [`flexible-216.json`](flexible-216.json) for NOVA and `fixed-9.json` for the fixed condition. The current table adds **Workplace Coffee**: free coffee is worth **+1 to the Candidate and 0 to the Recruiter**; no free coffee is worth 0 to both. All previous 215 issues and the nine fixed issues are unchanged. Agreement metadata allows a score of **0 or higher for each party**.
+Use [`flexible-216.json`](flexible-216.json) for NOVA and `fixed-9.json` for the fixed condition. The current table includes **Workplace Coffee**: free coffee is worth **+1 to each party**; no free coffee is worth 0 to both. This shared-benefit rule was updated on November 3, 2026, after the pilots. All previous 215 issues and the nine fixed issues are unchanged. Agreement metadata allows a score of **0 or higher for each party**.
 
 For classroom use, [`flexible-216-classroom.json`](flexible-216-classroom.json) has the same scoring table but removes the Prolific payment notice and disables monetary-payment metadata. The classroom survey is [`class_post_negotiation_survey.yaml`](../class_post_negotiation_survey.yaml).
 

@@ -12901,7 +12901,7 @@
         {
           "label": "Free coffee provided",
           "Candidate": 1,
-          "Recruiter": 0
+          "Recruiter": 1
         },
         {
           "label": "No free coffee provided",
@@ -12926,16 +12926,18 @@
         "Workplace comfort"
       ],
       "recruiter_interests": [
-        "Basic workplace amenities"
+        "Workplace comfort and morale"
       ],
-      "payoff_justification": "Free workplace coffee gives the Candidate +1 point as a small daily benefit; without it the Candidate receives 0. The Recruiter receives 0 either way: this scoring rule treats the small amenity as neutral to the hiring decision.",
+      "payoff_justification": "Free workplace coffee gives each role +1 point: it improves the Candidate's day-to-day comfort and helps the Recruiter offer a welcoming workplace. Without free coffee, both receive 0.",
       "catalog_issue_id": "v6_216_workplace_coffee",
-      "comment": "This issue was added after the October 27, 2026 pilot data collection, when we realized that the scorer could not assign a score to it.",
+      "comment": "This issue was added after the October 27, 2026 pilot data collection, when we realized that the scorer could not assign a score to it. On November 3, 2026, the Recruiter's score for free coffee was changed from 0 to +1, making it a shared-benefit issue.",
       "provenance": {
         "origin": "Live negotiation pilot",
         "pilot_date": "2026-10-27",
         "date_added": "2026-10-31",
-        "note": "This issue was added after the October 27, 2026 pilot data collection, when we realized that the scorer could not assign a score to it."
+        "note": "This issue was added after the October 27, 2026 pilot data collection, when we realized that the scorer could not assign a score to it.",
+        "score_revision_date": "2026-11-03",
+        "score_revision_note": "On November 3, 2026, the Recruiter's score for free coffee was changed from 0 to +1, making it a shared-benefit issue."
       }
     }
   ],
@@ -12961,7 +12963,7 @@
     "mode": "open_capture",
     "unknown_term_policy": "capture_unscored",
     "description": "Plausible new job features are retained as novel terms, but receive no improvised payoff until they enter the versioned ontology.",
-    "catalog_release": "flexible-216-2026-10-31",
+    "catalog_release": "flexible-216-2026-11-03",
     "supported_issue_count": 216
   },
   "material_source": {
@@ -13100,6 +13102,6 @@
     "max_choices_per_issue": 5,
     "note": "A nine-issue table view with non-compete in place of recruitment-fair participation. It does not limit the 215-issue natural-language task."
   },
-  "scoring_table_revision": "2026-10-31-workplace-coffee",
-  "scoring_table_revision_note": "This issue was added after the October 27, 2026 pilot data collection, when we realized that the scorer could not assign a score to it."
+  "scoring_table_revision": "2026-11-03-shared-benefit-coffee",
+  "scoring_table_revision_note": "This issue was added after the October 27, 2026 pilot data collection, when we realized that the scorer could not assign a score to it. On November 3, 2026, the Recruiter's score for free coffee was changed from 0 to +1, making it a shared-benefit issue."
 }
