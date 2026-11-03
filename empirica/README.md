@@ -37,6 +37,8 @@ Use `--reasoning high` for A1-high or `--architecture A2` for A2. The existing `
 
 Historical `15`, `200`, `215`, `fixed-9` and `fixed-15` command paths remain available. The main command defaults to `216`; the tutorial command defaults to `tutorial`. Explicit `--issue-space 215` uses the original, frozen validation table. Both A1 and A2 use the current table when `216` is selected.
 
+Use `python score_offer.py --version` on the study server to check the installed version. It should report `candidate_recruiter_large_216` and `issue_count: 216`. The numbered scripts in `app/scoring/` also default to the current 216-issue job table. If an older study setup explicitly passes `--issue-space 215`, sets `SCORER_DEFAULT_SPACE=215`, or supplies `--scenario-file flexible-215.json`, change that setting to 216 as well. For classroom role materials, use the `flexible-216-classroom.json` URL above.
+
 ## Check the update without paid calls
 
 ```sh

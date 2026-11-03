@@ -31,8 +31,9 @@ DEFAULTS={'Salary':50000,'Personal Budget':10000,'Starting Date':'2026-05-01',
 def load():
     saved=os.environ.get('NEGOTIATOR_SCENARIO_FILE')
     try:
-        for name in ('fixed-15','flexible-15','flexible-215','tutorial'):
-            path=Path(__file__).resolve().parent/'scenarios'/f'{name}.json'
+        for name in ('flexible-216','flexible-216-classroom','fixed-15','flexible-15','flexible-215','tutorial'):
+            path=(ROOT/'empirica'/f'{name}.json' if name.startswith('flexible-216')
+                  else Path(__file__).resolve().parent/'scenarios'/f'{name}.json')
             SCENARIOS[name]=json.loads(path.read_text(encoding='utf-8'))
             os.environ['NEGOTIATOR_SCENARIO_FILE']=str(path)
             spec=importlib.util.spec_from_file_location('preview_'+name,APP/'backend/stream.py')
@@ -89,7 +90,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(Path(__file__).with_name('preview.html').read_text(encoding='utf-8'),kind='text/html')
             if route.path=='/deterministic_score.mjs':
                 return self.respond(Path(__file__).with_name('deterministic_score.mjs').read_text(encoding='utf-8'),kind='text/javascript')
-            name=query.get('scenario',['fixed-15'])[0];role=query.get('role',['Candidate'])[0]
+            name=query.get('scenario',['flexible-216'])[0];role=query.get('role',['Candidate'])[0]
             s=SCENARIOS[name]
             if role not in s['roles']:raise ValueError('Unknown role')
             if route.path=='/api/scenario':

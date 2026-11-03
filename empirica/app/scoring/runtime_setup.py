@@ -6,7 +6,9 @@ ROOT = Path(__file__).resolve().parent
 
 def data_dir(exercise):
     if exercise == 'tutorial': return ROOT / 'frozen/tutorial'
-    return ROOT / 'current' if os.environ.get('NOVA_JOB_SCORING_RELEASE') == '216' else ROOT / 'frozen'
+    # Direct use of the numbered scripts follows the same current default as
+    # score_offer.py. Reproducing the old benchmark requires an explicit 215.
+    return ROOT / 'frozen' if os.environ.get('NOVA_JOB_SCORING_RELEASE', '216') == '215' else ROOT / 'current'
 
 def a1_setup(exercise):
     sys.path.insert(0, str(ROOT.parent / 'a1/backend'))

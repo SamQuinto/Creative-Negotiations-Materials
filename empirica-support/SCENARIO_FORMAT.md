@@ -1,5 +1,7 @@
 # Using the current scenarios in Empirica
 
+The current NOVA scoring file is [`empirica/flexible-216.json`](../empirica/flexible-216.json); use [`flexible-216-classroom.json`](../empirica/flexible-216-classroom.json) for classroom role materials. Both contain 216 issues. The main scorer and preview use 216 by default. References to Flexible 215 below describe the historical scenario exports and their original format.
+
 The generated JSONs follow the supplied sample's structure. Each has `roles.Candidate` and `roles.Recruiter`, with `narrative`, `full_text`, `BATNA`, `RP`, and `determinatescoretable`. Older scenarios also retain their source `full_blocks`. The narratives carry the approved headings, bullets, indentation, emphasis, and payoff colors. Dates in scored offers show the day as well as the month.
 
 `readrole_instructions` contains the short preparation message. The role narrative explains the participant's interests; `tips` holds the offer and scoring instructions under **Tips on Negotiation**. Keep **Your role** as the interface's role heading, without repeating a Candidate/Recruiter role-information heading inside the narrative. These fields use trusted, researcher-authored HTML. The old office-sharing introduction, pounds, and three-party agreement wording are not copied into these files. The general `tips` do not promise an outdated feedback-survey bonus.

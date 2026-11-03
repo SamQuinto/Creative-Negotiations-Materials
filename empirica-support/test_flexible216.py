@@ -37,11 +37,18 @@ def main():
                 result=call('--scenario-file',str(PACKAGE/filename),'--role',role,
                     '--choices-json',json.dumps(choices),'--json')
                 assert result['decision']=='scorable'
-                assert result['total_for_proposer']==(score if role=='Candidate' else 0)
-                assert result['total_for_receiver']==(0 if role=='Candidate' else score)
+                assert result['total_for_proposer']==score
+                assert result['total_for_receiver']==score
                 assert result['scorer_routing']['calls']==0
     assert call('--version')['issue_count']==216
     assert call('--issue-space','215','--version')['issue_count']==215
+    # Calling the numbered A1 script directly must also use 216 by default.
+    direct=subprocess.run([sys.executable,str(PACKAGE/'app/scoring/A1-1.py'),
+        '--case-json',str(PACKAGE/'app/scoring/examples/job_offer.json')],
+        capture_output=True,text=True,encoding='utf-8',timeout=25)
+    assert direct.returncode==0,direct.stderr or direct.stdout
+    names=json.loads(direct.stdout)['text']['format']['schema']['properties']['pairs']['items']['properties']['issue']['enum']
+    assert len(names)==216 and 'Workplace Coffee' in names
     print('PASS: all original issue definitions preserved; A1/A2 request schemas include coffee; both roles and both coffee choices score correctly in standard and classroom JSON. No API calls.')
 
 if __name__=='__main__':main()

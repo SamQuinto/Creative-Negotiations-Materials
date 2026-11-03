@@ -26,7 +26,7 @@ def main() -> None:
 
     env = {key: value for key, value in os.environ.items()
            if 'KEY' not in key.upper()
-           and key not in {'PYTHONPATH', 'PYTHONHOME', 'SCORER_DEFAULT_SPACE'}
+           and key not in {'PYTHONPATH', 'PYTHONHOME', 'SCORER_DEFAULT_SPACE', 'NOVA_JOB_SCORING_RELEASE'}
            and not key.startswith('NEGOTIATOR_')}
     env.update(PYTHONIOENCODING='utf-8', PYTHONUTF8='1', PYTHONDONTWRITEBYTECODE='1')
     defaults = {'Salary': 31213, 'Personal Budget': 7000, 'Starting Date': '2026-05-01',
@@ -48,6 +48,19 @@ def main() -> None:
             response = json.loads(result.stdout)
             count += 1
             return response
+
+        current = call('score_offer.py', '--version')
+        assert current['issue_count'] == 216 and current['scenario_id'] == 'candidate_recruiter_large_216', current
+        for reasoning in ('low', 'high'):
+            request = call('score_offer.py', '--reasoning', reasoning, '--text', 'salary 50k budget 10k start March free coffee', '--preview')
+            names = request['text']['format']['schema']['properties']['pairs']['items']['properties']['issue']['enum']
+            assert len(names) == 216 and 'Workplace Coffee' in names
+            assert request['reasoning']['effort'] == reasoning
+        for role in ('Candidate', 'Recruiter'):
+            response = call('score_offer.py', '--role', role, '--choices-json', json.dumps({
+                'Salary': 50000, 'Personal Budget': 10000, 'Starting Date': '2026-03-01',
+                'Workplace Coffee': 'Free coffee provided'}), '--json')
+            assert response['total_for_proposer'] == response['total_for_receiver'] == 1, response
 
         for space, (filename, issue_count) in spaces.items():
             definition = json.loads((PACKAGE / 'app/config' / filename).read_text(encoding='utf-8'))
@@ -101,7 +114,7 @@ def main() -> None:
                 assert response['valid_pairs']['Regular Social Media Posts for Company'] == '75% of usual posting commitment', response
 
     print(f'PASS: {count} offline command-line checks. Main and tutorial scorers, both roles, '
-          'all seven bundled issue spaces, external 215 JSON, invalid dates, September deadline, '
+          'default 216 table and coffee, all seven bundled issue spaces, historical external 215 JSON, invalid dates, September deadline, '
           'proportional social-media commitments and old/new performance-bonus names. '
           'No sibling repository files, API keys, or model calls required.')
 

@@ -17,7 +17,7 @@ def command(package,exercise,*args,env=None,cwd=None):
 
 class CurrentScorerTests(unittest.TestCase):
     def test_both_default_to_general_a1(self):
-        for exercise,count in [('job',215),('tutorial',9)]:
+        for exercise,count in [('job',216),('tutorial',9)]:
             with self.subTest(exercise=exercise):
                 result=command(ROOT,exercise,'--version')
                 self.assertEqual(result['architecture'],'A1');self.assertEqual(result['model'],'gpt-6.1-sol')
@@ -31,7 +31,8 @@ class CurrentScorerTests(unittest.TestCase):
             case=json.loads((EXAMPLES/f'{prefix}_offer.json').read_text())
             with self.subTest(config=config):
                 result=command(ROOT,exercise,'--architecture',config['architecture'],'--reasoning',config['reasoning'],
-                    '--role',case['role'],'--text',case['offer'],'--previous-offer',case.get('previous_offer',''),'--preview')
+                    '--role',case['role'],'--text',case['offer'],'--previous-offer',case.get('previous_offer',''),'--preview',
+                    env={'SCORER_DEFAULT_SPACE': '215'} if exercise == 'job' else None)
                 digest=hashlib.sha256(json.dumps(result,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
                 self.assertEqual(digest,config['request_sha256'])
 

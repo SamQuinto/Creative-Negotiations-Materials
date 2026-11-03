@@ -2,7 +2,7 @@
 
 The current study package is [empirica](../empirica/). Both main and tutorial commands now default to the general-purpose A1 at low reasoning; the current A2 is available with `--architecture A2`. Download that whole folder, including `app`. The older development notes below describe retained historical paths, not the current default. See the [current setup and commands](../empirica/README.md).
 
-The [Empirica folder](../empirica/) contains both scorer commands, the Fixed-9 and Flexible-215 scenarios, and the complete engine in `empirica/app/`. That folder alone is sufficient for scoring. This support folder holds further instructions, tests, the optional preview, and five scenario exports. The direct Fixed-9 and Flexible-215 files match their copies in `scenarios/`; the smoke test checks this. The [current runtime manifest](../empirica/runtime_manifest.json) records the engine revision, source files and checks. Update the whole `empirica/` folder together, not just the two Python entry points. Archived experimental versions keep their earlier numerical values.
+The [Empirica folder](../empirica/) contains both scorer commands, the current Flexible-216 scoring table and classroom version, the Fixed-9 scenario, and the complete engine in `empirica/app/`. That folder alone is sufficient for scoring. This support folder holds further instructions, tests, the optional preview, and historical scenario exports. The preview defaults to Flexible 216 and reads that file directly from `empirica/`. Update the whole `empirica/` folder together, not just the two Python entry points. Archived experimental versions keep their earlier numerical values.
 
 ## Download and run
 
@@ -29,15 +29,15 @@ This tests the actual command-line scripts, all four current scenarios, both rol
 For natural-language scoring, set your own `OPENAI_API_KEY` environment variable, then run:
 
 ```text
-python empirica/score_offer.py --role Candidate --issue-space 215 --text "budget of 7000 salary of 31213 starting date of may" --json
+python empirica/score_offer.py --role Candidate --issue-space 216 --text "budget of 7000 salary of 31213 starting date of may" --json
 python empirica/score_tutorial_offer.py --text "300 venue fee September 15 close at 9pm include projector use" --json
-python empirica/score_offer.py --issue-space 215 --version
-python empirica/score_offer.py --scenario-file empirica/flexible-215.json --role Candidate --text "salary 55k budget 9k start January 1" --json
+python empirica/score_offer.py --issue-space 216 --version
+python empirica/score_offer.py --scenario-file empirica/flexible-216.json --role Candidate --text "salary 55k budget 9k start January 1" --json
 ```
 
-The main command defaults to Flexible 215. Use `--issue-space fixed-9` for the current control or `215` for NOVA. `fixed-15` and `15` remain available; `200` selects the archived scenario. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all nine rows for Fixed 9, or all 15 for the retained Fixed 15 condition.
+The main command defaults to Flexible 216. Use `--issue-space fixed-9` for the fixed-issue condition or `216` for NOVA. Explicit `215`, `fixed-15`, `15` and `200` remain available for older setups. Use `--scenario-file /path/to/scenario.json` to load an external complete scoring file. Explicit form values can use `--choices-json` instead of `--text`, with zero AI calls. Include all nine rows for Fixed 9, or all 15 for Fixed 15.
 
-Natural-language offers use Nano for routine interpretation and independent Luna review when flagged. Payoffs are calculated by the shared deterministic engine. A month-only start such as May is shown as May 1 for confirmation; a supplied day is preserved. Salary and budget accept any non-negative amount, with proportional scoring beyond the displayed reference anchors.
+The current default uses A1 with GPT-6.1 Sol at low reasoning. Python calculates scores from the scoring table. A month-only start such as May is shown as May 1 for confirmation; a supplied day is preserved. Salary and budget accept any non-negative amount, with proportional scoring beyond the displayed reference anchors. The earlier Nano–Luna implementation remains available through the historical paths.
 
 Current job dates give both roles January 1 = +1, March 1 = 0, May 1 = −1, July 1 = −2, and September 1–30 = −3. Dates between anchors are scored proportionally. October–December give −1000 to both roles, making agreement impossible under the normal positive-payoff rule. Role materials explain that a start after September cannot go ahead. A supplied year is ignored; month/day use the 2026 calendar. A month alone means day 1, mid-month day 15, end-month its last day, and “start ASAP” means January 1. The venue tutorial keeps its separate dates and payoffs.
 
@@ -56,15 +56,15 @@ For natural-language feedback, `unstated_required` lists required issues the par
 ## Files and integration
 
 For the current study, use [`fixed-9.json`](../empirica/fixed-9.json) for control
-and [`flexible-215.json`](../empirica/flexible-215.json) for NOVA. Each has its own
+and [`flexible-216.json`](../empirica/flexible-216.json) for NOVA, or [`flexible-216-classroom.json`](../empirica/flexible-216-classroom.json) for classroom role materials. Each has its own
 narratives and a nine-row table with at most five choices per issue and clean
 two-decimal scores. Only the fixed file restricts scoring to those nine issues.
 The [integration guide](../EMPIRICA_INTEGRATION.md#choose-the-conditions-scenario-20-october-2026)
 lists the treatment links. No external interface changes are part of this update.
 
 - [Main scorer](../empirica/score_offer.py) and [tutorial scorer](../empirica/score_tutorial_offer.py).
-- [Convenient 215-issue scenario copy](../empirica/flexible-215.json).
-- [Current scenario JSONs](scenarios/): Fixed 9, Fixed 15, Flexible 15, Flexible 215, and the venue tutorial.
+- [Current 216-issue scoring file](../empirica/flexible-216.json) and [classroom version](../empirica/flexible-216-classroom.json).
+- [Historical scenario JSONs and tutorial](scenarios/): Fixed 9, Fixed 15, Flexible 15, Flexible 215, and the venue tutorial.
 - [Continuous-scoring browser helper](deterministic_score.mjs).
 - [Scenario format and integration guide](SCENARIO_FORMAT.md). Its development/rebuild commands refer to the full prototype checkout; this public download includes only the runtime and the smoke check above.
 - `python empirica-support/preview_server.py` starts a local researcher integration game at `http://127.0.0.1:3136/`. It uses explicit form choices, needs no key, and is not the live Empirica study.

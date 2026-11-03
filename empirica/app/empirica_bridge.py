@@ -6,7 +6,7 @@ import argparse,hashlib,importlib.util,json,os,sys
 APP=Path(__file__).resolve().parent
 PACKAGE=APP.parent
 ENGINE=APP/'scoring'
-RELEASE='NOVA-empirica-2026-10-31-216'
+RELEASE='NOVA-empirica-2026-11-03-216'
 sys.path.insert(0,str(ENGINE))
 import common1225 as calls
 import nova_cli

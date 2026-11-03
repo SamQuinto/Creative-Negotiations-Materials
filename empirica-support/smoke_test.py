@@ -15,7 +15,7 @@ from offer_engine import score_pair
 
 
 def main():
-    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json', 'app', 'README.md', 'runtime_manifest.json'}
+    expected_files = {'score_offer.py', 'score_tutorial_offer.py', 'fixed-9.json', 'flexible-215.json', 'flexible-216.json', 'flexible-216-classroom.json', 'app', 'README.md', 'runtime_manifest.json'}
     published_files = {p.name for p in (ROOT / 'empirica').iterdir() if p.name != '__pycache__'}
     assert published_files == expected_files, published_files
     assert (ROOT / 'empirica/flexible-215.json').read_bytes() == (ROOT / 'empirica-support/scenarios/flexible-215.json').read_bytes(), '215 scenario copies differ'
@@ -79,7 +79,7 @@ def main():
             capture_output=True,text=True,encoding='utf-8',timeout=60)
         assert completed.returncode==0,completed.stderr or completed.stdout
         print(completed.stdout.strip())
-        for script,wanted in (('score_offer.py',215),('score_tutorial_offer.py',9)):
+        for script,wanted in (('score_offer.py',216),('score_tutorial_offer.py',9)):
             completed=subprocess.run([sys.executable,str(handoff/script),'--version'],cwd=folder,env=env,
                 capture_output=True,text=True,encoding='utf-8',timeout=20)
             assert completed.returncode==0,completed.stderr or completed.stdout
@@ -89,7 +89,11 @@ def main():
     preview = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(preview)
     preview.load()
-    assert set(preview.SCENARIOS) == {'fixed-15', 'flexible-15', 'flexible-215', 'tutorial'}
+    assert set(preview.SCENARIOS) == {'flexible-216', 'flexible-216-classroom', 'fixed-15', 'flexible-15', 'flexible-215', 'tutorial'}
+    assert len(preview.SCENARIOS['flexible-216']['issues']) == 216
+    coffee = {'Salary': 50000, 'Personal Budget': 10000, 'Starting Date': '2026-03-01', 'Workplace Coffee': 'Free coffee provided'}
+    for role in ('Candidate', 'Recruiter'):
+        assert preview.score('flexible-216', role, coffee)['total_for_proposer'] == 1
     print(f'PASS: {count} additional CLI checks, all four exports, both roles, invalid dates, the standalone package, identical 215 exports, and preview imports. No AI calls.')
 
 

@@ -45,7 +45,7 @@ Keep the same paths: `empirica/score_offer.py` and
 `empirica/score_tutorial_offer.py`. Download or update the whole folder together.
 [Setup](empirica/README.md). No separate A1 folder is needed.
 
-[Open the public Empirica folder](empirica/). **Download everything inside that folder, including `app/`.** It now contains both Python commands, the current 215-issue scenario, and the complete shared scoring engine. No other repository folder is needed to run the scorers. [The short setup guide](empirica/README.md) includes a no-key installation check.
+[Open the public Empirica folder](empirica/). **Download everything inside that folder, including `app/`.** It contains both Python commands, the current 216-issue scenario, its classroom version, and the complete shared scoring engine. The main scorer defaults to 216 issues. No other repository folder is needed to run the scorers. [The short setup guide](empirica/README.md) includes a no-key installation check.
 
 [Detailed instructions, extra tests, the preview, and other scenario exports](empirica-support/) are kept separately. The optional preview also uses the single helper in `developer/`; neither sibling folder is required to run the scorers. If you clone the whole repository, keep your Empirica commands pointed at `empirica/score_offer.py` and `empirica/score_tutorial_offer.py`. The [key template](empirica/app/openai_key_example.txt) contains a placeholder only; copy it to `empirica/app/openai_key.txt` and add your own key locally, or set `OPENAI_API_KEY` on the server. Never commit a real key. The current engine revision and file hashes are in the [runtime manifest](empirica/runtime_manifest.json).
 
@@ -60,7 +60,7 @@ Keep the same paths: `empirica/score_offer.py` and
 
 Use **Fixed 9 for the fixed-issue condition** and **Flexible 216 for NOVA** in the treatment's `roleDataURL`. Each file has its own role narratives. Both have a nine-row `determinatescoretable`, at most five choices per issue, and table scores rounded to two decimals. Flexible 216 scores its full table and requires only salary, budget and starting date in natural-language offers. Fixed 9 activates only its nine listed issues. Fixed 15 is separate and unchanged.
 
-Flexible 216 adds **Workplace Coffee** after the October 27, 2026 pilot. Free coffee is worth **+1 to the Candidate and 0 to the Recruiter**; no free coffee is worth 0 to both. The previous 215 issue definitions are unchanged, and the original 215-issue files remain available for historical replication. The classroom version has the same scores but omits the Prolific payment notice and disables monetary-payment metadata.
+Flexible 216 adds **Workplace Coffee** after the October 27, 2026 pilot. Free coffee is worth **+1 to each party**, following the November 3 classroom update; no free coffee is worth 0 to both. The previous 215 issue definitions are unchanged, and the original 215-issue files remain available for historical replication. The classroom version has the same scores but omits the Prolific payment notice and disables monetary-payment metadata.
 
 The current nine-issue agenda includes the **non-compete clause instead of recruitment-fair participation**. Waiving the clause gives Candidate +1 and Recruiter −1; keeping it gives both 0. Training remains in Fixed 9. Recruitment-fair participation remains available in Flexible 216, alongside the non-compete clause.
 
